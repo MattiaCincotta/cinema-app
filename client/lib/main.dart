@@ -1,11 +1,15 @@
+import 'package:client/login.dart';
+import 'package:client/registration.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
-
+import 'directorlist.dart';
 void main() {
-  runApp(CinemaApp());
+  runApp(const CinemaApp());
 }
 
 class CinemaApp extends StatefulWidget {
+  const CinemaApp({super.key});
+
   @override
   State<CinemaApp> createState() => _CinemaAppState();
 }
@@ -21,8 +25,10 @@ class _CinemaAppState extends State<CinemaApp> {
     return MaterialApp(
       initialRoute: '/homepage',
       routes: {
-        '/homepage': (context) => const CinemaAppHomepage()
-        //'/login': (context) => const LoginPage(),
+        '/homepage': (context) => const CinemaAppHomepage(),
+        '/login': (context) => const LoginPage(),
+        '/registration': (context) => const Registrationpage(),
+        '/directorList.dart': (context) => const DirectionListPage()
       },
     );
   }

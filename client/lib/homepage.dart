@@ -1,4 +1,6 @@
+import 'package:client/login.dart';
 import 'package:flutter/material.dart';
+
 
 class CinemaAppHomepage extends StatefulWidget {
   const CinemaAppHomepage({super.key});
@@ -43,6 +45,10 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
             const SizedBox(height: 50), 
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
               backgroundColor: Colors.grey[600], // Colore di sfondo del bottone
