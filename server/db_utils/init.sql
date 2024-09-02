@@ -4,13 +4,18 @@ USE cineCult;
 
 CREATE TABLE IF NOT EXISTS directors(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(64) NOT NULL
+    name VARCHAR(64) NOT NULL,
+    image_url VARCHAR(256) NOT NULL,
+    categories VARCHAR(8) NOT NULL -- categories of the movies they direct
 );
 
 CREATE TABLE IF NOT EXISTS movies(
     id SERIAL PRIMARY KEY,
     title VARCHAR(64) NOT NULL,
-    director_id INTEGER NOT NULL
+    director_id INTEGER NOT NULL,
+    year INTEGER NOT NULL,
+    categories VARCHAR(8) NOT NULL,
+    image_url VARCHAR(256) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users(

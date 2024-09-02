@@ -1,22 +1,14 @@
 from flask import Flask, request, jsonify, g
 from db_utils.db import DB_utils
 from dotenv import load_dotenv
-import mysql.connector
+import mysql.connector, utils
 app = Flask(__name__)   
 
 @app.route('/')
 def index():
-    if 'db' not in g:
-        g.db = DB_utils.get_db_connection()
-        
-    try:
-        cursor = g.db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM movies")
-        result = cursor.fetchall()
-        return jsonify(result)
-    except mysql.connector.Error as e:
-        print(f"Error: {e}")
-        return jsonify({"error": str(e)})
+    return "Hello, World!"
+    # utils.UserManager.add_user(utils.User("test", "password"))
+    # return utils.UserManager.get_user("test").username     
 
 @app.teardown_appcontext
 def close_db(exception):
