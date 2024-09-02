@@ -109,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Sign In'),
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[900],
@@ -167,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: 300.0,
                   child: TextField(

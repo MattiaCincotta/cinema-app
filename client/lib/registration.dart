@@ -65,7 +65,7 @@ class _RegistrationpageState extends State<Registrationpage> {
   bool isValid = _validateInputs();
 
   if (!isValid) {
-    _showSnackBar('Registrazione non riuscita'); // Corretto il messaggio
+    _showSnackBar('Registrazione non riuscita'); 
     return;
   }
 
@@ -76,7 +76,6 @@ class _RegistrationpageState extends State<Registrationpage> {
   await storage.write(key: 'username', value: _username.text);
   await storage.write(key: 'password', value: hash);
 
-  // Verifica se il widget è ancora montato prima di navigare
   if (mounted) {
     Navigator.pushNamed(context, '/login');
   }
@@ -113,7 +112,7 @@ class _RegistrationpageState extends State<Registrationpage> {
         content: Text(
           message,
           style: const TextStyle(
-            fontSize: 18.0, // Aumenta la dimensione del testo
+            fontSize: 18.0, 
           ),
         ),
         duration: const Duration(seconds: 3),
@@ -127,7 +126,7 @@ class _RegistrationpageState extends State<Registrationpage> {
       appBar: AppBar(
         title: const Text('Sign Up'),
         foregroundColor: Colors.white,
-        backgroundColor:  Colors.grey[900], // Imposta il colore dell'AppBar
+        backgroundColor:  Colors.grey[900], 
       ),
       backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
@@ -141,9 +140,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                 ClipOval(
                 child: Image.asset(
                   'images/profile.jpg',
-                  width: 275, // Larghezza dell'immagine
-                  height: 275, // Altezza dell'immagine
-                  fit: BoxFit.cover, // Adatta l'immagine per coprire l'area
+                  width: 275, 
+                  height: 275,
+                  fit: BoxFit.cover, 
                 ),
               ),
                 const SizedBox(height: 25),
@@ -162,9 +161,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                   child: TextField(
                     controller: _username,
                     style: const TextStyle(
-                      color: Colors.white, // Colore del testo inserito
-                      fontSize: 20, // Dimensione del testo
-                      fontFamily: 'Roboto', // Nome del font
+                      color: Colors.white, 
+                      fontSize: 20, 
+                      fontFamily: 'Roboto', 
                     ),
                     onChanged: (value) {
                       _validateUsername(value);
@@ -172,17 +171,17 @@ class _RegistrationpageState extends State<Registrationpage> {
                     decoration: const InputDecoration(
                       labelText: 'Username',
                       labelStyle: TextStyle(
-                        //color: Colors.white, // Colore del testo dell'etichetta
-                        fontSize: 20, // Dimensione del testo dell'etichetta
-                      ), // Colore del testo dell'etichetta
+                        
+                        fontSize: 20, 
+                      ), 
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), // Colore del bordo
+                        borderSide: BorderSide(color: Colors.white), 
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple), // Colore del bordo quando il campo è focalizzato
+                        borderSide: BorderSide(color: Colors.deepPurple), 
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), // Colore del bordo quando il campo è abilitato
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                     ),
                   ),
@@ -204,9 +203,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                   child: TextField(
                     obscureText: _isObscure,
                     style: const TextStyle(
-                      color: Colors.white, // Colore del testo inserito
-                      fontSize: 20, // Dimensione del testo
-                      fontFamily: 'Roboto', // Nome del font
+                      color: Colors.white, 
+                      fontSize: 20, 
+                      fontFamily: 'Roboto', 
                     ),
                     controller: _password1,
                     onChanged: (_) {
@@ -217,21 +216,21 @@ class _RegistrationpageState extends State<Registrationpage> {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: const TextStyle(
-                        fontSize: 18, // Dimensione del testo dell'etichetta
+                        fontSize: 18, 
                       ),
                       border: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white), // Colore del bordo
+                          borderSide: BorderSide(color: Colors.white), 
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.deepPurple), // Colore del bordo quando il campo è focalizzato
+                          borderSide: BorderSide(color: Colors.deepPurple), 
                         ),
                         enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white), // Colore del bordo quando il campo è abilitato
+                          borderSide: BorderSide(color: Colors.white), 
                         ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isObscure ? Icons.visibility : Icons.visibility_off,
-                          color: Colors.white, // Colore dell'icona
+                          color: Colors.white,
                         ),
                         onPressed: () {
                           setState(() {
@@ -259,9 +258,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                   child: TextField(
                     obscureText: _isObscure,
                     style: const TextStyle(
-                      color: Colors.white, // Colore del testo inserito
-                      fontSize: 20, // Dimensione del testo
-                      fontFamily: 'Roboto', // Nome del font
+                      color: Colors.white, 
+                      fontSize: 20,
+                      fontFamily: 'Roboto', 
                     ),
                     controller: _password2,
                     onChanged: (_) {
@@ -275,18 +274,18 @@ class _RegistrationpageState extends State<Registrationpage> {
                         fontSize: 18, // Dimensione del testo dell'etichetta
                       ),
                       border: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), // Colore del bordo
+                        borderSide: BorderSide(color: Colors.white), 
                       ),
                       focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple), // Colore del bordo quando il campo è focalizzato
+                        borderSide: BorderSide(color: Colors.deepPurple), 
                       ),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), // Colore del bordo quando il campo è abilitato
+                        borderSide: BorderSide(color: Colors.white), 
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isObscure ? Icons.visibility : Icons.visibility_off,
-                          color: Colors.white, // Colore dell'icona
+                          color: Colors.white,
                         ),
                         onPressed: () {
                           setState(() {
@@ -317,18 +316,18 @@ class _RegistrationpageState extends State<Registrationpage> {
                       await _register();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[600], // Colore di sfondo del bottone
-                      foregroundColor: Colors.white, // Colore del testo del bottone
+                      backgroundColor: Colors.grey[600], 
+                      foregroundColor: Colors.white, 
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40), // Bordi stondati
+                        borderRadius: BorderRadius.circular(40), 
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15), // Spaziatura interna
-                      elevation: 5, // Ombra del bottone
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      elevation: 5, 
                     ),
                     child: const Text(
-                      'CONTINUA',
+                      'Sign Up',
                       style: TextStyle(
-                        fontSize: 18, // Dimensione del testo
+                        fontSize: 27, 
                       ),
                     ),
                   ),
