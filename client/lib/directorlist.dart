@@ -21,11 +21,15 @@ class _DirectionListPageState extends State<DirectionListPage> {
     // Aggiungi altri elementi qui
   ];
 
- final Map<String, bool> _checkboxValues = {
-    'Opzione 1': false,
-    'Opzione 2': false,
-    'Opzione 3': false,
-    'Opzione 4': false,
+  final Map<String, bool> _checkboxValues = {
+    'Categoria 1': false,
+    'Categoria 2': false,
+    'Categoria 3': false,
+    'Categoria 4': false,
+    'Categoria 5': false,
+    'Categoria 6': false,
+    'Categoria 7': false,
+    'Categoria 8': false,
   };
 
   @override
@@ -61,53 +65,115 @@ class _DirectionListPageState extends State<DirectionListPage> {
             icon: const Icon(Icons.tune),
             iconSize: 35,
             onPressed: () {
+              // Crea una copia temporanea dello stato delle checkbox
+              final Map<String, bool> tempCheckboxValues =
+                  Map.from(_checkboxValues);
+
               showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text('Seleziona Categorie'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _checkboxValues.keys.map((String key) {
-                    return Row(
-                      children: [
-                        Transform.scale(
-                          scale: 1.5, // Dimensioni della checkbox
-                          child: Checkbox(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8), // Arrotonda la checkbox
-                            ),
-                            value: _checkboxValues[key],
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _checkboxValues[key] = value!;
-                              });
-                            },
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Filtra per Categoria',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, 
+                            fontSize: 25, // Dimensione del testo, opzionale
                           ),
                         ),
-                        const SizedBox(width: 10.0), // Spazio tra la checkbox e il testo
-                        Text(key),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Chiudi il dialog
-                  },
-                  child: const Text('Chiudi'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+                        content: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: createCheckbox('Categoria 1',
+                                          setState, tempCheckboxValues)),
+                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  Expanded(
+                                      child: createCheckbox('Categoria 2',
+                                          setState, tempCheckboxValues)),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: createCheckbox('Categoria 3',
+                                          setState, tempCheckboxValues)),
+                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  Expanded(
+                                      child: createCheckbox('Categoria 4',
+                                          setState, tempCheckboxValues)),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: createCheckbox('Categoria 5',
+                                          setState, tempCheckboxValues)),
+                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  Expanded(
+                                      child: createCheckbox('Categoria 6',
+                                          setState, tempCheckboxValues)),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: createCheckbox('Categoria 7',
+                                          setState, tempCheckboxValues)),
+                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  Expanded(
+                                      child: createCheckbox('Categoria 8',
+                                          setState, tempCheckboxValues)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Chiudi il dialog
+                            },
+                            style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    20.0), // Arrotonda i bordi del bottone
+                              ),
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                              textStyle: const TextStyle(
+                                fontSize: 23, // Dimensione del testo
+                              ),
+                            ),
+                            child: const Text('Chiudi'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Chiudi il dialog
+                            },
+                            style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    20.0), // Arrotonda i bordi del bottone
+                              ),
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                              textStyle: const TextStyle(
+                                fontSize: 23, // Dimensione del testo
+                              ),
+                            ),
+                            child: const Text('Applica'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
             },
           ),
           IconButton(
@@ -161,65 +227,98 @@ class _DirectionListPageState extends State<DirectionListPage> {
       ),
     );
   }
-}
 
-Widget createInkWell({
-  required BuildContext context,
-  required ImageProvider image,
-  required String title,
-}) {
-  return InkWell(
-    onTap: () {
-      // Aggiungi qui la logica del tap, se necessario
-    },
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Image(
-                image: image,
-                width: 75,
-                height: 75,
-              ),
-              const SizedBox(width: 10.0), // Spazio tra l'immagine e il titolo
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 25.0, // Dimensione del testo
-                  color: Colors.white, // Colore del testo
+  Widget createInkWell({
+    required BuildContext context,
+    required ImageProvider image,
+    required String title,
+  }) {
+    return InkWell(
+      onTap: () {
+        // Aggiungi qui la logica del tap, se necessario
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Image(
+                  image: image,
+                  width: 75,
+                  height: 75,
+                ),
+                const SizedBox(
+                    width: 10.0), // Spazio tra l'immagine e il titolo
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 25.0, // Dimensione del testo
+                    color: Colors.white, // Colore del testo
+                  ),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Aggiungi qui la logica del bottone "Esplora"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DirectionListPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(30.0), // Bordi arrotondati
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 15.0), // Spaziatura interna
+                textStyle: const TextStyle(
+                  fontSize: 20.0, // Dimensione del testo
+                  fontWeight: FontWeight.bold, // Peso del testo
                 ),
               ),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Aggiungi qui la logica del bottone "Esplora"
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const DirectionListPage()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0), // Bordi arrotondati
-              ),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 30.0, vertical: 15.0), // Spaziatura interna
-              textStyle: const TextStyle(
-                fontSize: 20.0, // Dimensione del testo
-                fontWeight: FontWeight.bold, // Peso del testo
-              ),
-            ),
-            child: const Text('Esplora'),
-          )
-        ],
+              child: const Text('Esplora'),
+            )
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
+
+  Widget createCheckbox(String title, StateSetter setState,
+      Map<String, bool> tempCheckboxValues) {
+    return Row(
+      children: [
+        Transform.scale(
+          scale: 1.5,
+          child: Checkbox(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            value:
+                tempCheckboxValues[title] ?? false, // Usa lo stato temporaneo
+            onChanged: (bool? value) {
+              setState(() {
+                tempCheckboxValues[title] = value ?? false;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: 10.0),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 15.0, // Modifica la dimensione del testo qui
+            color: Colors.black, // Puoi anche modificare il colore del testo
+          ),
+        ),
+      ],
+    );
+  }
 }
