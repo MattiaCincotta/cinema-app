@@ -3,6 +3,7 @@ import 'package:client/registration.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'directorlist.dart';
+import 'favoritefilm.dart';
 void main() {
   runApp(const CinemaApp());
 }
@@ -28,7 +29,8 @@ class _CinemaAppState extends State<CinemaApp> {
         '/homepage': (context) => const CinemaAppHomepage(),
         '/login': (context) => const LoginPage(),
         '/registration': (context) => const Registrationpage(),
-        '/directorList.dart': (context) => const DirectionListPage()
+        '/directorList.dart': (context) => const DirectionListPage(),
+        '/favoritefilm.dart': (context) => const FavoriteFilmPage(),
       },
     );
   }

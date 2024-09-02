@@ -1,3 +1,4 @@
+import 'package:client/favoritefilm.dart';
 import 'package:flutter/material.dart';
 
 class DirectionListPage extends StatefulWidget {
@@ -20,52 +21,115 @@ class _DirectionListPageState extends State<DirectionListPage> {
     // Aggiungi altri elementi qui
   ];
 
-@override
+ final Map<String, bool> _checkboxValues = {
+    'Opzione 1': false,
+    'Opzione 2': false,
+    'Opzione 3': false,
+    'Opzione 4': false,
+  };
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  automaticallyImplyLeading: false,
-  title: Row(
-    children: [
-      ClipOval(
-        child: Image.asset(
-          'images/Logo.jpg', // Sostituisci con il percorso dell'immagine
-          width: 57.0, // Dimensione dell'immagine
-          height: 57.0, // Dimensione dell'immagine
-          fit: BoxFit.cover, // Adatta l'immagine all'area
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            ClipOval(
+              child: Image.asset(
+                'images/Logo.jpg', // Sostituisci con il percorso dell'immagine
+                width: 57.0, // Dimensione dell'immagine
+                height: 57.0, // Dimensione dell'immagine
+                fit: BoxFit.cover, // Adatta l'immagine all'area
+              ),
+            ),
+            const SizedBox(width: 10.0), // Spazio tra l'immagine e il titolo
+            const Text(
+              'CineCult',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-      ),
-      const SizedBox(width: 10.0), // Spazio tra l'immagine e il titolo
-      const Text(
-        'CineCult',
-        style: TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ],
-  ),
-  foregroundColor: Colors.white,
-  backgroundColor: Colors.grey[900], // Colore dello sfondo
-  elevation: 4.0, // Aumenta l'elevazione per una leggera ombra
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.tune),
-      iconSize: 35,
-      onPressed: () {
-        // TODO: Implementa la funzione per il filtraggio
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.grey[900], // Colore dello sfondo
+        elevation: 4.0, // Aumenta l'elevazione per una leggera ombra
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.tune),
+            iconSize: 35,
+            onPressed: () {
+              showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Seleziona Categorie'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _checkboxValues.keys.map((String key) {
+                    return Row(
+                      children: [
+                        Transform.scale(
+                          scale: 1.5, // Dimensioni della checkbox
+                          child: Checkbox(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8), // Arrotonda la checkbox
+                            ),
+                            value: _checkboxValues[key],
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _checkboxValues[key] = value!;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10.0), // Spazio tra la checkbox e il testo
+                        Text(key),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Chiudi il dialog
+                  },
+                  child: const Text('Chiudi'),
+                ),
+              ],
+            );
+          },
+        );
       },
-    ),
-    IconButton(
-      icon: const Icon(Icons.search),
-      iconSize: 35,
-      onPressed: () {
-        // TODO: Implementa la funzione per la ricerca
-      },
-    ),
-  ],
-),
-
+    );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            iconSize: 35,
+            onPressed: () {
+              // TODO: Implementa la funzione per la ricerca
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.star_border),
+            iconSize: 35,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const FavoriteFilmPage()),
+              );
+            },
+          ),
+        ],
+      ),
       backgroundColor: Colors.grey[900],
       body: Column(
         children: [
@@ -80,7 +144,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               separatorBuilder: (context, index) => const Divider(
                 color: Colors.white30, // Colore del Divider
                 thickness: 1.0, // Spessore del Divider
-                height: 20.0, // Altezza totale del Divider (compresa la spaziatura)
+                height:
+                    20.0, // Altezza totale del Divider (compresa la spaziatura)
               ),
               itemBuilder: (context, index) {
                 final item = _items[index];
@@ -97,6 +162,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
     );
   }
 }
+
 Widget createInkWell({
   required BuildContext context,
   required ImageProvider image,
