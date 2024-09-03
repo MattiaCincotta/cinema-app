@@ -81,10 +81,9 @@ class UserManager:
 ######### DIRECTOR PART ###########################################################################################
 
 class Director:
-    def __init__(self, id:int, name: str, categories: str, image_url: str) -> None:
+    def __init__(self, id:int, name: str, image_url: str) -> None:
         self.id = id
         self.name = name
-        self.categories = categories
         self.image_url = image_url
     
 class DirectorManager:
@@ -107,7 +106,7 @@ class DirectorManager:
             cursor.execute("SELECT * FROM directors")
             result = cursor.fetchall()
             cursor.close()
-            return [Director(director['id'], director['name'], director['categories'], director['image_url']) for director in result]
+            return [Director(director['id'], director['name'], director['image_url']) for director in result]
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -131,7 +130,7 @@ class DirectorManager:
             result = cursor.fetchone()
             cursor.close()
             if result:
-                return Director(result['id'], result['name'], result['categories'], result['image_url'])
+                return Director(result['id'], result['name'], result['image_url'])
             return None
         except mysql.connector.Error as e:
             print(f"Error: {e}")
@@ -142,11 +141,10 @@ class DirectorManager:
 ######### MOVIE PART ##############################################################################################
 
 class Movie:
-    def __init__(self, title: str, director_id: str, year: int, categories: str, image_url: str) -> None:
+    def __init__(self, title: str, director_id: str, year: int, image_url: str) -> None:
         self.title = title
         self.director_id = director_id
         self.year = year
-        self.categories = categories
         self.image_url = image_url
     
 class MovieManager:
@@ -169,7 +167,7 @@ class MovieManager:
             cursor.execute("SELECT * FROM movies")
             result = cursor.fetchall()
             cursor.close()
-            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -193,7 +191,7 @@ class MovieManager:
             result = cursor.fetchone()
             cursor.close()
             if result:
-                return Movie(result['title'], result['director_id'], result['year'], result['categories'], result['image_url'])
+                return Movie(result['title'], result['director_id'], result['year'], result['image_url'])
             return None
         except mysql.connector.Error as e:
             print(f"Error: {e}")
@@ -216,8 +214,44 @@ class MovieManager:
             cursor = g.db.cursor(dictionary=True)
             cursor.execute("SELECT * FROM movies WHERE title LIKE %s", (f"%{title}%",))
             result = cursor.fetchall()
+            cursor.close()  
+            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return []
+    
+    @staticmethod
+    def get_movies_from_category(category: str) -> list:
+        """
+        Get all movies from a category.
+        Args:
+            category: The category of the movies.
+        Returns:
+            A list of movie objects.
+        """
+        
+        l = []
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT id FROM categories WHERE name = %s", (category,))
+            result = cursor.fetchone()
+            
+            if result:
+                cursor.execute("SELECT * FROM movies_categories WHERE category_id = %s", (result['id'],))
+                result = cursor.fetchall()
+                
+                for link in result:
+                    cursor.execute("SELECT * FROM movies WHERE id = %s", (link['movie_id'],))
+                    movie = cursor.fetchone()
+                    l.append(Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']))
+            
             cursor.close()
-            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+            return l
+        
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -241,7 +275,7 @@ class MovieManager:
             cursor.execute("SELECT * FROM movies WHERE director_id = %s", (director.id,))
             result = cursor.fetchall()
             cursor.close()
-            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:      
             print(f"Error: {e}")
             return []
@@ -261,7 +295,7 @@ class MovieManager:
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("INSERT INTO movies (title, director, year, categories) VALUES (%s, %s, %s, %s, %s)", (movie.title, movie.director, movie.year, movie.categories, movie.image_url))
+            cursor.execute("INSERT INTO movies (title, director, year) VALUES (%s, %s, %s, %s)", (movie.title, movie.director, movie.year, movie.image_url))
             g.db.commit()
             return True
         except mysql.connector.Error as e:

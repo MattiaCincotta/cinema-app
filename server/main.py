@@ -27,6 +27,15 @@ def movie():
     else:
         return jsonify({})
 
+@app.route('/movies_category', methods=['GET'])
+def movies_category():
+    category = request.args.get('category')
+    result = MovieManager.get_movies_from_category(category)
+    if result:
+        return jsonify([movie.__dict__ for movie in result])
+    else:
+        return jsonify([])
+
 @app.teardown_appcontext
 def close_db(exception):
     db = g.pop('db', None)
