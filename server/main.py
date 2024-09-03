@@ -7,7 +7,7 @@ from utils import *
 app = Flask(__name__)   
 
 @app.route('/director_movies', methods=['GET'])
-def index():
+def director_movies():
     director_name = request.args.get('director')
     director = DirectorManager.get_director(director_name)
     if director:    
@@ -15,8 +15,17 @@ def index():
         
         return jsonify([movie.__dict__ for movie in result])
     
-    else:
+    else:   
         return jsonify([])
+
+@app.route('/search_movie', methods=['GET'])
+def movie():
+    title = request.args.get('title')
+    result = MovieManager.search_movie(title)
+    if result:
+        return jsonify([movie.__dict__ for movie in result])
+    else:
+        return jsonify({})
 
 @app.teardown_appcontext
 def close_db(exception):

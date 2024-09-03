@@ -142,9 +142,9 @@ class DirectorManager:
 ######### MOVIE PART ##############################################################################################
 
 class Movie:
-    def __init__(self, title: str, director: str, year: int, categories: str, image_url: str) -> None:
+    def __init__(self, title: str, director_id: str, year: int, categories: str, image_url: str) -> None:
         self.title = title
-        self.director = director
+        self.director_id = director_id
         self.year = year
         self.categories = categories
         self.image_url = image_url
@@ -169,7 +169,7 @@ class MovieManager:
             cursor.execute("SELECT * FROM movies")
             result = cursor.fetchall()
             cursor.close()
-            return [Movie(movie['title'], movie['director_id    '], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -193,11 +193,35 @@ class MovieManager:
             result = cursor.fetchone()
             cursor.close()
             if result:
-                return Movie(result['title'], result['director'], result['year'], result['categories'], result['image_url'])
+                return Movie(result['title'], result['director_id'], result['year'], result['categories'], result['image_url'])
             return None
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return None
+    
+    @staticmethod
+    def search_movie(title: str) -> list:
+        """
+        Search for a movie in the database.
+        Args:
+            title: The title of the movie to search for.
+        Returns:
+            The movie object list if found, [] otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM movies WHERE title LIKE %s", (f"%{title}%",))
+            result = cursor.fetchall()
+            cursor.close()
+            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return []
+            
         
     @staticmethod
     def get_movies_from_director(director: Director) -> list:
