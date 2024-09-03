@@ -110,6 +110,30 @@ class DirectorManager:
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
+        
+    def get_director_by_id(id: int) -> Director:
+        """
+        Get a director from the database.
+        Args:
+            id: The id of the director to get.
+        Returns:
+            The director object if found, None otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM directors WHERE id = %s", (id,))
+            result = cursor.fetchone()
+            cursor.close()
+            if result:
+                return Director(result['id'], result['name'], result['image_url'])
+            return None
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return None
     
     @staticmethod
     def get_directors_from_category(category: str):

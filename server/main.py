@@ -44,6 +44,15 @@ def directors_category():
         return jsonify([director.__dict__ for director in result])
     else:
         return jsonify([])
+    
+@app.route('/director', methods=['GET'])
+def director():
+    director_id = request.args.get('director_id')
+    result = DirectorManager.get_director_by_id(director_id)
+    if result:
+        return jsonify(result.__dict__)
+    else:
+        return jsonify({})
 
 @app.teardown_appcontext
 def close_db(exception):
