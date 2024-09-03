@@ -47,9 +47,11 @@ class DB_utils:
 
             for result in cursor.execute(open(os.path.join(os.getcwd(), 'db_utils', 'init.sql'), 'r').read(), multi=True):
                 if result.with_rows:
-                    print(f"Rows produced by statement '{result.statement}': {result.fetchall()}")
+                    pass
+                    #print(f"Rows produced by statement '{result.statement}': {result.fetchall()}")
                 else:
-                    print(f"Number of rows affected by statement '{result.statement}': {result.rowcount}")
+                    pass
+                    #print(f"Number of rows affected by statement '{result.statement}': {result.rowcount}")
             connection.commit()     
             
             cursor.close()

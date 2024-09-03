@@ -30,7 +30,7 @@ class UserManager:
             cursor = g.db.cursor(dictionary=True)
             cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
             result = cursor.fetchone()
-            print(result)
+            cursor.close()
             if result:
                 return User(result['username'], result['password'])
             return None
@@ -78,6 +78,67 @@ class UserManager:
     
 ###################################################################################################################
 
+######### DIRECTOR PART ###########################################################################################
+
+class Director:
+    def __init__(self, id:int, name: str, categories: str, image_url: str) -> None:
+        self.id = id
+        self.name = name
+        self.categories = categories
+        self.image_url = image_url
+    
+class DirectorManager:
+    def __init__(self) -> None:
+        pass
+    
+    @staticmethod
+    def get_directors() -> list:
+        """
+        Get all directors from the database.
+        Returns:
+            A list of director objects.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM directors")
+            result = cursor.fetchall()
+            cursor.close()
+            return [Director(director['id'], director['name'], director['categories'], director['image_url']) for director in result]
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return []
+    
+    @staticmethod
+    def get_director(name: str) -> Director:
+        """
+        Get a director from the database.
+        Args:
+            name: The name of the director to get.
+        Returns:
+            The director object if found, None otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM directors WHERE name = %s LIMIT 1", (name,))
+            result = cursor.fetchone()
+            cursor.close()
+            if result:
+                return Director(result['id'], result['name'], result['categories'], result['image_url'])
+            return None
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return None
+        
+###################################################################################################################
+
 ######### MOVIE PART ##############################################################################################
 
 class Movie:
@@ -107,7 +168,8 @@ class MovieManager:
             cursor = g.db.cursor(dictionary=True)
             cursor.execute("SELECT * FROM movies")
             result = cursor.fetchall()
-            return [Movie(movie['title'], movie['director'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+            cursor.close()
+            return [Movie(movie['title'], movie['director_id    '], movie['year'], movie['categories'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -129,12 +191,36 @@ class MovieManager:
             cursor = g.db.cursor(dictionary=True)
             cursor.execute("SELECT * FROM movies WHERE title = %s", (title,))
             result = cursor.fetchone()
+            cursor.close()
             if result:
                 return Movie(result['title'], result['director'], result['year'], result['categories'], result['image_url'])
             return None
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return None
+        
+    @staticmethod
+    def get_movies_from_director(director: Director) -> list:
+        """
+        Get all movies from a director.
+        Args:
+            director: The director object.
+        Returns:
+            A list of movie objects.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+            
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM movies WHERE director_id = %s", (director.id,))
+            result = cursor.fetchall()
+            cursor.close()
+            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['categories'], movie['image_url']) for movie in result]
+        except mysql.connector.Error as e:      
+            print(f"Error: {e}")
+            return []
     
     @staticmethod
     def add_movie(movie: Movie) -> bool:
@@ -160,58 +246,3 @@ class MovieManager:
 
 ###################################################################################################################
 
-######### DIRECTOR PART ###########################################################################################
-
-class Director:
-    def __init__(self, name: str, categories: str, image_url: str) -> None:
-        self.name = name
-    
-class DirectorManager:
-    def __init__(self) -> None:
-        pass
-    
-    @staticmethod
-    def get_directors() -> list:
-        """
-        Get all directors from the database.
-        Returns:
-            A list of director objects.
-        """
-        
-        if 'db' not in g:
-            g.db = DB_utils.get_db_connection()
-        
-        try:
-            cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM directors")
-            result = cursor.fetchall()
-            return [Director(director['name'], director['categories'], director['image_url']) for director in result]
-        except mysql.connector.Error as e:
-            print(f"Error: {e}")
-            return []
-    
-    @staticmethod
-    def get_director(name: str) -> Director:
-        """
-        Get a director from the database.
-        Args:
-            name: The name of the director to get.
-        Returns:
-            The director object if found, None otherwise.
-        """
-        
-        if 'db' not in g:
-            g.db = DB_utils.get_db_connection()
-        
-        try:
-            cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM directors WHERE name = %s", (name,))
-            result = cursor.fetchone()
-            if result:
-                return Director(result['name'], result['categories'], result['image_url'])
-            return None
-        except mysql.connector.Error as e:
-            print(f"Error: {e}")
-            return None
-        
-###################################################################################################################
