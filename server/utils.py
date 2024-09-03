@@ -112,6 +112,42 @@ class DirectorManager:
             return []
     
     @staticmethod
+    def get_directors_from_category(category: str):
+        """
+        Get all directors from a category.
+        Args:
+            category: The category of the directors.
+        Returns:
+            A list of director objects.
+        """
+        
+        l = []
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT id FROM categories WHERE name = %s", (category,))
+            result = cursor.fetchone()
+            
+            if result:
+                cursor.execute("SELECT * FROM directors_categories WHERE category_id = %s", (result['id'],))
+                result = cursor.fetchall()
+                
+                for link in result:
+                    cursor.execute("SELECT * FROM directors WHERE id = %s", (link['director_id'],))
+                    director = cursor.fetchone()
+                    l.append(Director(director['id'], director['name'], director['image_url']))
+            
+            cursor.close()
+            return l
+        
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return []
+    
+    @staticmethod
     def get_director(name: str) -> Director:
         """
         Get a director from the database.

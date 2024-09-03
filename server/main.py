@@ -36,6 +36,15 @@ def movies_category():
     else:
         return jsonify([])
 
+@app.route('/directors_category', methods=['GET'])
+def directors_category():
+    category = request.args.get('category')
+    result = DirectorManager.get_directors_from_category(category)
+    if result:
+        return jsonify([director.__dict__ for director in result])
+    else:
+        return jsonify([])
+
 @app.teardown_appcontext
 def close_db(exception):
     db = g.pop('db', None)
