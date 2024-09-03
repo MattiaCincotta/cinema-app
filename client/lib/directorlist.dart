@@ -13,11 +13,11 @@ class DirectionListPage extends StatefulWidget {
 class _DirectionListPageState extends State<DirectionListPage> {
   final List<Map<String, dynamic>> _items = [
     {
-      'image': const AssetImage('images/Logo.jpg'),
+      'image': const AssetImage('assets/images/Logo.jpg'),
       'title': 'Title 1',
     },
     {
-      'image': const AssetImage('images/Logo.jpg'),
+      'image': const AssetImage('assets/images/Logo.jpg'),
       'title': 'Title 2',
     },
 
@@ -43,7 +43,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
           children: [
             ClipOval(
               child: Image.asset(
-                'images/Logo.jpg', 
+                'assets/images/Logo.jpg', 
                 width: 57.0, 
                 height: 57.0,
                 fit: BoxFit.cover, 
@@ -63,6 +63,35 @@ class _DirectionListPageState extends State<DirectionListPage> {
         backgroundColor: Colors.grey[900], 
         elevation: 4.0,
         actions: [
+            IconButton(
+            icon: const Icon(Icons.star_border),
+            iconSize: 35,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const FavoriteFilmPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.history),
+            iconSize: 35,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const MovieHistoryPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            iconSize: 35,
+            onPressed: () {
+              // TODO: Implementa la funzione per la ricerca
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.tune),
             iconSize: 35,
@@ -191,35 +220,6 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     },
                   );
                 },
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            iconSize: 35,
-            onPressed: () {
-              // TODO: Implementa la funzione per la ricerca
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.star_border),
-            iconSize: 35,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const FavoriteFilmPage()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            iconSize: 35,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MovieHistoryPage()),
               );
             },
           ),

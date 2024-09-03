@@ -91,7 +91,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
               backgroundColor: Colors.transparent, 
               child: ClipOval(
                 child: Image.asset(
-                  'images/Logo.jpg',
+                  'assets/images/Logo.jpg',
                   width: 300, 
                   height: 300, 
                   fit: BoxFit.cover, 

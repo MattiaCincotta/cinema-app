@@ -139,7 +139,7 @@ class _RegistrationpageState extends State<Registrationpage> {
                 const SizedBox(height: 15),
                 ClipOval(
                 child: Image.asset(
-                  'images/profile.jpg',
+                  'assets/images/profile.jpg',
                   width: 275, 
                   height: 275,
                   fit: BoxFit.cover, 

@@ -8,69 +8,84 @@ class FavoriteFilmPage extends StatefulWidget {
 }
 
 class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
-  int _counter = 0; // Variabile contatore
+  int _favoriteCount = 0; // Variabile contatore per i film preferiti
 
-  // Funzione per creare un'immagine con un'icona (al posto della checkbox)
-  Widget createImageWithStar(ImageProvider image, String filmName) {
-    bool isChecked = true; // L'icona è inizialmente selezionata
+  // Funzione per creare una card con un'immagine e un titolo
+  Widget createImageWithIcon(ImageProvider image, String filmName) {
+    bool isFavorite = false; // Stato iniziale dell'icona
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
-        return Visibility(
-          visible: isChecked, // La visibilità dipende dallo stato dell'icona
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Allinea gli elementi a sinistra
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding orizzontale per evitare che il testo tocchi i bordi
-                child: Text(
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          elevation: 5, // Ombra della card
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   filmName,
-                  textAlign: TextAlign.center, // Allinea il testo a sinistra
                   style: const TextStyle(
-                    fontSize: 30, // Dimensione del testo
-                    fontWeight: FontWeight.bold, // Testo in grassetto
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
                   ),
-                  softWrap: true, // Abilita il ritorno a capo automatico
+                  maxLines: 2, // Limita il titolo a 2 righe
+                  overflow: TextOverflow
+                      .ellipsis, // Aggiunge i puntini se il testo è troppo lungo
                 ),
-              ),
-              const SizedBox(height: 20), // Spazio tra il testo e l'immagine
-              Row(
-                children: [
-                  Image(
-                    image: image,
-                    width: 300, // Dimensione dell'immagine
-                    height: 300, // Dimensione dell'immagine
-                  ),
-                  const SizedBox(width: 10), // Spazio tra l'immagine e l'icona
-                  IconButton(
-                    icon: Icon(
-                      Icons.star,
-                      color: isChecked ? Colors.yellow : Colors.grey, // Colore dell'icona
-                      size: 65, // Dimensione dell'icona
+                const SizedBox(height: 15), // Spazio tra il titolo e l'immagine
+                Image(
+                  image: image,
+                  width: double.infinity,
+                  height: 275, // Aumenta l'altezza dell'immagine
+                  fit: BoxFit.cover,
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isFavorite = !isFavorite;
+                          if (isFavorite) {
+                            _favoriteCount++;
+                          } else {
+                            _favoriteCount--;
+                          }
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: isFavorite
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ]
+                              : [],
+                        ),
+                        child: Icon(
+                          isFavorite ? Icons.favorite_border : Icons.favorite,
+                          color: isFavorite ? Colors.grey: Colors.redAccent,
+                          size: 45, // Dimensione dell'icona
+                        ),
+                      ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        isChecked = !isChecked;
-                        if (isChecked) {
-                          // Incrementa il contatore quando l'icona viene selezionata
-                          _counter++;
-                        } else {
-                          // Decrementa il contatore quando l'icona viene deselezionata
-                          _counter--;
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10), // Spazio tra il Row e il Divider
-              const Divider(
-                color: Colors.white30, // Colore del divider
-                thickness: 2, // Spessore del divider
-                height: 20, // Altezza totale del divider (compresa la spaziatura)
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -81,11 +96,23 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(
+                context); // Funzione per tornare alla pagina precedente
+          },
+        ),
         title: const Text(
-          'La Mia Collezione',
+          'Preferiti',
           style: TextStyle(
-            fontWeight: FontWeight.bold, // Imposta il testo in grassetto (bold)
+            fontWeight: FontWeight.bold,
             fontSize: 27,
+            fontFamily: 'Cinematic',
           ),
         ),
         foregroundColor: Colors.white,
@@ -94,37 +121,76 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
-            child: Center(
-              child: Text(
-                '$_counter', // Mostra il contatore nell'AppBar
-                style: const TextStyle(fontSize: 30.0),
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.favorite,
+                  color: Colors.white,
+                  size: 33,
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Text(
+                    '$_favoriteCount', // Numero di film preferiti
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  iconSize: 35,
+                  onPressed: () {
+                    // TODO: Implementa la funzione per la ricerca
+                  },
+                ),
+              ],
             ),
           ),
         ],
       ),
-      backgroundColor: Colors.grey[900],
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            createImageWithStar(
-              const AssetImage('images/Logo.jpg'), // Esempio di immagine
-              'La storia della principessa splendente',
-            ),
-            createImageWithStar(
-              const AssetImage('images/Logo.jpg'), // Esempio di immagine
-              'La storia della principessa splendente',
-            ),
-            createImageWithStar(
-              const AssetImage('images/Logo.jpg'), // Esempio di immagine
-              'La storia della principessa splendente',
-            ),
-            // Aggiungi altre chiamate a createImageWithStar() qui se necessario
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1B1B1B),
+              Color(0xFF333333),
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              createImageWithIcon(
+                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                'La storia della principessa splendente e delle sue avventure straordinarie',
+              ),
+              createImageWithIcon(
+                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                'Un altro film con un titolo molto lungo che si estende per diverse righe',
+              ),
+              createImageWithIcon(
+                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                'La storia della principessa splendente',
+              ),
+              // Aggiungi altre chiamate a createImageWithIcon() qui se necessario
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
