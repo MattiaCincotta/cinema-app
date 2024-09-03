@@ -11,17 +11,6 @@ class DirectionListPage extends StatefulWidget {
 }
 
 class _DirectionListPageState extends State<DirectionListPage> {
-  final List<Map<String, dynamic>> _items = [
-    {
-      'image': const AssetImage('assets/images/Logo.jpg'),
-      'title': 'Title 1',
-    },
-    {
-      'image': const AssetImage('assets/images/Logo.jpg'),
-      'title': 'Title 2',
-    },
-  ];
-
   final Map<String, bool> _checkboxValues = {
     'Horror      ': false,
     'Thriller          ': false,
@@ -194,99 +183,147 @@ class _DirectionListPageState extends State<DirectionListPage> {
         ],
       ),
       backgroundColor: Colors.grey[900],
-      body: Column(
-        children: [
-          Container(
-            color: Colors.grey[850],
-            child: Divider(
-              color: Colors.grey[900],
-              thickness: 15,
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: _items.length,
-              separatorBuilder: (context, index) => const Divider(
-                color: Colors.white30,
-                thickness: 1.0,
-                height: 10.0, // Altezza ridotta per uniformare lo spazio
-              ),
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: createCard(
-                    context: context,
-                    image: item['image'],
-                    title: item['title'],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
- Widget createCard({
-    required BuildContext context,
-    required ImageProvider image,
-    required String title,
-  }) {
-    return Card(
-      color: Colors.grey[850],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      elevation: 5.0,
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            Row(
-              children: [
-                Image(
-                  image: image,
-                  width: 75,
-                  height: 75,
-                ),
-                const SizedBox(width: 20.0),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FilmPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 30.0, vertical: 15.0),
-                textStyle: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
+            Container(
+              color: Colors.grey[850],
+              child: Divider(
+                color: Colors.grey[900],
+                thickness: 15,
               ),
-              child: const Text('Esplora'),
+            ),
+            // Qui vengono inserite più card con Divider
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 1',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 2',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 3',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 3',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 3',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 3',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                image: const AssetImage('assets/images/Logo.jpg'),
+                name: 'Title 3',
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget createCard({
+    required BuildContext context,
+    required ImageProvider image,
+    required String name,
+  }) {
+    return Column(
+      children: [
+        Card(
+          color: Colors.grey[850],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          elevation: 5.0,
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Image(
+                      image: image,
+                      width: 75,
+                      height: 75,
+                    ),
+                    const SizedBox(width: 20.0),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 25.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const FilmPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 15.0),
+                    textStyle: const TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  child: const Text('Esplora'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Divider sotto la card
+        const Divider(
+          color: Colors.white30,
+          thickness: 1.0,
+          height: 20.0,
+        ),
+      ],
     );
   }
 }

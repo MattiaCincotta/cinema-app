@@ -101,14 +101,21 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
             const SizedBox(height: 40),
             // Testo grande
             Text(
-              'CineCult',
-              style: TextStyle(
-                fontSize: 100, 
-                fontWeight: FontWeight.bold, 
-                color: Colors.red[300],
-                fontFamily: 'Roboto',   
-              ),
+            'CineCult',
+            style: TextStyle(
+              fontSize: 100,
+              fontWeight: FontWeight.bold,
+              color: Colors.red[300],
+              fontFamily: 'Roboto',
+              shadows: [
+                Shadow(
+                  offset: const Offset(5.0, 5.0),
+                  blurRadius: 10.0,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ],
             ),
+          ),
             const SizedBox(height: 50), 
             ElevatedButton(
               onPressed: () {
