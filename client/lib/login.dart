@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
     await storage.write(key: 'logged', value: 'true');
 
-    // Verifica se il widget è ancora montato prima di navigare
+
     if (mounted) {
       Navigator.pushNamed(context, '/chat');
     }
@@ -211,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: 330.0,
                   child: Row(
                     children: [
-                      // Checkbox e testo "Remember Me" a sinistra
+
                       Row(
                         children: [
                           Checkbox(
@@ -226,14 +226,13 @@ class _LoginPageState extends State<LoginPage> {
                             'Remember Me',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 18.0, // Aggiungi la dimensione del font qui
+                              fontSize: 18.0, 
                             ),
                           )
                         ],
                       ),
-                      // Spacer per separare la checkbox dal pulsante "Register"
                       const Spacer(),
-                      // Pulsante "Register" a destra
+
                       SizedBox(
                         width: 110.0,
                         height: 50.0,

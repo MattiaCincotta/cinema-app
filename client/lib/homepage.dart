@@ -124,7 +124,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
                   borderRadius: BorderRadius.circular(40), 
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30), 
-                elevation: 5, // Ombra del bottone
+                elevation: 5, 
               ),
               child: const Text(
                 'CONTINUA',

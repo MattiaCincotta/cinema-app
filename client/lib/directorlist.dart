@@ -1,4 +1,6 @@
 import 'package:client/favoritefilm.dart';
+import 'package:client/filmpage.dart';
+import 'package:client/movie_history.dart';
 import 'package:flutter/material.dart';
 
 class DirectionListPage extends StatefulWidget {
@@ -18,7 +20,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
       'image': const AssetImage('images/Logo.jpg'),
       'title': 'Title 2',
     },
-    // Aggiungi altri elementi qui
+
   ];
 
   final Map<String, bool> _checkboxValues = {
@@ -41,13 +43,13 @@ class _DirectionListPageState extends State<DirectionListPage> {
           children: [
             ClipOval(
               child: Image.asset(
-                'images/Logo.jpg', // Sostituisci con il percorso dell'immagine
-                width: 57.0, // Dimensione dell'immagine
-                height: 57.0, // Dimensione dell'immagine
-                fit: BoxFit.cover, // Adatta l'immagine all'area
+                'images/Logo.jpg', 
+                width: 57.0, 
+                height: 57.0,
+                fit: BoxFit.cover, 
               ),
             ),
-            const SizedBox(width: 10.0), // Spazio tra l'immagine e il titolo
+            const SizedBox(width: 10.0),
             const Text(
               'CineCult',
               style: TextStyle(
@@ -58,14 +60,14 @@ class _DirectionListPageState extends State<DirectionListPage> {
           ],
         ),
         foregroundColor: Colors.white,
-        backgroundColor: Colors.grey[900], // Colore dello sfondo
-        elevation: 4.0, // Aumenta l'elevazione per una leggera ombra
+        backgroundColor: Colors.grey[900], 
+        elevation: 4.0,
         actions: [
           IconButton(
             icon: const Icon(Icons.tune),
             iconSize: 35,
             onPressed: () {
-              // Crea una copia temporanea dello stato delle checkbox
+    
               final Map<String, bool> tempCheckboxValues =
                   Map.from(_checkboxValues);
 
@@ -79,7 +81,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                           'Filtra per Categoria',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, 
-                            fontSize: 25, // Dimensione del testo, opzionale
+                            fontSize: 30,
                           ),
                         ),
                         content: SingleChildScrollView(
@@ -89,44 +91,55 @@ class _DirectionListPageState extends State<DirectionListPage> {
                               Row(
                                 children: [
                                   Expanded(
-                                      child: createCheckbox('Categoria 1',
+                                      child: createCheckbox('Azione',
                                           setState, tempCheckboxValues)),
-                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  const SizedBox(width: 19), 
                                   Expanded(
-                                      child: createCheckbox('Categoria 2',
-                                          setState, tempCheckboxValues)),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: createCheckbox('Categoria 3',
-                                          setState, tempCheckboxValues)),
-                                  const SizedBox(width: 20), // Spazio tra le colonne
-                                  Expanded(
-                                      child: createCheckbox('Categoria 4',
+                                      child: createCheckbox('Commedia',
                                           setState, tempCheckboxValues)),
                                 ],
                               ),
                               Row(
                                 children: [
                                   Expanded(
-                                      child: createCheckbox('Categoria 5',
+                                      child: createCheckbox('Drammatico',
                                           setState, tempCheckboxValues)),
-                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  const SizedBox(width: 19),
                                   Expanded(
-                                      child: createCheckbox('Categoria 6',
+                                      child: createCheckbox('Romantico',
                                           setState, tempCheckboxValues)),
                                 ],
                               ),
                               Row(
                                 children: [
                                   Expanded(
-                                      child: createCheckbox('Categoria 7',
+                                      child: createCheckbox('Horror',
                                           setState, tempCheckboxValues)),
-                                  const SizedBox(width: 20), // Spazio tra le colonne
+                                  const SizedBox(width: 19), 
                                   Expanded(
-                                      child: createCheckbox('Categoria 8',
+                                      child: createCheckbox('Thriller',
+                                          setState, tempCheckboxValues)),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: createCheckbox('Fantasy',
+                                          setState, tempCheckboxValues)),
+                                  const SizedBox(width: 19), 
+                                  Expanded(
+                                      child: createCheckbox('Fantascienza',
+                                          setState, tempCheckboxValues)),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: createCheckbox('Avventura',
+                                          setState, tempCheckboxValues)),
+                                  const SizedBox(width: 19), 
+                                  Expanded(
+                                      child: createCheckbox('Mistero',
                                           setState, tempCheckboxValues)),
                                 ],
                               ),
@@ -136,34 +149,39 @@ class _DirectionListPageState extends State<DirectionListPage> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); // Chiudi il dialog
+                              Navigator.of(context).pop();
                             },
                             style: TextButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                    20.0), // Arrotonda i bordi del bottone
+                                    20.0), 
                               ),
                               backgroundColor: Colors.blueAccent,
                               foregroundColor: Colors.white,
                               textStyle: const TextStyle(
-                                fontSize: 23, // Dimensione del testo
+                                fontSize: 23, 
                               ),
                             ),
                             child: const Text('Chiudi'),
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); // Chiudi il dialog
+                       
+                              setState(() {
+                                _checkboxValues.clear();
+                                _checkboxValues.addAll(tempCheckboxValues);
+                              });
+                              Navigator.of(context).pop(); 
                             },
                             style: TextButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                    20.0), // Arrotonda i bordi del bottone
+                                    20.0), 
                               ),
                               backgroundColor: Colors.blueAccent,
                               foregroundColor: Colors.white,
                               textStyle: const TextStyle(
-                                fontSize: 23, // Dimensione del testo
+                                fontSize: 23, 
                               ),
                             ),
                             child: const Text('Applica'),
@@ -194,6 +212,17 @@ class _DirectionListPageState extends State<DirectionListPage> {
               );
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.history),
+            iconSize: 35,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const MovieHistoryPage()),
+              );
+            },
+          ),
         ],
       ),
       backgroundColor: Colors.grey[900],
@@ -201,17 +230,17 @@ class _DirectionListPageState extends State<DirectionListPage> {
         children: [
           // Divider sotto l'AppBar
           Divider(
-            color: Colors.grey[900], // Colore del Divider
-            thickness: 15, // Spessore del Divider
+            color: Colors.grey[900],
+            thickness: 15, 
           ),
           Expanded(
             child: ListView.separated(
               itemCount: _items.length,
               separatorBuilder: (context, index) => const Divider(
-                color: Colors.white30, // Colore del Divider
-                thickness: 1.0, // Spessore del Divider
+                color: Colors.white30, 
+                thickness: 1.0, 
                 height:
-                    20.0, // Altezza totale del Divider (compresa la spaziatura)
+                    20.0, 
               ),
               itemBuilder: (context, index) {
                 final item = _items[index];
@@ -235,7 +264,6 @@ class _DirectionListPageState extends State<DirectionListPage> {
   }) {
     return InkWell(
       onTap: () {
-        // Aggiungi qui la logica del tap, se necessario
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -250,23 +278,22 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   height: 75,
                 ),
                 const SizedBox(
-                    width: 10.0), // Spazio tra l'immagine e il titolo
+                    width: 10.0),
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 25.0, // Dimensione del testo
-                    color: Colors.white, // Colore del testo
+                    fontSize: 25.0, 
+                    color: Colors.white, 
                   ),
                 ),
               ],
             ),
             ElevatedButton(
               onPressed: () {
-                // Aggiungi qui la logica del bottone "Esplora"
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const DirectionListPage()),
+                      builder: (context) => const FilmPage()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -274,13 +301,13 @@ class _DirectionListPageState extends State<DirectionListPage> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(30.0), // Bordi arrotondati
+                      BorderRadius.circular(30.0), 
                 ),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 30.0, vertical: 15.0), // Spaziatura interna
+                    horizontal: 30.0, vertical: 15.0), 
                 textStyle: const TextStyle(
-                  fontSize: 20.0, // Dimensione del testo
-                  fontWeight: FontWeight.bold, // Peso del testo
+                  fontSize: 20.0, 
+                  fontWeight: FontWeight.bold, 
                 ),
               ),
               child: const Text('Esplora'),
@@ -291,34 +318,33 @@ class _DirectionListPageState extends State<DirectionListPage> {
     );
   }
 
-  Widget createCheckbox(String title, StateSetter setState,
-      Map<String, bool> tempCheckboxValues) {
-    return Row(
-      children: [
-        Transform.scale(
-          scale: 1.5,
-          child: Checkbox(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            value:
-                tempCheckboxValues[title] ?? false, // Usa lo stato temporaneo
-            onChanged: (bool? value) {
-              setState(() {
-                tempCheckboxValues[title] = value ?? false;
-              });
-            },
+  Widget createCheckbox(String title, StateSetter setState, Map<String, bool> tempCheckboxValues) {
+  return Row(
+    children: [
+      Transform.scale(
+        scale: 1.5,
+        child: Checkbox(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
+          value: tempCheckboxValues[title] ?? false,
+          onChanged: (bool? value) {
+            setState(() {
+              tempCheckboxValues[title] = value ?? false;
+            });
+          },
         ),
-        const SizedBox(width: 10.0),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 15.0, // Modifica la dimensione del testo qui
-            color: Colors.black, // Puoi anche modificare il colore del testo
-          ),
+      ),
+      const SizedBox(width: 10.0),
+      Text(
+        title,
+        style: const TextStyle(
+          fontSize: 15.0,   
+          fontWeight: FontWeight.bold,
+          color: Colors.black,  
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

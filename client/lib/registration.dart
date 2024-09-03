@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// Aggiunto per usare TextInputFormatter
+
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,10 +18,10 @@ class _RegistrationpageState extends State<Registrationpage> {
   final TextEditingController _password2 = TextEditingController();
   bool _isObscure = true;
   bool _isUsernameNotEmpty = false;
-  bool _isUsernameInteracted = false; // Stato per verificare se l'utente ha interagito con lo username
-  bool _isPassword1Valid = false; // Stato per verificare se la password1 è valida
-  bool _isPassword1Interacted = false; // Stato per verificare se l'utente ha interagito con la password1
-  bool _isPassword2Interacted = false; // Stato per verificare se l'utente ha interagito con la password2
+  bool _isUsernameInteracted = false; 
+  bool _isPassword1Valid = false;
+  bool _isPassword1Interacted = false; 
+  bool _isPassword2Interacted = false;
 
   @override
   void initState() {

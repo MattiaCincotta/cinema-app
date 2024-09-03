@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class FavoriteFilmPage extends StatefulWidget {
-  const FavoriteFilmPage({super.key});
+class MovieHistoryPage extends StatefulWidget {
+  const MovieHistoryPage({super.key});
 
   @override
-  State<FavoriteFilmPage> createState() => _FavoriteFilmPageState();
+  State<MovieHistoryPage> createState() => _MovieHistoryPageState();
 }
 
-class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
+class _MovieHistoryPageState extends State<MovieHistoryPage> {
   int _counter = 0; // Variabile contatore
 
   // Funzione per creare un'immagine con un'icona (al posto della checkbox)
@@ -42,11 +42,11 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                     width: 300, // Dimensione dell'immagine
                     height: 300, // Dimensione dell'immagine
                   ),
-                  const SizedBox(width: 10), // Spazio tra l'immagine e l'icona
+                  const SizedBox(width: 30), // Spazio tra l'immagine e l'icona
                   IconButton(
-                    icon: Icon(
-                      Icons.star,
-                      color: isChecked ? Colors.yellow : Colors.grey, // Colore dell'icona
+                    icon: const Icon(
+                      Icons.check_box,
+                      color: Colors.lightBlue, // Colore dell'icona
                       size: 65, // Dimensione dell'icona
                     ),
                     onPressed: () {
@@ -82,7 +82,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'La Mia Collezione',
+          'La Mia Cronologia',
           style: TextStyle(
             fontWeight: FontWeight.bold, // Imposta il testo in grassetto (bold)
             fontSize: 27,
@@ -127,4 +127,3 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
     );
   }
 }
-
