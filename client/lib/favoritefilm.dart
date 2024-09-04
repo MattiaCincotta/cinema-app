@@ -8,11 +8,10 @@ class FavoriteFilmPage extends StatefulWidget {
 }
 
 class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
-  int _favoriteCount = 0; // Variabile contatore per i film preferiti
+  int _favoriteCount = 0; 
 
-  // Funzione per creare una card con un'immagine e un titolo
   Widget createImageWithIcon(ImageProvider image, String filmName) {
-    bool isFavorite = false; // Stato iniziale dell'icona
+    bool isFavorite = false; 
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -21,7 +20,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          elevation: 5, // Ombra della card
+          elevation: 5, 
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -34,15 +33,15 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
                   ),
-                  maxLines: 2, // Limita il titolo a 2 righe
+                  maxLines: 2, 
                   overflow: TextOverflow
-                      .ellipsis, // Aggiunge i puntini se il testo è troppo lungo
+                      .ellipsis,
                 ),
-                const SizedBox(height: 15), // Spazio tra il titolo e l'immagine
+                const SizedBox(height: 15),
                 Image(
                   image: image,
                   width: double.infinity,
-                  height: 275, // Aumenta l'altezza dell'immagine
+                  height: 275,
                   fit: BoxFit.cover,
                 ),
                 const SizedBox(height: 15),
@@ -78,7 +77,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                         child: Icon(
                           isFavorite ? Icons.favorite_border : Icons.favorite,
                           color: isFavorite ? Colors.grey: Colors.redAccent,
-                          size: 45, // Dimensione dell'icona
+                          size: 45, 
                         ),
                       ),
                     ),
@@ -104,7 +103,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           ),
           onPressed: () {
             Navigator.pop(
-                context); // Funzione per tornare alla pagina precedente
+                context); 
           },
         ),
         title: const Text(
@@ -138,7 +137,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Text(
-                    '$_favoriteCount', // Numero di film preferiti
+                    '$_favoriteCount',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -175,18 +174,17 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
             children: [
               const SizedBox(height: 50),
               createImageWithIcon(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'), 
                 'La storia della principessa splendente e delle sue avventure straordinarie',
               ),
               createImageWithIcon(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'Un altro film con un titolo molto lungo che si estende per diverse righe',
               ),
               createImageWithIcon(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'), 
                 'La storia della principessa splendente',
               ),
-              // Aggiungi altre chiamate a createImageWithIcon() qui se necessario
             ],
           ),
         ),

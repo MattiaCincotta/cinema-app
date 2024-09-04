@@ -193,9 +193,9 @@ class _DirectionListPageState extends State<DirectionListPage> {
                 thickness: 15,
               ),
             ),
-            // Qui vengono inserite più card con Divider
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -203,7 +203,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -211,7 +212,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -219,7 +221,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -227,7 +230,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -235,7 +239,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -243,7 +248,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
                 image: const AssetImage('assets/images/Logo.jpg'),
@@ -317,7 +323,6 @@ class _DirectionListPageState extends State<DirectionListPage> {
             ),
           ),
         ),
-        // Divider sotto la card
         const Divider(
           color: Colors.white30,
           thickness: 1.0,

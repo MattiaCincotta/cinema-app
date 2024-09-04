@@ -81,7 +81,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
-    final isSmallScreen = screenWidth < 360;  // Adatto per smartphone con schermi molto piccoli
+    final isSmallScreen = screenWidth < 360; 
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -96,18 +96,17 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
               child: ClipOval(
                 child: Image.asset(
                   'assets/images/Logo.jpg',
-                  width: screenWidth * 0.7,  // Adattamento proporzionale
+                  width: screenWidth * 0.7, 
                   height: screenWidth * 0.7,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            // Testo grande
             Text(
               'CineCult',
               style: TextStyle(
-                fontSize: isSmallScreen ? 70 : 90, // Dimensione del testo
+                fontSize: isSmallScreen ? 70 : 90, 
                 fontWeight: FontWeight.bold,
                 color: Colors.red[300],
                 fontFamily: 'Roboto',
@@ -135,7 +134,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
                   borderRadius: BorderRadius.circular(40),
                 ),
                 padding: EdgeInsets.symmetric(
-                  horizontal: isSmallScreen ? 30 : 50, // Ridimensionamento del padding
+                  horizontal: isSmallScreen ? 30 : 50, 
                   vertical: isSmallScreen ? 20 : 25,
                 ),
                 elevation: 5,

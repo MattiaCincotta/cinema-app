@@ -127,8 +127,7 @@ class _RegistrationpageState extends State<Registrationpage> {
             size: 28,
           ),
           onPressed: () {
-            Navigator.pop(
-                context); // Funzione per tornare alla pagina precedente
+            Navigator.pop(context);
           },
         ),
         title: Row(
@@ -304,7 +303,7 @@ class _RegistrationpageState extends State<Registrationpage> {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: const TextStyle(
-                        fontSize: 18, // Dimensione del testo dell'etichetta
+                        fontSize: 18,
                       ),
                       border: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),

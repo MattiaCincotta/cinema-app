@@ -8,11 +8,10 @@ class MovieHistoryPage extends StatefulWidget {
 }
 
 class _MovieHistoryPageState extends State<MovieHistoryPage> {
-  int _favoriteCount = 0; // Variabile contatore
+  int _favoriteCount = 0;
 
-  // Funzione per creare un'immagine con un'icona (al posto della checkbox)
   Widget createImageWithStar(ImageProvider image, String filmName) {
-    bool isChecked = true; // L'icona è inizialmente selezionata
+    bool isChecked = true;
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -21,7 +20,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          elevation: 5, // Ombra della card
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -34,15 +33,14 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
                   ),
-                  maxLines: 2, // Limita il titolo a 2 righe
-                  overflow: TextOverflow
-                      .ellipsis, // Aggiunge i puntini se il testo è troppo lungo
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 15), // Spazio tra il titolo e l'immagine
+                const SizedBox(height: 15),
                 Image(
                   image: image,
                   width: double.infinity,
-                  height: 275, // Aumenta l'altezza dell'immagine
+                  height: 275,
                   fit: BoxFit.cover,
                 ),
                 const SizedBox(height: 15),
@@ -80,8 +78,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                               ? Icons.check_box
                               : Icons.check_box_outline_blank,
                           color: Colors.lightBlue,
-                          size:
-                              45, // Dimensione dell'icona leggermente aumentata
+                          size: 45,
                         ),
                       ),
                     ),
@@ -106,8 +103,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
             size: 28,
           ),
           onPressed: () {
-            Navigator.pop(
-                context); // Funzione per tornare alla pagina precedente
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -141,7 +137,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Text(
-                    '$_favoriteCount', // Numero di film preferiti
+                    '$_favoriteCount',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -178,18 +174,17 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
             children: [
               const SizedBox(height: 50),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'La storia della principessa splendente e delle sue avventure straordinarie',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'Un altro film con un titolo molto lungo che si estende per diverse righe',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'La storia della principessa splendente',
               ),
-              // Aggiungi altre chiamate a createImageWithStar() qui se necessario
             ],
           ),
         ),

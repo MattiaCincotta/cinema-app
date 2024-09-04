@@ -9,19 +9,55 @@ class FilmPage extends StatefulWidget {
 
 class __FilmPageStateState extends State<FilmPage> {
   bool isFavorite = false;
-  int _favoriteCount = 0;
+  //final int _favoriteCount = 0;
   bool isViewed = false;
-  int _viewCount = 0;
+  //final int _viewCount = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catalogo Film'),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(
+                context); 
+          },
+        ),
+        title: const Text(
+          'Nome del regista',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 27,
+            fontFamily: 'Cinematic',
+          ),
+        ),
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[900],
         elevation: 4.0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  iconSize: 35,
+                  onPressed: () {
+                    // TODO: Implementa la funzione per la ricerca
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
+      backgroundColor: Colors.grey[900],
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -56,6 +92,21 @@ class __FilmPageStateState extends State<FilmPage> {
                 'La storia della principessa splendente',
                 '1992',
               ),
+              createImageWithStar(
+                const AssetImage('assets/images/Logo.jpg'),
+                'La storia della principessa splendente',
+                '1992',
+              ),
+              createImageWithStar(
+                const AssetImage('assets/images/Logo.jpg'),
+                'La storia della principessa splendente',
+                '1992',
+              ),
+              createImageWithStar(
+                const AssetImage('assets/images/Logo.jpg'),
+                'La storia della principessa splendente',
+                '1992',
+              ),
             ],
           ),
         ),
@@ -63,124 +114,128 @@ class __FilmPageStateState extends State<FilmPage> {
     );
   }
 
-  Widget createImageWithStar(ImageProvider image, String filmName, String year) {
-  return StatefulBuilder(
-    builder: (BuildContext context, StateSetter setState) {
-      return SizedBox(
-        width: 250.0, 
-        height: 420.0, 
-        child: Card(
-          margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(19.0),
-          ),
-          elevation: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                height: 250,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(19.0)),
-                  image: DecorationImage(
-                    image: image,
-                    fit: BoxFit.cover,
+  Widget createImageWithStar(
+      ImageProvider image, String filmName, String year) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return SizedBox(
+          width: 250.0,
+          height: 410.0,
+          child: Card(
+            margin:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(19.0),
+            ),
+            elevation: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(19.0)),
+                    image: DecorationImage(
+                      image: image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  filmName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.redAccent,
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    filmName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.redAccent,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center, 
-                  children: [
-                    Text(
-                      year, 
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                                            fontWeight: FontWeight.bold,
-
-                      ),
-                    ),
-                    const Spacer(), 
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isFavorite = !isFavorite;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        margin: const EdgeInsets.only(right: 10.0), 
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.redAccent : Colors.grey,
-                          size: 30,
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0, right: 10.0, bottom: 10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        year,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isViewed = !isViewed;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          isViewed ? Icons.check_box : Icons.check_box_outline_blank,
-                          color: isViewed ? Colors.blue : Colors.grey,
-                          size: 30,
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isFavorite = !isFavorite;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.only(right: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.redAccent : Colors.grey,
+                            size: 30,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isViewed = !isViewed;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isViewed
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: isViewed ? Colors.blue : Colors.grey,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 
   Widget createCardRows(List<Widget> cards) {
     List<Widget> rows = [];
@@ -198,10 +253,10 @@ class __FilmPageStateState extends State<FilmPage> {
       } else {
         rows.add(
           Row(
-            mainAxisAlignment: MainAxisAlignment.start, 
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                width: 250.0, 
+                width: 225.0,
                 child: cards[i],
               ),
             ],
