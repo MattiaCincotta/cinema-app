@@ -189,7 +189,7 @@ Widget build(BuildContext context) {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.redAccent,
+                      color: Colors.black,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -205,7 +205,7 @@ Widget build(BuildContext context) {
                         year,
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[600],
+                          color: Colors.grey[800],
                           fontWeight: FontWeight.bold,
                         ),
                       ),

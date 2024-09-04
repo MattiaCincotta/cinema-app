@@ -282,10 +282,14 @@ class _DirectionListPageState extends State<DirectionListPage> {
               children: [
                 Row(
                   children: [
-                    Image(
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Image(
                       image: image,
                       width: 75,
                       height: 75,
+                      fit: BoxFit.cover,
+                    ),
                     ),
                     const SizedBox(width: 20.0),
                     Text(
