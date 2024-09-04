@@ -1,39 +1,39 @@
 from flask import Flask, request, jsonify, g
 from utils.models import *
 
-app = Flask(__name__)   
+api = Flask(__name__, '/api')   
 
-@app.route('/director_movies', methods=['GET'])
+@api.route('/director_movies', methods=['GET'])
 def director_movies():
     director_name = request.args.get('director')
     director = DirectorManager.get_director(director_name)
     if director:    
         result = MovieManager.get_movies_from_director(director)
         
-        return jsonify([movie.__dict__ for movie in result])
+        return jsonify([movie.__dict__ for movie in result]), 200
     
     else:   
-        return jsonify([])
+        return jsonify([]), 400
 
-@app.route('/search_movie', methods=['GET'])
+@api.route('/search_movie', methods=['GET'])
 def search_movie():
     title = request.args.get('title')
     result = MovieManager.search_movie(title)
     if result:
-        return jsonify([movie.__dict__ for movie in result])
+        return jsonify([movie.__dict__ for movie in result]), 200
     else:
-        return jsonify({})
+        return jsonify({}), 404
 
-@app.route('/search_director', methods=['GET'])
+@api.route('/search_director', methods=['GET'])
 def search_director():
     name = request.args.get('name')
     result = DirectorManager.search_director(name)
     if result:
-        return jsonify([director.__dict__ for director in result])
+        return jsonify([director.__dict__ for director in result]), 200
     else:
-        return jsonify([])
+        return jsonify([]), 404
 
-@app.route('/movies_category', methods=['GET'])
+@api.route('/movies_category', methods=['GET'])
 def movies_category():
     category = request.args.get('category')
     result = MovieManager.get_movies_from_category(category)
@@ -42,7 +42,7 @@ def movies_category():
     else:
         return jsonify([])
 
-@app.route('/directors_category', methods=['GET'])
+@api.route('/directors_category', methods=['GET'])
 def directors_category():
     category = request.args.get('category')
     result = DirectorManager.get_directors_from_category(category)
@@ -51,16 +51,16 @@ def directors_category():
     else:
         return jsonify([])
     
-@app.route('/director', methods=['GET'])
+@api.route('/director', methods=['GET'])
 def director():
     director_id = request.args.get('director_id')
     result = DirectorManager.get_director_by_id(director_id)
     if result:
-        return jsonify(result.__dict__)
+        return jsonify(result.__dict__), 200
     else:
-        return jsonify({})
+        return jsonify({}), 400
 
-@app.teardown_appcontext
+@api.teardown_appcontext
 def close_db(exception):
     db = g.pop('db', None)
     
@@ -68,4 +68,4 @@ def close_db(exception):
         db.close()
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", debug=True)
+    api.run("0.0.0.0", debug=True)
