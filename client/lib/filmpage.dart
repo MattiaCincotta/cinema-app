@@ -13,106 +13,145 @@ class __FilmPageStateState extends State<FilmPage> {
   bool isViewed = false;
   //final int _viewCount = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 28,
-          ),
-          onPressed: () {
-            Navigator.pop(
-                context); 
-          },
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
+          color: Colors.white,
+          size: 28,
         ),
-        title: const Text(
-          'Nome del regista',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 27,
-            fontFamily: 'Cinematic',
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      title: const Text(
+        'Nome del regista',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 27,
+          fontFamily: 'Cinematic',
+        ),
+      ),
+      foregroundColor: Colors.white,
+      backgroundColor: Colors.grey[900],
+      elevation: 4.0,
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                iconSize: 35,
+                onPressed: () {
+                  // TODO: Implementa la funzione per la ricerca
+                },
+              ),
+            ],
           ),
         ),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.grey[900],
-        elevation: 4.0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  iconSize: 35,
-                  onPressed: () {
-                    // TODO: Implementa la funzione per la ricerca
-                  },
+      ],
+    ),
+    backgroundColor: Colors.grey[900],
+    body: Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF1B1B1B),
+            Color(0xFF333333),
+          ],
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+
+            Card(
+              margin: const EdgeInsets.all(16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.asset(
+                        'assets/images/Logo.jpg', 
+                        width: 200.0,
+                        height: 200.0,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: 16.0),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Biografia regista',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            'Una breve descrizione o un sottotitolo qui.',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            createCardRows(
+              [
+                createImageWithStar(
+                  const AssetImage('assets/images/Logo.jpg'),
+                  'La storia della principessa splendente e delle sue avventure straordinarie',
+                  '1992',
+                ),
+                createImageWithStar(
+                  const AssetImage('assets/images/Logo.jpg'),
+                  'Un altro film con un titolo molto lungo che si estende per diverse righe',
+                  '1992',
+                ),
+                createImageWithStar(
+                  const AssetImage('assets/images/Logo.jpg'),
+                  'La storia della principessa splendente',
+                  '1992',
+                ),
+                createImageWithStar(
+                  const AssetImage('assets/images/Logo.jpg'),
+                  'La storia della principessa splendente',
+                  '1992',
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.grey[900],
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1B1B1B),
-              Color(0xFF333333),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: createCardRows(
-            [
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'La storia della principessa splendente e delle sue avventure straordinarie',
-                '1992',
-              ),
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'Un altro film con un titolo molto lungo che si estende per diverse righe',
-                '1992',
-              ),
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'La storia della principessa splendente',
-                '1992',
-              ),
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'La storia della principessa splendente',
-                '1992',
-              ),
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'La storia della principessa splendente',
-                '1992',
-              ),
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'La storia della principessa splendente',
-                '1992',
-              ),
-              createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
-                'La storia della principessa splendente',
-                '1992',
-              ),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget createImageWithStar(
       ImageProvider image, String filmName, String year) {
