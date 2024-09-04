@@ -8,11 +8,16 @@ class FilmPage extends StatefulWidget {
 }
 
 class __FilmPageStateState extends State<FilmPage> {
+  bool isFavorite = false;
+  int _favoriteCount = 0;
+  bool isViewed = false;
+  int _viewCount = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        title: const Text('Catalogo Film'),
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[900],
         elevation: 4.0,
@@ -29,105 +34,181 @@ class __FilmPageStateState extends State<FilmPage> {
           ),
         ),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
+          child: createCardRows(
+            [
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'La storia della principessa splendente e delle sue avventure straordinarie',
+                '1992',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'Un altro film con un titolo molto lungo che si estende per diverse righe',
+                '1992',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'La storia della principessa splendente',
+                '1992',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'), // Esempio di immagine
+                const AssetImage('assets/images/Logo.jpg'),
                 'La storia della principessa splendente',
+                '1992',
               ),
-              // Aggiungi altre chiamate a createImageWithStar() qui se necessario
             ],
           ),
         ),
       ),
     );
   }
-}
 
-
-Widget createImageWithStar(ImageProvider image, String filmName) {
-  return SizedBox(
-    width: 250.0, // Riduci la larghezza della card
-    height: 420.0, // Mantieni l'altezza della card
-    child: Card(
-      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(19.0),
-      ),
-      elevation: 3,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Immagine di sfondo
-          Container(
-            width: double.infinity,
-            height: 250,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(19.0)),
-              image: DecorationImage(
-                image: image,
-                fit: BoxFit.cover,
-              ),
-            ),
+  Widget createImageWithStar(ImageProvider image, String filmName, String year) {
+  return StatefulBuilder(
+    builder: (BuildContext context, StateSetter setState) {
+      return SizedBox(
+        width: 250.0, 
+        height: 420.0, 
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(19.0),
           ),
-          // Testo in basso a sinistra
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              filmName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.redAccent,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          // Icona (checkbox) centrata
-          Align(
-            alignment: Alignment.centerRight, // Allinea a destra
-            child: GestureDetector(
-              onTap: () {
-                // Azione da eseguire al click
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                margin: const EdgeInsets.only(right: 10.0, bottom: 10.0), // Aggiungi margine a destra e in basso
+          elevation: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 250,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(19.0)),
+                  image: DecorationImage(
+                    image: image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  filmName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.redAccent,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center, 
+                  children: [
+                    Text(
+                      year, 
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[600],
+                                            fontWeight: FontWeight.bold,
+
+                      ),
+                    ),
+                    const Spacer(), 
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isFavorite = !isFavorite;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        margin: const EdgeInsets.only(right: 10.0), 
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.redAccent : Colors.grey,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isViewed = !isViewed;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isViewed ? Icons.check_box : Icons.check_box_outline_blank,
+                          color: isViewed ? Colors.blue : Colors.grey,
+                          size: 30,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.star_border,
-                  color: Colors.lightBlue,
-                  size: 35,
-                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    ),
+        ),
+      );
+    },
   );
+}
+
+
+  Widget createCardRows(List<Widget> cards) {
+    List<Widget> rows = [];
+    for (int i = 0; i < cards.length; i += 2) {
+      if (i + 1 < cards.length) {
+        rows.add(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(child: cards[i]),
+              Expanded(child: cards[i + 1]),
+            ],
+          ),
+        );
+      } else {
+        rows.add(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start, 
+            children: [
+              SizedBox(
+                width: 250.0, 
+                child: cards[i],
+              ),
+            ],
+          ),
+        );
+      }
+    }
+    return Column(children: rows);
+  }
 }
