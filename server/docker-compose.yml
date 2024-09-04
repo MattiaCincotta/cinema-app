@@ -1,0 +1,34 @@
+x-common:
+  database:
+    &db-env
+    MYSQL_HOST: db
+    MYSQL_USER: cineApp
+    MYSQL_PASSWORD: password
+    MYSQL_RANDOM_ROOT_PASSWORD: yes
+    MYSQL_DATABASE: cineCult
+
+
+services:
+  db:
+    image: mysql
+    restart: always
+    volumes: 
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    environment:
+      <<: *db-env
+
+  server:
+    build: .
+    ports:
+      - "80:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      <<: *db-env

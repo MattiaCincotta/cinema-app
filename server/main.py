@@ -1,8 +1,5 @@
 from flask import Flask, request, jsonify, g
-from db_utils.db import DB_utils
-from dotenv import load_dotenv
-import mysql.connector
-from utils import *
+from utils.models import *
 
 app = Flask(__name__)   
 
@@ -19,13 +16,22 @@ def director_movies():
         return jsonify([])
 
 @app.route('/search_movie', methods=['GET'])
-def movie():
+def search_movie():
     title = request.args.get('title')
     result = MovieManager.search_movie(title)
     if result:
         return jsonify([movie.__dict__ for movie in result])
     else:
         return jsonify({})
+
+@app.route('/search_director', methods=['GET'])
+def search_director():
+    name = request.args.get('name')
+    result = DirectorManager.search_director(name)
+    if result:
+        return jsonify([director.__dict__ for director in result])
+    else:
+        return jsonify([])
 
 @app.route('/movies_category', methods=['GET'])
 def movies_category():
@@ -62,6 +68,4 @@ def close_db(exception):
         db.close()
 
 if __name__ == "__main__":
-    load_dotenv()
-    DB_utils.init_db()
-    app.run(debug=True)
+    app.run("0.0.0.0", debug=True)
