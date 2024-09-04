@@ -9,9 +9,7 @@ class CinemaAppHomepage extends StatefulWidget {
 }
 
 class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
-  
-  
-  final List<Map<String, String>> _quotes = [
+    final List<Map<String, String>> _quotes = [
   {'quote': '"Siamo tutti e due dei meravigliosi sconosciuti."', 'author': 'The Big Lebowski'},
   {'quote':'"Meglio essere un porco che un fascista."', 'author': 'Porco Rosso'},
   {'quote': '"Che la forza sia con te."', 'author': 'Star Wars'},
@@ -70,6 +68,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
   {'quote': '"La vita è un viaggio, non una destinazione."', 'author': 'Il Signore degli Anelli'},
 ];
 
+
   int _currentQuoteIndex = 0;
 
   void _changeQuote() {
@@ -82,14 +81,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
-    final isSmallScreen = screenWidth < 399; // Adatto per smartphone con schermi molto piccoli
-    final isLargeScreen = screenWidth > 400; // Adatto per schermi più grandi
-
-    // Ridimensionamento dinamico delle SizedBox
-    final double logoTopSpacing = isSmallScreen ? 60 : (isLargeScreen ? 100 : 80);
-    final double textTopSpacing = isSmallScreen ? 30 : (isLargeScreen ? 60 : 40);
-    final double buttonTopSpacing = isSmallScreen ? 30 : (isLargeScreen ? 60 : 40);
-    final double quoteTopSpacing = isSmallScreen ? 20 : (isLargeScreen ? 30 : 30);
+    final isSmallScreen = screenWidth < 360;  // Adatto per smartphone con schermi molto piccoli
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -97,7 +89,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: logoTopSpacing), // Spazio sopra il logo
+            const SizedBox(height: 50),
             CircleAvatar(
               radius: 150,
               backgroundColor: Colors.transparent,
@@ -110,11 +102,12 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
                 ),
               ),
             ),
-            SizedBox(height: textTopSpacing), // Spazio sopra il testo grande
+            const SizedBox(height: 10),
+            // Testo grande
             Text(
               'CineCult',
               style: TextStyle(
-                fontSize: isSmallScreen ? 70 : (isLargeScreen ? 110 : 90),
+                fontSize: isSmallScreen ? 70 : 90, // Dimensione del testo
                 fontWeight: FontWeight.bold,
                 color: Colors.red[300],
                 fontFamily: 'Roboto',
@@ -127,7 +120,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
                 ],
               ),
             ),
-            SizedBox(height: buttonTopSpacing), // Spazio sopra il bottone
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -149,10 +142,10 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
               ),
               child: Text(
                 'CONTINUA',
-                style: TextStyle(fontSize: isSmallScreen ? 22 : (isLargeScreen ? 30 : 27)),
+                style: TextStyle(fontSize: isSmallScreen ? 22 : 27),
               ),
             ),
-            SizedBox(height: quoteTopSpacing), // Spazio sopra la citazione
+            const SizedBox(height: 30),
             GestureDetector(
               onTap: _changeQuote,
               child: Container(

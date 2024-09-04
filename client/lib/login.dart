@@ -109,11 +109,34 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Sign In'),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.grey[900],
+  automaticallyImplyLeading: false,
+  title: Row(
+    children: [
+      Icon(Icons.movie, color: Colors.red[300]), // Icona cinematografica
+      const SizedBox(width: 10),
+      const Text(
+        'Benvenuto su CineCult',
+        style: TextStyle(
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.bold,
+        ),
       ),
+    ],
+  ),
+  foregroundColor: Colors.white,
+  backgroundColor: Colors.black87, 
+  elevation: 10, // Ombreggiatura
+  flexibleSpace: Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [Colors.grey[900]!, Colors.black],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+  ),
+),
+
       backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
         child: Center(
@@ -133,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 25),
                 const Text(
-                  'Sign In',
+                  'Accesso',
                   style: TextStyle(
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -207,51 +230,100 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 330.0,
-                  child: Row(
-                    children: [
-
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: _isChecked,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isChecked = value!;
-                              });
-                            },
-                          ),
-                          const Text(
-                            'Remember Me',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0, 
-                            ),
-                          )
-                        ],
-                      ),
-                      const Spacer(),
-
-                      SizedBox(
-                        width: 110.0,
-                        height: 50.0,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/registration');
-                          },
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 10,),
+SizedBox(
+  width: 300.0,
+  child: Row(
+    children: [
+      InkWell(
+        onTap: () {
+          setState(() {
+            _isChecked = !_isChecked; // Cambia lo stato della checkbox
+          });
+        },
+        borderRadius: BorderRadius.circular(15), // Bordo arrotondato per l'effetto splash
+        splashColor: Colors.blueGrey[200], // Colore dell'effetto splash
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 3.0),
+          child: Row(
+            children: [
+              const Text(
+                'Ricordami',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0, 
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 0.0), // Spazio ridotto a sinistra della checkbox
+                child: Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.blueGrey[300], // Colore del bordo quando non selezionato
+                  ),
+                  child: Checkbox(
+                    value: _isChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isChecked = value!;
+                      });
+                    },
+                    activeColor: Colors.blueGrey[500], // Colore di sfondo quando selezionato, più scuro
+                    checkColor: Colors.white, // Colore del segno di spunta
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5), // Angoli arrotondati
+                    ),
                   ),
                 ),
+              ),
+              const SizedBox(width: 5.0), // Spazio tra checkbox e testo
+            ],
+          ),
+        ),
+      ),
+      const SizedBox(width: 19.0), // Spazio fisso tra "Ricordami" e "Registrati"
+      InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, '/registration');
+        },
+        borderRadius: BorderRadius.circular(15), // Bordo arrotondato per l'effetto splash
+        splashColor: Colors.blueGrey[200], // Colore dell'effetto splash
+        child: Container(
+          width: 135.0,
+          height: 50.0,
+          decoration: BoxDecoration(
+            color: Colors.blueGrey[700], // Colore di sfondo del pulsante
+            borderRadius: BorderRadius.circular(15), // Bordo arrotondato
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+               Text(
+                'Registrati',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+               SizedBox(width: 10.0),
+               Icon(
+                Icons.arrow_forward, // Freccia a destra
+                color: Colors.white,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
+
+
+
+
+
                 const SizedBox(height: 30),
                 SizedBox(
                   width: 180.0,
@@ -273,7 +345,7 @@ class _LoginPageState extends State<LoginPage> {
                       elevation: 5,
                     ),
                     child: const Text(
-                      'Sign In',
+                      'Accedi',
                       style: TextStyle(
                         fontSize: 27,
                       ),

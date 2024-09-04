@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-
 class Registrationpage extends StatefulWidget {
   const Registrationpage({super.key});
 
@@ -18,9 +17,9 @@ class _RegistrationpageState extends State<Registrationpage> {
   final TextEditingController _password2 = TextEditingController();
   bool _isObscure = true;
   bool _isUsernameNotEmpty = false;
-  bool _isUsernameInteracted = false; 
+  bool _isUsernameInteracted = false;
   bool _isPassword1Valid = false;
-  bool _isPassword1Interacted = false; 
+  bool _isPassword1Interacted = false;
   bool _isPassword2Interacted = false;
 
   @override
@@ -62,25 +61,24 @@ class _RegistrationpageState extends State<Registrationpage> {
   }
 
   Future<void> _register() async {
-  bool isValid = _validateInputs();
+    bool isValid = _validateInputs();
 
-  if (!isValid) {
-    _showSnackBar('Registrazione non riuscita'); 
-    return;
+    if (!isValid) {
+      _showSnackBar('Registrazione non riuscita');
+      return;
+    }
+
+    List<int> bytes = utf8.encode(_password1.text);
+    String hash = sha256.convert(bytes).toString();
+
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'username', value: _username.text);
+    await storage.write(key: 'password', value: hash);
+
+    if (mounted) {
+      Navigator.pushNamed(context, '/login');
+    }
   }
-
-  List<int> bytes = utf8.encode(_password1.text);
-  String hash = sha256.convert(bytes).toString();
-
-  const storage = FlutterSecureStorage();
-  await storage.write(key: 'username', value: _username.text);
-  await storage.write(key: 'password', value: hash);
-
-  if (mounted) {
-    Navigator.pushNamed(context, '/login');
-  }
-}
-
 
   bool _validateInputs() {
     bool isUsernameValid = _validateUsername(_username.text);
@@ -95,8 +93,7 @@ class _RegistrationpageState extends State<Registrationpage> {
   }
 
   bool _validatePassword1(String password) {
-    final regex =
-        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$');
+    final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
     bool isValid = regex.hasMatch(password);
     return isValid;
   }
@@ -105,14 +102,13 @@ class _RegistrationpageState extends State<Registrationpage> {
     return _password1.text == _password2.text;
   }
 
-
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
           style: const TextStyle(
-            fontSize: 18.0, 
+            fontSize: 18.0,
           ),
         ),
         duration: const Duration(seconds: 3),
@@ -124,9 +120,46 @@ class _RegistrationpageState extends State<Registrationpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(
+                context); // Funzione per tornare alla pagina precedente
+          },
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.account_circle,
+              color: Colors.red[300],
+              size: 40,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Benvenuto! Crea il tuo account ',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         foregroundColor: Colors.white,
-        backgroundColor:  Colors.grey[900], 
+        backgroundColor: Colors.black87,
+        elevation: 10, // Ombreggiatura
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.grey[900]!, Colors.black],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
@@ -138,16 +171,16 @@ class _RegistrationpageState extends State<Registrationpage> {
               children: [
                 const SizedBox(height: 15),
                 ClipOval(
-                child: Image.asset(
-                  'assets/images/profile.jpg',
-                  width: 275, 
-                  height: 275,
-                  fit: BoxFit.cover, 
+                  child: Image.asset(
+                    'assets/images/profile.jpg',
+                    width: 275,
+                    height: 275,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
                 const SizedBox(height: 25),
                 const Text(
-                  'Sign Up',
+                  'Registrazione',
                   style: TextStyle(
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -161,9 +194,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                   child: TextField(
                     controller: _username,
                     style: const TextStyle(
-                      color: Colors.white, 
-                      fontSize: 20, 
-                      fontFamily: 'Roboto', 
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontFamily: 'Roboto',
                     ),
                     onChanged: (value) {
                       _validateUsername(value);
@@ -171,14 +204,13 @@ class _RegistrationpageState extends State<Registrationpage> {
                     decoration: const InputDecoration(
                       labelText: 'Username',
                       labelStyle: TextStyle(
-                        
-                        fontSize: 20, 
-                      ), 
+                        fontSize: 20,
+                      ),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), 
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple), 
+                        borderSide: BorderSide(color: Colors.deepPurple),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -203,9 +235,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                   child: TextField(
                     obscureText: _isObscure,
                     style: const TextStyle(
-                      color: Colors.white, 
-                      fontSize: 20, 
-                      fontFamily: 'Roboto', 
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontFamily: 'Roboto',
                     ),
                     controller: _password1,
                     onChanged: (_) {
@@ -216,17 +248,17 @@ class _RegistrationpageState extends State<Registrationpage> {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: const TextStyle(
-                        fontSize: 18, 
+                        fontSize: 18,
                       ),
                       border: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white), 
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.deepPurple), 
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white), 
-                        ),
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.deepPurple),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isObscure ? Icons.visibility : Icons.visibility_off,
@@ -243,10 +275,11 @@ class _RegistrationpageState extends State<Registrationpage> {
                 ),
                 const SizedBox(height: 10),
                 Visibility(
-                  visible: _isPassword1Interacted && (!_isPassword1Valid || !_isObscure),
+                  visible: _isPassword1Interacted &&
+                      (!_isPassword1Valid || !_isObscure),
                   child: const Text(
-                    'password non valida',
-                    style:  TextStyle(
+                    '8+ caratteri, lettere e numeri',
+                    style: TextStyle(
                       color: Colors.red,
                       fontSize: 16,
                     ),
@@ -258,9 +291,9 @@ class _RegistrationpageState extends State<Registrationpage> {
                   child: TextField(
                     obscureText: _isObscure,
                     style: const TextStyle(
-                      color: Colors.white, 
+                      color: Colors.white,
                       fontSize: 20,
-                      fontFamily: 'Roboto', 
+                      fontFamily: 'Roboto',
                     ),
                     controller: _password2,
                     onChanged: (_) {
@@ -274,13 +307,13 @@ class _RegistrationpageState extends State<Registrationpage> {
                         fontSize: 18, // Dimensione del testo dell'etichetta
                       ),
                       border: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), 
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                       focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple), 
+                        borderSide: BorderSide(color: Colors.deepPurple),
                       ),
                       enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white), 
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -298,7 +331,8 @@ class _RegistrationpageState extends State<Registrationpage> {
                 ),
                 const SizedBox(height: 10),
                 Visibility(
-                  visible: _isPassword2Interacted && _password1.text != _password2.text,
+                  visible: _isPassword2Interacted &&
+                      _password1.text != _password2.text,
                   child: const Text(
                     'password non corrispondente',
                     style: TextStyle(
@@ -309,25 +343,26 @@ class _RegistrationpageState extends State<Registrationpage> {
                 ),
                 const SizedBox(height: 30),
                 SizedBox(
-                  width: 180.0,
+                  width: 200.0,
                   height: 65.0,
                   child: ElevatedButton(
                     onPressed: () async {
                       await _register();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[600], 
-                      foregroundColor: Colors.white, 
+                      backgroundColor: Colors.grey[600],
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40), 
+                        borderRadius: BorderRadius.circular(40),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                      elevation: 5, 
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 15),
+                      elevation: 5,
                     ),
                     child: const Text(
-                      'Sign Up',
+                      'Registrati',
                       style: TextStyle(
-                        fontSize: 27, 
+                        fontSize: 27,
                       ),
                     ),
                   ),
