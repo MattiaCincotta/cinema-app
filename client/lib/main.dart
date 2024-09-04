@@ -30,9 +30,9 @@ class _CinemaAppState extends State<CinemaApp> {
         '/homepage': (context) => const CinemaAppHomepage(),
         '/login': (context) => const LoginPage(),
         '/registration': (context) => const Registrationpage(),
-        '/directorList.dart': (context) => const DirectionListPage(),
-        '/favoritefilm.dart': (context) => const FavoriteFilmPage(),
-        '/filmpage.dart': (context) => const FilmPage(),
+        '/directorList': (context) => const DirectionListPage(),
+        '/favoritefilm': (context) => const FavoriteFilmPage(),
+        '/filmpage': (context) => const FilmPage(),
       },
     );
   }

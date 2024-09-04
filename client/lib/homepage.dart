@@ -9,8 +9,10 @@ class CinemaAppHomepage extends StatefulWidget {
 }
 
 class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
-    final List<Map<String, String>> _quotes = [
-  {'quote': '"Siamo tutti e due dei meravigliosi sconosciuti."', 'author': 'The Big Lebowski'},
+  final List<Map<String, String>> _quotes = [
+    
+
+{'quote': '"Siamo tutti e due dei meravigliosi sconosciuti."', 'author': 'The Big Lebowski'},
   {'quote':'"Meglio essere un porco che un fascista."', 'author': 'Porco Rosso'},
   {'quote': '"Che la forza sia con te."', 'author': 'Star Wars'},
   {'quote': '"Rosebud."', 'author': 'Quarto Potere'},
@@ -66,8 +68,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
   {'quote': '"Non c’è niente di più potente di un’idea.','author': 'Inception'},
   {'quote': '"Il mondo è un palcoscenico e la recita è mal interpretata."', 'author': 'Barry Lyndon'},
   {'quote': '"La vita è un viaggio, non una destinazione."', 'author': 'Il Signore degli Anelli'},
-];
-
+  ];
 
   int _currentQuoteIndex = 0;
 
@@ -79,105 +80,102 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
-    final isSmallScreen = screenWidth < 360; 
-
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(height: 50),
-            CircleAvatar(
-              radius: 150,
-              backgroundColor: Colors.transparent,
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/Logo.jpg',
-                  width: screenWidth * 0.7, 
-                  height: screenWidth * 0.7,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'CineCult',
-              style: TextStyle(
-                fontSize: isSmallScreen ? 70 : 90, 
-                fontWeight: FontWeight.bold,
-                color: Colors.red[300],
-                fontFamily: 'Roboto',
-                shadows: [
-                  Shadow(
-                    offset: const Offset(5.0, 5.0),
-                    blurRadius: 10.0,
-                    color: Colors.black.withOpacity(0.5),
+      body: SingleChildScrollView( // Rende la pagina scorribile
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 100),
+              CircleAvatar(
+                radius: 150,
+                backgroundColor: Colors.transparent,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/Logo.jpg',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[600],
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
                 ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: isSmallScreen ? 30 : 50, 
-                  vertical: isSmallScreen ? 20 : 25,
-                ),
-                elevation: 5,
               ),
-              child: Text(
-                'CONTINUA',
-                style: TextStyle(fontSize: isSmallScreen ? 22 : 27),
-              ),
-            ),
-            const SizedBox(height: 30),
-            GestureDetector(
-              onTap: _changeQuote,
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                color: Colors.transparent,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      _quotes[_currentQuoteIndex]['quote']!,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 18 : 22,
-                        color: Colors.white,
-                        fontStyle: FontStyle.italic,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      '- ${_quotes[_currentQuoteIndex]['author']}',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 16 : 20,
-                        color: Colors.white70,
-                      ),
-                      textAlign: TextAlign.center,
+              const SizedBox(height: 40),
+              // Testo grande
+              Text(
+                'CineCult',
+                style: TextStyle(
+                  fontSize: 100,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red[300],
+                  fontFamily: 'Roboto',
+                  shadows: [
+                    Shadow(
+                      offset: const Offset(5.0, 5.0),
+                      blurRadius: 10.0,
+                      color: Colors.black.withOpacity(0.5),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 50),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[600],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+                  elevation: 5,
+                ),
+                child: const Text(
+                  'CONTINUA',
+                  style: TextStyle(fontSize: 27),
+                ),
+              ),
+              const SizedBox(height: 30),
+              GestureDetector(
+                onTap: _changeQuote,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  color: Colors.transparent,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        _quotes.isNotEmpty ? _quotes[_currentQuoteIndex]['quote']! : '',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        _quotes.isNotEmpty ? '- ${_quotes[_currentQuoteIndex]['author']}' : '',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white70,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+

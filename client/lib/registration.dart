@@ -135,7 +135,7 @@ class _RegistrationpageState extends State<Registrationpage> {
             Icon(
               Icons.account_circle,
               color: Colors.red[300],
-              size: 40,
+              size: 30,
             ),
             const SizedBox(width: 10),
             const Text(
@@ -143,6 +143,7 @@ class _RegistrationpageState extends State<Registrationpage> {
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
+                fontSize: 18
               ),
             ),
           ],
