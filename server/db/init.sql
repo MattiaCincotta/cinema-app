@@ -56,41 +56,36 @@ CREATE TABLE IF NOT EXISTS to_see_movies(
     seen BIT(1)
 );
 
-IF NOT EXISTS (SELECT * FROM categories) THEN
-    INSERT INTO categories(name) VALUES
-        ('Action'),
-        ('Adventure'),
-        ('Comedy'),
-        ('Drama'),
-        ('Fantasy'),
-        ('Horror'),
-        ('Mystery'),
-        ('Romance'),
-        ('Sci-Fi'),
-        ('Thriller');
-END IF;
+INSERT INTO categories(name)
+SELECT 'Action' UNION ALL
+SELECT 'Adventure' UNION ALL
+SELECT 'Comedy' UNION ALL
+SELECT 'Drama' UNION ALL
+SELECT 'Fantasy' UNION ALL
+SELECT 'Horror' UNION ALL
+SELECT 'Mystery' UNION ALL
+SELECT 'Romance' UNION ALL
+SELECT 'Sci-Fi' UNION ALL
+SELECT 'Thriller'
+WHERE NOT EXISTS (SELECT * FROM categories);
 
 -- example data for testing
-IF NOT EXISTS (SELECT * FROM directors) THEN
-    INSERT INTO directors(name, image_url) VALUES
+INSERT INTO directors(name, image_url) VALUES
         ('Christopher Nolan', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Christopher_Nolan_by_Gage_Skidmore.jpg/800px-Christopher_Nolan_by_Gage_Skidmore.jpg'),
         ('Quentin Tarantino', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Quentin_Tarantino_by_Gage_Skidmore.jpg/800px-Quentin_Tarantino_by_Gage_Skidmore.jpg'),
         ('Steven Spielberg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Steven_Spielberg_by_Gage_Skidmore.jpg/800px-Steven_Spielberg_by_Gage_Skidmore.jpg');
     
-    INSERT INTO directors_categories(director_id, category_id) VALUES
+INSERT INTO directors_categories(director_id, category_id) VALUES
         (1, 9),
         (2, 3),
         (3, 1);
-END IF;
 
-IF NOT EXISTS (SELECT * FROM movies) THEN
-    INSERT INTO movies(title, year, image_url, director_id) VALUES
+INSERT INTO movies(title, year, image_url, director_id) VALUES
         ('Inception', 2010, 'https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg', 1),
         ('Pulp Fiction', 1994, 'https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg', 2),
         ('Saving Private Ryan', 1998, 'https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg', 3);
     
-    INSERT INTO movies_categories(movie_id, category_id) VALUES
+INSERT INTO movies_categories(movie_id, category_id) VALUES
         (1, 9),
         (2, 3),
         (3, 1);
-END IF;
