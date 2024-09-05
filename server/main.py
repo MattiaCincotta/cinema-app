@@ -3,7 +3,25 @@ from utils.models import *
 
 api = Flask(__name__, '/api')   
 
-@api.route('/director_movies', methods=['GET'])
+@api.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    success, token = UserManager.register(data)
+    if success:
+        return jsonify({"token":token}), 200      
+    else:
+        return jsonify("username already exists"), 400
+
+@api.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    success, token = UserManager.login(data)
+    if success:
+        return jsonify({"token":token}), 200
+    else:
+        return jsonify("invalid username or password"), 400
+
+@api.route('/director/movies', methods=['GET'])
 def director_movies():
     director_name = request.args.get('director')
     director = DirectorManager.get_director(director_name)
@@ -15,7 +33,7 @@ def director_movies():
     else:   
         return jsonify([]), 400
 
-@api.route('/search_movie', methods=['GET'])
+@api.route('/search/movie', methods=['GET'])
 def search_movie():
     title = request.args.get('title')
     result = MovieManager.search_movie(title)
@@ -24,7 +42,7 @@ def search_movie():
     else:
         return jsonify({}), 404
 
-@api.route('/search_director', methods=['GET'])
+@api.route('/search/director', methods=['GET'])
 def search_director():
     name = request.args.get('name')
     result = DirectorManager.search_director(name)
@@ -33,7 +51,7 @@ def search_director():
     else:
         return jsonify([]), 404
 
-@api.route('/movies_category', methods=['GET'])
+@api.route('/movies/category', methods=['GET'])
 def movies_category():
     category = request.args.get('category')
     result = MovieManager.get_movies_from_category(category)
@@ -42,7 +60,7 @@ def movies_category():
     else:
         return jsonify([])
 
-@api.route('/directors_category', methods=['GET'])
+@api.route('/directors/category', methods=['GET'])
 def directors_category():
     category = request.args.get('category')
     result = DirectorManager.get_directors_from_category(category)
@@ -59,6 +77,10 @@ def director():
         return jsonify(result.__dict__), 200
     else:
         return jsonify({}), 400
+
+@api.route('/favorites', methods=['GET'])
+
+
 
 @api.teardown_appcontext
 def close_db(exception):

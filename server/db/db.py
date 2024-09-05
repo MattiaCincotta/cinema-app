@@ -19,8 +19,6 @@ class DB_utils:
             'user': os.getenv('MYSQL_USER'),
             'password': os.getenv('MYSQL_PASSWORD'),
             'database': os.getenv('MYSQL_DATABASE'),
-            # 'collation': os.getenv('DB_COLLATION'),
-            # 'charset': os.getenv('DB_CHARSET')
         }
         
         try:

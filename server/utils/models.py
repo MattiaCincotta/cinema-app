@@ -1,11 +1,14 @@
 from flask import Flask, current_app, g
 import mysql.connector
 from db.db import DB_utils
+import uuid
+from hashlib import sha256
 
 ######### USER PART ##############################################################################################
 
 class User:
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(self, id: int, username: str, password: str) -> None:
+        self.id = id
         self.username = username
         self.password = password
     
@@ -32,49 +35,73 @@ class UserManager:
             result = cursor.fetchone()
             cursor.close()
             if result:
-                return User(result['username'], result['password'])
+                return User(result['id'], result['username'], result['password'])
             return None
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return None
     
     @staticmethod
-    def add_user(user: User) -> bool:
+    def register(data: dict) -> tuple:
         """
-        Add a user to the database.
+        Register a user.
         Args:
-            user: The user object to add.
+            data: The data of the user to register.
         Returns:
-            True if the user was added successfully, False otherwise.
+            A tuple containing a boolean and a token.
         """
+        
+        user = UserManager.get_user(data['username'])
+        if user:
+            return False, None  
         
         if 'db' not in g:
             g.db = DB_utils.get_db_connection()
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (user.username, user.password))
+            cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (data['username'], sha256(data['password'].encode()).hexdigest())) 
+            cursor.execute("SELECT id FROM users WHERE username = %s", (data['username'],))
+            user_id = int(cursor.fetchone()['id'])               
+            token = uuid.uuid4().hex
+            cursor.execute("INSERT INTO sessions (user_id, token) VALUES (%s, %s)", (user_id, token))
             g.db.commit()
-            return True
+            cursor.close()
+            return True, token
         except mysql.connector.Error as e:
-            print(f"Error: {e}")
-            return False
+            current_app.logger.error(f"Error: {e}")
+            return False, None
         
     @staticmethod
-    def verify_user(username:str, password: str) -> bool:
+    def login(data: dict) -> tuple:
         """
-        Verify a user's credentials.
+        Login a user.
         Args:
-            name: The name of the user.
-            password: The password of the user.
+            data: The data of the user to login.
         Returns:
-            True if the user's credentials are valid, False otherwise.
+            A tuple containing a boolean and a token.
         """
         
-        user = UserManager.get_user(username)
-        if user and user.password == password:
-            return True
-        return False
+        user = UserManager.get_user(data['username'])
+        if user and user.password == sha256(data['password'].encode()).hexdigest():
+            if 'db' not in g:
+                g.db = DB_utils.get_db_connection()
+            
+            try:
+                cursor = g.db.cursor(dictionary=True)
+                cursor.execute("SELECT token FROM sessions WHERE user_id = %s", (user.id,))
+                token = cursor.fetchone()
+                if token:
+                    return True, token['token']
+                token = uuid.uuid4().hex
+                cursor.execute("INSERT INTO sessions (user_id, token) VALUES (%s, %s)", (user.id, token))
+                g.db.commit()
+                cursor.close()
+                return True, token
+            except mysql.connector.Error as e:
+                current_app.logger.error(f"Error: {e}")
+                return False, None
+        return False, None
     
 ###################################################################################################################
 
