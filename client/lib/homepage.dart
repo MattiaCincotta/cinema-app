@@ -1,4 +1,4 @@
-import 'package:client/filmpage.dart';
+import 'package:client/directorlist.dart';
 import 'package:flutter/material.dart';
 import 'package:client/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -227,13 +227,13 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
                           // ignore: use_build_context_synchronously
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const LoginPage()),
+                              builder: (context) => const DirectionListPage()),
                         )
                       : Navigator.push(
                           // ignore: use_build_context_synchronously
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const FilmPage()),
+                              builder: (context) => const LoginPage()),
                         );
                 },
                 style: ElevatedButton.styleFrom(

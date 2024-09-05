@@ -70,10 +70,15 @@ class _RegistrationpageState extends State<Registrationpage> {
       return;
     }
 
-    RequestManager mgr = RequestManager(baseUrl: '127.0.0.1');
+    RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
     if(!(await mgr.register(_username.text, _password1.text))){
-      //TODO registrazione non andata bene 
+      _showSnackBar('utente già registrato');
+      return;
     }
+     // ignore: use_build_context_synchronously
+     Navigator.pushNamed(context, '/login');
+
+    
   }
 
   bool _validateInputs() {

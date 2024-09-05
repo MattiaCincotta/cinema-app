@@ -161,9 +161,11 @@ class RequestManager {
     if (response.statusCode == 200) {
       const storage = FlutterSecureStorage();
       final responseData = json.decode(response.body);
-      await storage.write(key: 'token',value: responseData['token']);
+      await storage.write(key: 'token', value: responseData['token']);
 
-      print('Registrazione riuscita: ${responseData['message']}');
+      print(await storage.read(key: "token"));
+
+      print('Registrazione riuscita: ${responseData['token']}');
       return true;
     } else {
 

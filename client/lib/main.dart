@@ -1,11 +1,14 @@
 import 'package:client/login.dart';
 import 'package:client/registration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'homepage.dart';
 import 'directorlist.dart';
 import 'favoritefilm.dart';
 import 'filmpage.dart';
-void main() {
+
+void main() async {
+
   runApp(const CinemaApp());
 }
 
@@ -21,6 +24,7 @@ class _CinemaAppState extends State<CinemaApp> {
   void initState() {
     super.initState();
 }
+
 
 @override
   Widget build(BuildContext context) {

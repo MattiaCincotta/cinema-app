@@ -1,9 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
-import 'package:client/utils/encrypt.dart';
 import 'directorlist.dart';
 import 'package:client/utils/request_manager.dart';
 
@@ -28,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       return true;
     }
 
-    RequestManager mgr = RequestManager(baseUrl: '127.0.0.1');
+    RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
     if (await mgr.login(_usernameController.text, _passwordController.text)) {
       return true;
     } else {
