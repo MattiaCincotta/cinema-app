@@ -103,6 +103,36 @@ class UserManager:
                 return False, None
         return False, None
     
+    @staticmethod
+    def verify_token(token: str, boolean_response = False) -> User | bool | None:
+        """
+        Verifies a token.
+        Args:
+            token: The token to verify;
+            boolean_response: if true the return value will be a boolean, if false it will be a user object.
+        Returns:
+            The user object if the token is valid and boolean_response is false, if it is true the boolean result of the query, None otherwise.
+        """
+        
+        if not 'db' in g:
+            g.db = DB_utils.get_db_connection()
+        
+        cursor = g.db.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM sessions WHERE token = %s", (token,))
+        result = cursor.fetchone()
+        
+        if result:
+            if boolean_response:
+                return True
+            cursor.execute("SELECT * FROM users WHERE id = %s", (result['user_id'],))
+            user = cursor.fetchone()
+            return User(user['id'], user['username'], user['password'])
+        
+        else:
+            if boolean_response:
+                return False
+            return None
+    
 ###################################################################################################################
 
 ######### DIRECTOR PART ###########################################################################################

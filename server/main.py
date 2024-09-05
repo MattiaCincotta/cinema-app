@@ -23,64 +23,78 @@ def login():
 
 @api.route('/director/movies', methods=['GET'])
 def director_movies():
-    director_name = request.args.get('director')
-    director = DirectorManager.get_director(director_name)
-    if director:    
-        result = MovieManager.get_movies_from_director(director)
+    if UserManager.verify_token(request.headers.get('token'), True):
+        director_name = request.args.get('director')
+        director = DirectorManager.get_director(director_name)
+        if director:    
+            result = MovieManager.get_movies_from_director(director)
+            
+            return jsonify([movie.__dict__ for movie in result]), 200
         
-        return jsonify([movie.__dict__ for movie in result]), 200
-    
-    else:   
-        return jsonify([]), 400
+        else:   
+            return jsonify([]), 400
+    else:
+            return jsonify("invalid token"), 401
 
 @api.route('/search/movie', methods=['GET'])
 def search_movie():
-    title = request.args.get('title')
-    result = MovieManager.search_movie(title)
-    if result:
-        return jsonify([movie.__dict__ for movie in result]), 200
+    if UserManager.verify_token(request.headers.get('token'), True):
+        title = request.args.get('title')
+        result = MovieManager.search_movie(title)
+        if result:
+            return jsonify([movie.__dict__ for movie in result]), 200
+        else:
+            return jsonify({}), 404
     else:
-        return jsonify({}), 404
+        return jsonify("invalid token"), 401
 
 @api.route('/search/director', methods=['GET'])
 def search_director():
-    name = request.args.get('name')
-    result = DirectorManager.search_director(name)
-    if result:
-        return jsonify([director.__dict__ for director in result]), 200
+    if UserManager.verify_token(request.headers.get('token'), True):
+        name = request.args.get('name')
+        result = DirectorManager.search_director(name)
+        if result:
+            return jsonify([director.__dict__ for director in result]), 200
+        else:
+            return jsonify([]), 404
     else:
-        return jsonify([]), 404
+        return jsonify("invalid token"), 401
 
 @api.route('/movies/category', methods=['GET'])
 def movies_category():
-    category = request.args.get('category')
-    result = MovieManager.get_movies_from_category(category)
-    if result:
-        return jsonify([movie.__dict__ for movie in result])
+    if UserManager.verify_token(request.headers.get('token'), True):
+        category = request.args.get('category')
+        result = MovieManager.get_movies_from_category(category)
+        if result:
+            return jsonify([movie.__dict__ for movie in result])
+        else:
+            return jsonify([])
     else:
-        return jsonify([])
+        return jsonify("invalid token"), 401
 
 @api.route('/directors/category', methods=['GET'])
 def directors_category():
-    category = request.args.get('category')
-    result = DirectorManager.get_directors_from_category(category)
-    if result:
-        return jsonify([director.__dict__ for director in result])
+    if UserManager.verify_token(request.headers.get('token'), True):
+        category = request.args.get('category')
+        result = DirectorManager.get_directors_from_category(category)
+        if result:
+            return jsonify([director.__dict__ for director in result])
+        else:
+            return jsonify([])
     else:
-        return jsonify([])
+        return jsonify("invalid token"), 401
     
 @api.route('/director', methods=['GET'])
 def director():
-    director_id = request.args.get('director_id')
-    result = DirectorManager.get_director_by_id(director_id)
-    if result:
-        return jsonify(result.__dict__), 200
+    if UserManager.verify_token(request.headers.get('token'), True):
+        director_name = request.args.get('director')
+        result = DirectorManager.get_director(director_name)
+        if result:
+            return jsonify(result.__dict__), 200
+        else:
+            return jsonify({}), 400
     else:
-        return jsonify({}), 400
-
-@api.route('/favorites', methods=['GET'])
-
-
+        return jsonify("invalid token"), 401
 
 @api.teardown_appcontext
 def close_db(exception):
