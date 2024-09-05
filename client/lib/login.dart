@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'package:client/utils/encrypt.dart';
 import 'directorlist.dart';
+import 'package:client/utils/request_manager.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,52 +28,11 @@ class _LoginPageState extends State<LoginPage> {
       return true;
     }
 
-    List<int> bytes = utf8.encode(_passwordController.text);
-    String hash = sha256.convert(bytes).toString();
-
-    bool isValid =
-        (await storage.read(key: 'username') == _usernameController.text) &&
-            (hash == await storage.read(key: 'password'));
-
-    return isValid;
-  }
-
-  void _handleLogin() async {
-    const storage = FlutterSecureStorage();
-
-    bool loginSuccess = await _login();
-    if (loginSuccess) {
-      await (await storage.read(key: 'remember') == 'true'
-          ? Cryptography.setUpKeyFromHash((await storage.read(key: 'key'))!)
-          : Cryptography.setUpKey(_passwordController.text));
-
-      if (File(await Cryptography.getEncryptedFile()).existsSync()) {
-        await Cryptography().decryptFile();
-      }
-
-      if (_isChecked) {
-        await storage.write(key: 'remember', value: 'true');
-        await storage.write(
-            key: 'key',
-            value:
-                md5.convert(utf8.encode(_passwordController.text)).toString());
-      } else {
-        await storage.write(key: 'remember', value: 'false');
-        await storage.write(key: 'key', value: null);
-      }
-
-      await storage.write(key: 'logged', value: 'true');
-
-      if (mounted) {
-        Navigator.pushNamed(context, '/chat');
-      }
+    RequestManager mgr = RequestManager(baseUrl: '127.0.0.1');
+    if (await mgr.login(_usernameController.text, _passwordController.text)) {
+      return true;
     } else {
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Credenziali non valide';
-          _showSnackBar();
-        });
-      }
+      return false;
     }
   }
 
@@ -94,15 +54,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
-  }
-
-  @override
-  void initState() {
-    const storage = FlutterSecureStorage();
-    storage.read(key: 'remember').then((value) => {
-          if (value == 'true') {_handleLogin()}
-        });
-    super.initState();
   }
 
   @override

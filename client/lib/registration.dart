@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:client/utils/request_manager.dart';
+import 'package:http/http.dart';
 
 class Registrationpage extends StatefulWidget {
   const Registrationpage({super.key});
@@ -68,15 +70,9 @@ class _RegistrationpageState extends State<Registrationpage> {
       return;
     }
 
-    List<int> bytes = utf8.encode(_password1.text);
-    String hash = sha256.convert(bytes).toString();
-
-    const storage = FlutterSecureStorage();
-    await storage.write(key: 'username', value: _username.text);
-    await storage.write(key: 'password', value: hash);
-
-    if (mounted) {
-      Navigator.pushNamed(context, '/login');
+    RequestManager mgr = RequestManager(baseUrl: '127.0.0.1');
+    if(!(await mgr.register(_username.text, _password1.text))){
+      //TODO registrazione non andata bene 
     }
   }
 

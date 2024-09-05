@@ -1,5 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class RequestManager {
   final String baseUrl;
@@ -115,38 +117,35 @@ class RequestManager {
   }
 
 ///////////////////////////////// LOGIN /////////////////////////////////
-  Future<String?> login(String username, String password) async {
-    String endpoint = '/login';
+   Future<bool> login(String username, String password) async {
+    String endpoint = '/login'; 
     final Uri url = Uri.parse('$baseUrl$endpoint');
 
-    try {
-      final response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode({
-          'username': username,
-          'password': password,
-        }),
-      );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'username': username,
+        'password': password,
+      }),
+    );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+    if (response.statusCode == 200) {
+      const storage = FlutterSecureStorage();
+      final responseData = json.decode(response.body);
+      await storage.write(key: 'token',value: responseData['token']);
 
-        return data['token']; //specificare il campo
-      } else {
-        print('Errore durante la richiesta POST: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Errore durante la richiesta POST: $e');
-      return null;
+      print('login riuscito: ${responseData['message']}');
+      return true;
+    } else {
+
+      print('Errore nel login: ${response.body}');
+      return false; //TODO se ritorna falso credenziali sbagliate
     }
   }
 
 ///////////////////////////////// REGISTER /////////////////////////////////
-  Future<void> register(String username, String password) async {
+  Future<bool> register(String username, String password) async {
     String endpoint = '/register'; 
     final Uri url = Uri.parse('$baseUrl$endpoint');
 
@@ -159,14 +158,17 @@ class RequestManager {
       }),
     );
 
-    if (response.statusCode == 201) {
-
+    if (response.statusCode == 200) {
+      const storage = FlutterSecureStorage();
       final responseData = json.decode(response.body);
+      await storage.write(key: 'token',value: responseData['token']);
 
       print('Registrazione riuscita: ${responseData['message']}');
+      return true;
     } else {
 
       print('Errore nella registrazione: ${response.body}');
+      return false; //TODO se ritorna falso nome già in uso
     }
   }
 }
