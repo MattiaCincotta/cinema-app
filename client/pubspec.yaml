@@ -35,7 +35,7 @@ dependencies:
   sqflite: ^2.3.3+1
   sqflite_common_ffi: ^2.3.3
   encrypt: ^5.0.3
-
+  http: ^0.13.5
   path: any
 
 

@@ -10,7 +10,7 @@ class MovieHistoryPage extends StatefulWidget {
 class _MovieHistoryPageState extends State<MovieHistoryPage> {
   int _favoriteCount = 0;
 
-  Widget createImageWithStar(ImageProvider image, String filmName) {
+  Widget createImageWithStar(String imageUrl, String filmName) {
     bool isChecked = true;
 
     return StatefulBuilder(
@@ -37,8 +37,8 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 15),
-                Image(
-                  image: image,
+                Image.network(
+                  imageUrl,
                   width: double.infinity,
                   height: 275,
                   fit: BoxFit.cover,
@@ -174,15 +174,15 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
             children: [
               const SizedBox(height: 50),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
+                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 'La storia della principessa splendente e delle sue avventure straordinarie',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
+                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 'Un altro film con un titolo molto lungo che si estende per diverse righe',
               ),
               createImageWithStar(
-                const AssetImage('assets/images/Logo.jpg'),
+                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 'La storia della principessa splendente',
               ),
             ],

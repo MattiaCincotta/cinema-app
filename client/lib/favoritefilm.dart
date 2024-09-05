@@ -10,7 +10,7 @@ class FavoriteFilmPage extends StatefulWidget {
 class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   int _favoriteCount = 0; 
 
-  Widget createImageWithIcon(ImageProvider image, String filmName) {
+  Widget createImageWithIcon(String imageUrl, String filmName) {
     bool isFavorite = false; 
 
     return StatefulBuilder(
@@ -38,8 +38,8 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                       .ellipsis,
                 ),
                 const SizedBox(height: 15),
-                Image(
-                  image: image,
+                Image.network(
+                  imageUrl,
                   width: double.infinity,
                   height: 275,
                   fit: BoxFit.cover,
@@ -174,15 +174,15 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
             children: [
               const SizedBox(height: 50),
               createImageWithIcon(
-                const AssetImage('assets/images/Logo.jpg'), 
+                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg', 
                 'La storia della principessa splendente e delle sue avventure straordinarie',
               ),
               createImageWithIcon(
-                const AssetImage('assets/images/Logo.jpg'),
+                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 'Un altro film con un titolo molto lungo che si estende per diverse righe',
               ),
               createImageWithIcon(
-                const AssetImage('assets/images/Logo.jpg'), 
+                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg', 
                 'La storia della principessa splendente',
               ),
             ],

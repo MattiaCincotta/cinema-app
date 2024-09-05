@@ -198,25 +198,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
-                name: 'Title 1',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
-                name: 'Title 2',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 name: 'Title 3',
               ),
             ),
@@ -225,7 +207,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 name: 'Title 3',
               ),
             ),
@@ -234,7 +216,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 name: 'Title 3',
               ),
             ),
@@ -243,7 +225,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 name: 'Title 3',
               ),
             ),
@@ -252,7 +234,25 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
               child: createCard(
                 context: context,
-                image: const AssetImage('assets/images/Logo.jpg'),
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                name: 'Title 3',
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                name: 'Title 3',
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+              child: createCard(
+                context: context,
+                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                 name: 'Title 3',
               ),
             ),
@@ -264,7 +264,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
 
   Widget createCard({
     required BuildContext context,
-    required ImageProvider image,
+    required String imageUrl,
     required String name,
   }) {
     return Column(
@@ -284,8 +284,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15.0),
-                      child: Image(
-                      image: image,
+                      child: Image.network(
+                      imageUrl,
                       width: 75,
                       height: 75,
                       fit: BoxFit.cover,
