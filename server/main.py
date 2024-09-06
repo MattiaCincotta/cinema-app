@@ -83,7 +83,18 @@ def directors_category():
             return jsonify([])
     else:
         return jsonify("invalid token"), 401
-    
+
+@api.route('/directors', methods=['GET'])
+def directors():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        result = DirectorManager.get_directors()
+        if result:
+            return jsonify([director.__dict__ for director in result])
+        else:
+            return jsonify([])
+    else:
+        return jsonify("invalid token"), 401
+
 @api.route('/director', methods=['GET'])
 def director():
     if UserManager.verify_token(request.headers.get('token'), True):
