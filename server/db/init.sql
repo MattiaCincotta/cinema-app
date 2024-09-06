@@ -56,21 +56,30 @@ CREATE TABLE IF NOT EXISTS to_see_movies(
     seen BIT(1)
 );
 
-IF NOT EXISTS (SELECT 1 FROM categories)
-THEN
-    INSERT INTO categories (name)
-    VALUES
-        ('Action'),
-        ('Adventure'),
-        ('Comedy'),
-        ('Drama'),
-        ('Fantasy'),
-        ('Horror'),
-        ('Mystery'),
-        ('Romance'),
-        ('Sci-Fi'),
-        ('Thriller');
-END IF;
+-- IF NOT EXISTS CANNOT BE USED OUTSIDE OF A FUNCTION OR PROCEDURE
+DELIMITER $$
+CREATE PROCEDURE insert_categories_if_empty()
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM categories) THEN
+        INSERT INTO categories (name)
+        VALUES
+            ('Action'),
+            ('Adventure'),
+            ('Comedy'),
+            ('Drama'),
+            ('Fantasy'),
+            ('Horror'),
+            ('Mystery'),
+            ('Romance'),
+            ('Sci-Fi'),
+            ('Thriller');
+    END IF;
+END$$
+
+DELIMITER ;
+
+CALL insert_categories_if_empty();
+-- CALL THE PROCEDURE TO INSERT CATEGORIES
 
 -- example data for testing
 INSERT INTO directors(name, image_url) VALUES
