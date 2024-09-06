@@ -89,9 +89,9 @@ def directors():
     if UserManager.verify_token(request.headers.get('token'), True):
         result = DirectorManager.get_directors()
         if result:
-            return jsonify([director.__dict__ for director in result])
+            return jsonify({"count": len(result), "directors": [director.__dict__ for director in result]}), 200
         else:
-            return jsonify([])
+            return jsonify([]), 400
     else:
         return jsonify("invalid token"), 401
 
