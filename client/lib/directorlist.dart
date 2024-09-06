@@ -1,6 +1,7 @@
 import 'package:client/favoritefilm.dart';
 import 'package:client/filmpage.dart';
 import 'package:client/movie_history.dart';
+import 'package:client/utils/models.dart';
 import 'package:client/utils/request_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
     'Drammatico  ': false,
   };
 
-  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  final RequestManager requestManager =
+      RequestManager(baseUrl: 'http://172.18.0.3:5000');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,24 +188,43 @@ class _DirectionListPageState extends State<DirectionListPage> {
       ),
       backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
-        child: FutureBuilder(future: requestManager.getDirectors(), builder: (context, snapshot) {
-              List<Widget> children = List.empty(growable: true);
-              children.add(Container(
-                color: Colors.grey[850],
-                child: Divider(
-                  color: Colors.grey[900],
-                  thickness: 15,),));
+        child: Column(
+          children: [
+            Container(
+              color: Colors.grey[850],
+              child: Divider(
+                color: Colors.grey[900],
+                thickness: 15,
+              ),
+            ),
+            FutureBuilder(
+                future: requestManager.getDirectors(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                        child: Text('Error loading directors.'));
+                  } else if (!snapshot.hasData || snapshot.data == null) {
+                    return const Center(child: Text('No directors found.'));
+                  }
 
-              if (snapshot.hasData) {
-                for (var values in snapshot.data!) {
-                  children.add(createCard(context: context, imageUrl: values.imageUrl, name: values.name));
-                }
-              }
+                  final List<Director> directors =
+                      snapshot.data as List<Director>;
 
-              return Column(
-                children: children,
-              );
-            })
+                  return ListView.builder(
+                    itemCount: directors.length,
+                    itemBuilder: (context, index) {
+                      return createCard(
+                        context: context,
+                        imageUrl: directors[index].imageUrl,
+                        name: directors[index].name,
+                      );
+                    },
+                  );
+                })
+          ],
+        ),
       ),
     );
   }
@@ -231,11 +252,11 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15.0),
                       child: Image.network(
-                      imageUrl,
-                      width: 75,
-                      height: 75,
-                      fit: BoxFit.cover,
-                    ),
+                        imageUrl,
+                        width: 75,
+                        height: 75,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(width: 20.0),
                     Text(

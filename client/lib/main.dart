@@ -1,5 +1,6 @@
 import 'package:client/login.dart';
 import 'package:client/registration.dart';
+import 'package:client/utils/request_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'homepage.dart';
@@ -8,7 +9,6 @@ import 'favoritefilm.dart';
 import 'filmpage.dart';
 
 void main() async {
-
   runApp(const CinemaApp());
 }
 
@@ -23,10 +23,9 @@ class _CinemaAppState extends State<CinemaApp> {
   @override
   void initState() {
     super.initState();
-}
+  }
 
-
-@override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/homepage',

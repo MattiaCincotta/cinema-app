@@ -70,14 +70,12 @@ class _RegistrationpageState extends State<Registrationpage> {
     }
 
     RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
-    if(!(await mgr.register(_username.text, _password1.text))){
+    if (!(await mgr.register(_username.text, _password1.text))) {
       _showSnackBar('utente già registrato');
       return;
     }
-     // ignore: use_build_context_synchronously
-     Navigator.pushNamed(context, '/login');
-
-    
+    // ignore: use_build_context_synchronously
+    Navigator.pushNamed(context, '/login');
   }
 
   bool _validateInputs() {
@@ -141,10 +139,9 @@ class _RegistrationpageState extends State<Registrationpage> {
             const Text(
               'Benvenuto! Crea il tuo account ',
               style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-                fontSize: 18
-              ),
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
             ),
           ],
         ),

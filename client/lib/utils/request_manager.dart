@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:client/utils/models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 
 class RequestManager {
   final String baseUrl;
@@ -19,7 +20,10 @@ class RequestManager {
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        return Director(id: result['id'], name: result['name'], imageUrl: result['image_url']);
+        return Director(
+            id: result['id'],
+            name: result['name'],
+            imageUrl: result['image_url']);
       } else {
         print('Errore durante la richiesta GET: ${response.statusCode}');
         return null;
@@ -56,16 +60,20 @@ class RequestManager {
     const storage = FlutterSecureStorage();
 
     try {
-      final response = await http.get(url, headers: {"token": (await storage.read(key: 'token'))!});
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        final List<dynamic> result = json.decode(response.body);
+        final dynamic result = json.decode(response.body);
 
-        List<Director> directors = List.empty(growable: true);
-        for (var value in result) {
-            directors.add(Director(id: value["id"], name: value["name"], imageUrl: value["image_url"]));
+        int count = result["count"];
+        List<Director> directors = [];
+        for (int i = 0; i < count; i++) {
+          directors.add(Director(
+              id: result["directors"][i]["id"],
+              name: result["directors"][i]["name"],
+              imageUrl: result["directors"][i]["image_url"]));
         }
-
         return directors;
       }
 
@@ -142,8 +150,8 @@ class RequestManager {
   }
 
 ///////////////////////////////// LOGIN /////////////////////////////////
-   Future<bool> login(String username, String password) async {
-    String endpoint = '/login'; 
+  Future<bool> login(String username, String password) async {
+    String endpoint = '/login';
     final Uri url = Uri.parse('$baseUrl$endpoint');
 
     final response = await http.post(
@@ -158,20 +166,19 @@ class RequestManager {
     if (response.statusCode == 200) {
       const storage = FlutterSecureStorage();
       final responseData = json.decode(response.body);
-      await storage.write(key: 'token',value: responseData['token']);
+      await storage.write(key: 'token', value: responseData['token']);
 
       print('login riuscito: ${responseData['message']}');
       return true;
     } else {
-
       print('Errore nel login: ${response.body}');
-      return false; 
+      return false;
     }
   }
 
 ///////////////////////////////// REGISTER /////////////////////////////////
   Future<bool> register(String username, String password) async {
-    String endpoint = '/register'; 
+    String endpoint = '/register';
     final Uri url = Uri.parse('$baseUrl$endpoint');
 
     final response = await http.post(
@@ -193,9 +200,8 @@ class RequestManager {
       print('Registrazione riuscita: ${responseData['token']}');
       return true;
     } else {
-
       print('Errore nella registrazione: ${response.body}');
-      return false; 
+      return false;
     }
   }
 }
