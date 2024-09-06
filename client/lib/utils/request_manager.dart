@@ -1,3 +1,4 @@
+import 'package:client/utils/models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,7 +10,7 @@ class RequestManager {
   RequestManager({required this.baseUrl});
 
 ///////////////////////////////// SEARCH DIRECTOR /////////////////////////////////
-  Future<Map<String, dynamic>?> searchDirector(String directorName) async {
+  Future<Director?> searchDirector(String directorName) async {
     String endpoint = '/search/director';
     final Uri url = Uri.parse('$baseUrl$endpoint?name=$directorName');
 
@@ -17,7 +18,8 @@ class RequestManager {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final result = json.decode(response.body);
+        return Director(id: result['id'], name: result['name'], imageUrl: result['image_url']);
       } else {
         print('Errore durante la richiesta GET: ${response.statusCode}');
         return null;
@@ -48,7 +50,29 @@ class RequestManager {
     }
   }
 
+  Future<List<Director>?> getDirectors() async {
+    String endpoint = '/directors';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
 
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> result = json.decode(response.body);
+
+        List<Director> directors = List.empty(growable: true);
+        for (var value in result) {
+            directors.add(Director(id: value["id"], name: value["name"], imageUrl: value["image_url"]));
+        }
+
+        return directors;
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 
 ///////////////////////////////// GET DIRECTOR BIOGRAPHY /////////////////////////////////
   Future<String?> getDirectorBiography() async {
@@ -140,7 +164,7 @@ class RequestManager {
     } else {
 
       print('Errore nel login: ${response.body}');
-      return false; //TODO se ritorna falso credenziali sbagliate
+      return false; 
     }
   }
 
@@ -170,7 +194,7 @@ class RequestManager {
     } else {
 
       print('Errore nella registrazione: ${response.body}');
-      return false; //TODO se ritorna falso nome già in uso
+      return false; 
     }
   }
 }

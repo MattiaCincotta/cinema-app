@@ -1,6 +1,7 @@
 import 'package:client/favoritefilm.dart';
 import 'package:client/filmpage.dart';
 import 'package:client/movie_history.dart';
+import 'package:client/utils/request_manager.dart';
 import 'package:flutter/material.dart';
 
 class DirectionListPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
     'Drammatico  ': false,
   };
 
+  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,80 +186,24 @@ class _DirectionListPageState extends State<DirectionListPage> {
       ),
       backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.grey[850],
-              child: Divider(
-                color: Colors.grey[900],
-                thickness: 15,
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-              child: createCard(
-                context: context,
-                imageUrl: 'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                name: 'Title 3',
-              ),
-            ),
-          ],
-        ),
+        child: FutureBuilder(future: requestManager.getDirectors(), builder: (context, snapshot) {
+              List<Widget> children = List.empty(growable: true);
+              children.add(Container(
+                color: Colors.grey[850],
+                child: Divider(
+                  color: Colors.grey[900],
+                  thickness: 15,),));
+
+              if (snapshot.hasData) {
+                for (var values in snapshot.data!) {
+                  children.add(createCard(context: context, imageUrl: values.imageUrl, name: values.name));
+                }
+              }
+
+              return Column(
+                children: children,
+              );
+            })
       ),
     );
   }
