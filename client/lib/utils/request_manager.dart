@@ -53,9 +53,10 @@ class RequestManager {
   Future<List<Director>?> getDirectors() async {
     String endpoint = '/directors';
     final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
 
     try {
-      final response = await http.get(url);
+      final response = await http.get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
         final List<dynamic> result = json.decode(response.body);
