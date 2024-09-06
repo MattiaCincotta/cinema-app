@@ -56,9 +56,21 @@ CREATE TABLE IF NOT EXISTS to_see_movies(
     seen BIT(1)
 );
 
-INSERT INTO categories(name)
-VALUES ('Action'), ('Adventure'), ('Comedy'), ('Drama'), ('Fantasy'), ('Horror'), ('Mystery'), ('Romance'), ('Sci-Fi'), ('Thriller')
-WHERE NOT EXISTS (SELECT * FROM categories);
+IF NOT EXISTS (SELECT 1 FROM categories)
+THEN
+    INSERT INTO categories (name)
+    VALUES
+        ('Action'),
+        ('Adventure'),
+        ('Comedy'),
+        ('Drama'),
+        ('Fantasy'),
+        ('Horror'),
+        ('Mystery'),
+        ('Romance'),
+        ('Sci-Fi'),
+        ('Thriller');
+END IF;
 
 -- example data for testing
 INSERT INTO directors(name, image_url) VALUES
