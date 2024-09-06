@@ -57,16 +57,7 @@ CREATE TABLE IF NOT EXISTS to_see_movies(
 );
 
 INSERT INTO categories(name)
-SELECT 'Action' UNION ALL
-SELECT 'Adventure' UNION ALL
-SELECT 'Comedy' UNION ALL
-SELECT 'Drama' UNION ALL
-SELECT 'Fantasy' UNION ALL
-SELECT 'Horror' UNION ALL
-SELECT 'Mystery' UNION ALL
-SELECT 'Romance' UNION ALL
-SELECT 'Sci-Fi' UNION ALL
-SELECT 'Thriller'
+VALUES ('Action'), ('Adventure'), ('Comedy'), ('Drama'), ('Fantasy'), ('Horror'), ('Mystery'), ('Romance'), ('Sci-Fi'), ('Thriller')
 WHERE NOT EXISTS (SELECT * FROM categories);
 
 -- example data for testing
