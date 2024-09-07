@@ -19,11 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _isSnackBarActive = false;
 
   Future<bool> _login() async {
-    const storage = FlutterSecureStorage();
-    if (await storage.read(key: 'remember') == 'true') {
-      return true;
-    }
-
     RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
     if (await mgr.login(_usernameController.text, _passwordController.text)) {
       return true;
@@ -212,9 +207,14 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   child: Checkbox(
                                     value: _isChecked,
-                                    onChanged: (bool? value) {
+                                    onChanged: (bool? value) async {
+                                      const storage = FlutterSecureStorage();
+                                      await storage.write(
+                                          key: "rememberMe",
+                                          value: value! ? "true" : "false");
+
                                       setState(() {
-                                        _isChecked = value!;
+                                        _isChecked = value;
                                       });
                                     },
                                     activeColor: Colors.blueGrey[500],
