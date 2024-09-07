@@ -222,6 +222,7 @@ class _CinemaAppHomepageState extends State<CinemaAppHomepage> {
               ElevatedButton(
                 onPressed: () async {
                   var storage = const FlutterSecureStorage();
+                  await storage.write(key: 'rememberMe', value: 'false');
                   (await storage.read(key: 'rememberMe') == 'true' &&
                           await storage.containsKey(key: "token"))
                       ? Navigator.push(

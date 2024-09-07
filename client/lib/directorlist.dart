@@ -25,7 +25,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
   };
 
   final RequestManager requestManager =
-      RequestManager(baseUrl: 'http://172.18.0.3:5000');
+      RequestManager(baseUrl: 'http://172.19.0.3:5000/');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,32 +187,40 @@ class _DirectionListPageState extends State<DirectionListPage> {
         ],
       ),
       backgroundColor: Colors.grey[900],
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.grey[850],
-              child: Divider(
-                color: Colors.grey[900],
-                thickness: 15,
-              ),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.grey[850],
+            child: Divider(
+              color: Colors.grey[900],
+              thickness: 15,
             ),
-            FutureBuilder(
-                future: requestManager.getDirectors(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                        child: Text('Error loading directors.'));
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-                    return const Center(child: Text('No directors found.'));
-                  }
+          ),
+          FutureBuilder(
+              future: requestManager.getDirectors(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading directors.'));
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(child: Text('No directors found.'));
+                }
 
-                  final List<Director> directors =
-                      snapshot.data as List<Director>;
+                final dynamic result = snapshot.data;
 
-                  return ListView.builder(
+                int count = result["count"];
+                List<Director> directors = [];
+                for (int i = 0; i < count; i++) {
+                  print(result["directors"][i]["name"]);
+                  directors.add(Director(
+                      id: result["directors"][i]["id"],
+                      name: result["directors"][i]["name"],
+                      imageUrl: result["directors"][i]["image_url"]));
+                }
+
+                return Expanded(
+                  child: ListView.builder(
                     itemCount: directors.length,
                     itemBuilder: (context, index) {
                       return createCard(
@@ -221,10 +229,10 @@ class _DirectionListPageState extends State<DirectionListPage> {
                         name: directors[index].name,
                       );
                     },
-                  );
-                })
-          ],
-        ),
+                  ),
+                );
+              })
+        ],
       ),
     );
   }

@@ -1,9 +1,9 @@
-class Director{
+class Director {
+  final int id;
 
-final String id;
+  final String name;
 
-final String name;
+  final String imageUrl;
 
-final String imageUrl;
-
-Director({required this.id, required this.name, required this.imageUrl});}
+  Director({required this.id, required this.name, required this.imageUrl});
+}

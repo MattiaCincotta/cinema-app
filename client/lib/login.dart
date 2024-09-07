@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isSnackBarActive = false;
 
   Future<bool> _login() async {
-    RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
+    RequestManager mgr = RequestManager(baseUrl: 'http://172.19.0.3:5000/');
     if (await mgr.login(_usernameController.text, _passwordController.text)) {
       return true;
     } else {

@@ -54,7 +54,7 @@ class RequestManager {
     }
   }
 
-  Future<List<Director>?> getDirectors() async {
+  Future<dynamic> getDirectors() async {
     String endpoint = '/directors';
     final Uri url = Uri.parse('$baseUrl$endpoint');
     const storage = FlutterSecureStorage();
@@ -66,7 +66,7 @@ class RequestManager {
       if (response.statusCode == 200) {
         final dynamic result = json.decode(response.body);
 
-        int count = result["count"];
+        /*int count = result["count"];
         List<Director> directors = [];
         for (int i = 0; i < count; i++) {
           directors.add(Director(
@@ -74,7 +74,8 @@ class RequestManager {
               name: result["directors"][i]["name"],
               imageUrl: result["directors"][i]["image_url"]));
         }
-        return directors;
+        return directors;*/
+        return result;
       }
 
       return null;
