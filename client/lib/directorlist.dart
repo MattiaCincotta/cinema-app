@@ -202,22 +202,38 @@ class _DirectionListPageState extends State<DirectionListPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading directors.'));
+                  return const Center(
+                    child: Text(
+                      'Error loading directors.',
+                      style: TextStyle(
+                        color: Colors.red, // Colore rosso
+                        fontWeight: FontWeight.bold, // Grassetto
+                      ),
+                    ),
+                  );
                 } else if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(child: Text('No directors found.'));
+                  return const Center(
+                    child: Text(
+                      'No directors found.',
+                      style: TextStyle(
+                        color: Colors.red, // Colore rosso
+                        fontWeight: FontWeight.bold, // Grassetto
+                      ),
+                    ),
+                  );
                 }
 
-                final List<dynamic> result = snapshot.data;
+                final dynamic result = snapshot.data;
+
+                int count = result["count"] as int;
 
                 List<Director> directors = [];
-
-                
-                for (var directorData in result) {
+                for (int i = 0; i < count; i++) {
+                  print(result["directors"][i]["name"]);
                   directors.add(Director(
-                    id: directorData["id"],
-                    name: directorData["name"],
-                    imageUrl: directorData["image_url"],
-                  ));
+                      id: result["directors"][i]["id"],
+                      name: result["directors"][i]["name"],
+                      imageUrl: result["directors"][i]["image_url"]));
                 }
 
                 return Expanded(
@@ -268,11 +284,11 @@ class _DirectionListPageState extends State<DirectionListPage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    const SizedBox(width: 20.0),
+                    const SizedBox(width: 15.0),
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 5.0,
+                        fontSize: 23.0,
                         color: Colors.white,
                       ),
                     ),
@@ -294,7 +310,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30.0, vertical: 15.0),
                     textStyle: const TextStyle(
-                      fontSize: 5.0,
+                      fontSize: 17.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

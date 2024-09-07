@@ -28,7 +28,7 @@ class _CinemaAppState extends State<CinemaApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/directorList',
+      initialRoute: '/homepage',
       routes: {
         '/homepage': (context) => const CinemaAppHomepage(),
         '/login': (context) => const LoginPage(),
