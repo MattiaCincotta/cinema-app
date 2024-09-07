@@ -83,9 +83,9 @@ CALL insert_categories_if_empty();
 
 -- example data for testing
 INSERT INTO directors(name, image_url) VALUES
-        ('Christopher Nolan', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Christopher_Nolan_by_Gage_Skidmore.jpg/800px-Christopher_Nolan_by_Gage_Skidmore.jpg'),
-        ('Quentin Tarantino', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Quentin_Tarantino_by_Gage_Skidmore.jpg/800px-Quentin_Tarantino_by_Gage_Skidmore.jpg'),
-        ('Steven Spielberg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Steven_Spielberg_by_Gage_Skidmore.jpg/800px-Steven_Spielberg_by_Gage_Skidmore.jpg');
+        ('Christopher Nolan', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Christopher_Nolan_Cannes_2018.jpg/220px-Christopher_Nolan_Cannes_2018.jpg'),
+        ('Quentin Tarantino', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Quentin_Tarantino_by_Gage_Skidmore.jpg/220px-Quentin_Tarantino_by_Gage_Skidmore.jpg'),
+        ('Steven Spielberg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/MKr25402_Steven_Spielberg_%28Berlinale_2023%29.jpg/220px-MKr25402_Steven_Spielberg_%28Berlinale_2023%29.jpg');
     
 INSERT INTO directors_categories(director_id, category_id) VALUES
         (1, 9),
