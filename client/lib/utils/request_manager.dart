@@ -129,9 +129,9 @@ class RequestManager {
   }
 
   ///////////////////////////////// GET DIRECTOR MOVIE /////////////////////////////////
-  Future<String?> getDirectorMovie() async {
+  Future<String?> getDirectorMovie(String director) async {
     String endpoint = '/director/movies';
-    final Uri url = Uri.parse('$baseUrl$endpoint');
+    final Uri url = Uri.parse('$baseUrl$endpoint?director=$director');
 
     try {
       final response = await http.get(url);

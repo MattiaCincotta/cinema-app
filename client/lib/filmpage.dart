@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:client/utils/request_manager.dart';
+import 'package:client/utils/models.dart';
 
 class FilmPage extends StatefulWidget {
   const FilmPage({super.key});
@@ -9,69 +11,67 @@ class FilmPage extends StatefulWidget {
 
 class __FilmPageStateState extends State<FilmPage> {
   bool isFavorite = false;
-  //final int _favoriteCount = 0;
   bool isViewed = false;
-  //final int _viewCount = 0;
+  final RequestManager requestManager =
+      RequestManager(baseUrl: 'http://172.18.0.3:5000');
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios_new,
-          color: Colors.white,
-          size: 28,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      title: const Text(
-        'Nome del regista',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 27,
-          fontFamily: 'Cinematic',
+        title: const Text(
+          'Nome del regista',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 27,
+            fontFamily: 'Cinematic',
+          ),
         ),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.grey[900],
+        elevation: 4.0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  iconSize: 35,
+                  onPressed: () {
+                    // TODO: Implementa la funzione per la ricerca
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      foregroundColor: Colors.white,
       backgroundColor: Colors.grey[900],
-      elevation: 4.0,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.search),
-                iconSize: 35,
-                onPressed: () {
-                  // TODO: Implementa la funzione per la ricerca
-                },
-              ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1B1B1B),
+              Color(0xFF333333),
             ],
           ),
         ),
-      ],
-    ),
-    backgroundColor: Colors.grey[900],
-    body: Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF1B1B1B),
-            Color(0xFF333333),
-          ],
-        ),
-      ),
-      child: SingleChildScrollView(
         child: Column(
           children: [
-
             Card(
               margin: const EdgeInsets.all(16.0),
               shape: RoundedRectangleBorder(
@@ -82,18 +82,16 @@ Widget build(BuildContext context) {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: Image.asset(
-                        'assets/images/Logo.jpg', 
+                        'assets/images/Logo.jpg',
                         width: 200.0,
                         height: 200.0,
                         fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(width: 16.0),
-
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,40 +119,75 @@ Widget build(BuildContext context) {
                 ),
               ),
             ),
-            createCardRows(
-              [
-                createImageWithStar(
-                  const AssetImage('assets/images/Logo.jpg'),
-                  'La storia della principessa splendente e delle sue avventure straordinarie',
-                  '1992',
-                ),
-                createImageWithStar(
-                  const AssetImage('assets/images/Logo.jpg'),
-                  'Un altro film con un titolo molto lungo che si estende per diverse righe',
-                  '1992',
-                ),
-                createImageWithStar(
-                  const AssetImage('assets/images/Logo.jpg'),
-                  'La storia della principessa splendente',
-                  '1992',
-                ),
-                createImageWithStar(
-                  const AssetImage('assets/images/Logo.jpg'),
-                  'La storia della principessa splendente',
-                  '1992',
-                ),
-              ],
+
+            // Aggiunta del FutureBuilder per ottenere i registi
+            FutureBuilder(
+              future: requestManager.getDirectorMovie('Christopher Nolan'),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      'Error loading movies.',
+                      style: TextStyle(
+                        color: Colors.red, // Colore rosso
+                        fontWeight: FontWeight.bold, // Grassetto
+                      ),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(
+                    child: Text(
+                      'No movies found.',
+                      style: TextStyle(
+                        color: Colors.red, // Colore rosso
+                        fontWeight: FontWeight.bold, // Grassetto
+                      ),
+                    ),
+                  );
+                }
+
+                final dynamic result = snapshot.data;
+
+                // Creare una lista di registi
+                List<Movie> movies = [];
+                for (var movieData in result) {
+                  movies.add(Movie(
+                    directorID: movieData["director_id"],
+                    title: movieData["title"],
+                    imageUrl: movieData["image_url"],
+                    year: movieData["year"],
+                  ));
+                }
+
+                List<Widget> movieCards = movies.map((movie) {
+                  return createCard(
+                    context,
+                    movie.title,
+                    movie.imageUrl,
+                    movie.year,
+                  );
+                }).toList();
+
+                // Usa createCardRows per visualizzare le card in righe
+                return Expanded(
+                  child: SingleChildScrollView(
+                    child: createCardRows(movieCards),
+                  ),
+                );
+              },
             ),
+
+            // Le tue card statiche di esempio
           ],
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-
-  Widget createImageWithStar(
-      ImageProvider image, String filmName, String year) {
+  Widget createCard(
+      BuildContext context, String title, String imageUrl, int year) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
         return SizedBox(
@@ -177,7 +210,7 @@ Widget build(BuildContext context) {
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(19.0)),
                     image: DecorationImage(
-                      image: image,
+                      image: NetworkImage(imageUrl), // Carica l'immagine da URL
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -185,7 +218,7 @@ Widget build(BuildContext context) {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    filmName,
+                    title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -202,7 +235,7 @@ Widget build(BuildContext context) {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        year,
+                        year.toString(),
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.grey[800],
