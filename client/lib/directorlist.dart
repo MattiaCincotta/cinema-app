@@ -25,7 +25,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
   };
 
   final RequestManager requestManager =
-      RequestManager(baseUrl: 'http://172.19.0.3:5000/');
+      RequestManager(baseUrl: 'http://172.18.0.3:5000');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -207,22 +207,24 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   return const Center(child: Text('No directors found.'));
                 }
 
-                final dynamic result = snapshot.data;
+                final List<dynamic> result = snapshot.data;
 
-                int count = result["count"];
                 List<Director> directors = [];
-                for (int i = 0; i < count; i++) {
-                  print(result["directors"][i]["name"]);
+
+                
+                for (var directorData in result) {
                   directors.add(Director(
-                      id: result["directors"][i]["id"],
-                      name: result["directors"][i]["name"],
-                      imageUrl: result["directors"][i]["image_url"]));
+                    id: directorData["id"],
+                    name: directorData["name"],
+                    imageUrl: directorData["image_url"],
+                  ));
                 }
 
                 return Expanded(
                   child: ListView.builder(
                     itemCount: directors.length,
                     itemBuilder: (context, index) {
+                      print(directors[index].imageUrl);
                       return createCard(
                         context: context,
                         imageUrl: directors[index].imageUrl,
@@ -270,7 +272,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 25.0,
+                        fontSize: 5.0,
                         color: Colors.white,
                       ),
                     ),
@@ -292,7 +294,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30.0, vertical: 15.0),
                     textStyle: const TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 5.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
