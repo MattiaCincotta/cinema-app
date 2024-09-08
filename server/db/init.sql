@@ -93,9 +93,9 @@ INSERT INTO directors_categories(director_id, category_id) VALUES
         (3, 1);
 
 INSERT INTO movies(title, year, image_url, director_id) VALUES
-        ('Inception', 2010, 'https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg', 1),
+        ('Inception', 2010, 'https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg', 1),
         ('Pulp Fiction', 1994, 'https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg', 2),
-        ('Saving Private Ryan', 1998, 'https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg', 3);
+        ('Saving Private Ryan', 1998, 'https://upload.wikimedia.org/wikipedia/en/thumb/a/ac/Saving_Private_Ryan_poster.jpg/220px-Saving_Private_Ryan_poster.jpg', 3);
     
 INSERT INTO movies_categories(movie_id, category_id) VALUES
         (1, 9),
