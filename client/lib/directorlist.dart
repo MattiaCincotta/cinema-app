@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:client/favoritefilm.dart';
 import 'package:client/filmpage.dart';
 import 'package:client/movie_history.dart';
 import 'package:client/utils/models.dart';
 import 'package:client/utils/request_manager.dart';
-import 'package:flutter/material.dart';
 
 class DirectionListPage extends StatefulWidget {
   const DirectionListPage({super.key});
@@ -14,18 +14,20 @@ class DirectionListPage extends StatefulWidget {
 
 class _DirectionListPageState extends State<DirectionListPage> {
   final Map<String, bool> _checkboxValues = {
-    'Horror      ': false,
-    'Thriller          ': false,
-    'Mistero    ': false,
-    'Romantico    ': false,
-    'Fantasy    ': false,
+    'Horror': false,
+    'Thriller': false,
+    'Mistero': false,
+    'Romantico': false,
+    'Fantasy': false,
     'Fantascienza': false,
     'Avventura': false,
-    'Drammatico  ': false,
+    'Drammatico': false,
   };
 
-  final RequestManager requestManager =
-      RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  final TextEditingController searchController = TextEditingController();
+  bool showSearchBar = false; // Variabile di stato per mostrare/nascondere la barra di ricerca
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +58,15 @@ class _DirectionListPageState extends State<DirectionListPage> {
         elevation: 6.0,
         actions: [
           IconButton(
+            icon: const Icon(Icons.search),
+            iconSize: 28,
+            onPressed: () {
+              setState(() {
+                showSearchBar = !showSearchBar; // Mostra o nasconde la barra di ricerca
+              });
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.star_border),
             iconSize: 28,
             onPressed: () {
@@ -75,13 +86,6 @@ class _DirectionListPageState extends State<DirectionListPage> {
                 MaterialPageRoute(
                     builder: (context) => const MovieHistoryPage()),
               );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            iconSize: 28,
-            onPressed: () {
-              // TODO: Implementa la funzione per la ricerca
             },
           ),
           IconButton(
@@ -189,71 +193,116 @@ class _DirectionListPageState extends State<DirectionListPage> {
       backgroundColor: Colors.grey[900],
       body: Column(
         children: [
-          Container(
-            color: Colors.grey[850],
-            child: Divider(
-              color: Colors.grey[900],
-              thickness: 15,
-            ),
-          ),
-          FutureBuilder(
-              future: requestManager.getDirectors(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text(
-                      'Error loading directors.',
-                      style: TextStyle(
-                        color: Colors.red, // Colore rosso
-                        fontWeight: FontWeight.bold, // Grassetto
-                      ),
+          if (showSearchBar) // Mostra la barra di ricerca solo se showSearchBar è true
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                style: const TextStyle(
+                  color: Colors.white, // Colore del testo digitato
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Cerca regista...',
+                  hintStyle: const TextStyle(
+                    color: Colors.white54, // Colore del testo suggerimento
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: const BorderSide(color: Colors.white), // Colore del bordo
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.white, // Colore dell'icona di ricerca
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      color: Colors.white, // Colore dell'icona clear
                     ),
-                  );
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(
-                    child: Text(
-                      'No directors found.',
-                      style: TextStyle(
-                        color: Colors.red, // Colore rosso
-                        fontWeight: FontWeight.bold, // Grassetto
-                      ),
-                    ),
-                  );
-                }
-
-                final dynamic result = snapshot.data;
-
-                int count = result["count"] as int;
-
-                List<Director> directors = [];
-                for (int i = 0; i < count; i++) {
-                  print(result["directors"][i]["name"]);
-                  directors.add(Director(
-                      id: result["directors"][i]["id"],
-                      name: result["directors"][i]["name"],
-                      imageUrl: result["directors"][i]["image_url"]));
-                }
-
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: directors.length,
-                    itemBuilder: (context, index) {
-                      print(directors[index].imageUrl);
-                      return createCard(
-                        context: context,
-                        imageUrl: directors[index].imageUrl,
-                        name: directors[index].name,
-                      );
+                    onPressed: () {
+                      searchController.clear();
+                      FocusScope.of(context).unfocus(); // Chiude la tastiera
                     },
                   ),
-                );
-              })
+                ),
+                onSubmitted: (value) {
+                  // Logica di ricerca
+                  print('Ricerca per: $value');
+                },
+              ),
+            ),
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  color: Colors.grey[850],
+                  child: Divider(
+                    color: Colors.grey[900],
+                    thickness: 15,
+                  ),
+                ),
+                FutureBuilder(
+                    future: requestManager.getDirectors(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                          child: Text(
+                            'Error loading directors.',
+                            style: TextStyle(
+                              color: Colors.red, // Colore rosso
+                              fontWeight: FontWeight.bold, // Grassetto
+                            ),
+                          ),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data == null) {
+                        return const Center(
+                          child: Text(
+                            'No directors found.',
+                            style: TextStyle(
+                              color: Colors.red, // Colore rosso
+                              fontWeight: FontWeight.bold, // Grassetto
+                            ),
+                          ),
+                        );
+                      }
+
+                      final dynamic result = snapshot.data;
+
+                      int count = result["count"] as int;
+
+                      List<Director> directors = [];
+                      for (int i = 0; i < count; i++) {
+                        print(result["directors"][i]["name"]);
+                        directors.add(Director(
+                            id: result["directors"][i]["id"],
+                            name: result["directors"][i]["name"],
+                            imageUrl: result["directors"][i]["image_url"]));
+                      }
+
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: directors.length,
+                          itemBuilder: (context, index) {
+                            print(directors[index].imageUrl);
+                            return createCard(
+                              context: context,
+                              imageUrl: directors[index].imageUrl,
+                              name: directors[index].name,
+                            );
+                          },
+                        ),
+                      );
+                    })
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
+
 
   Widget createCard({
     required BuildContext context,

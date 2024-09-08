@@ -9,8 +9,146 @@ class MovieHistoryPage extends StatefulWidget {
 
 class _MovieHistoryPageState extends State<MovieHistoryPage> {
   int _favoriteCount = 0;
+  final TextEditingController _searchController = TextEditingController();
+  bool _showSearchBar = false;
 
-  Widget createImageWithStar(String imageUrl, String filmName) {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          'Film Visti',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 27,
+            fontFamily: 'Cinematic',
+          ),
+        ),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.grey[900],
+        elevation: 4.0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.movie,
+                  color: Colors.white,
+                  size: 33,
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Text(
+                    '$_favoriteCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  iconSize: 35,
+                  onPressed: () {
+                    setState(() {
+                      _showSearchBar = !_showSearchBar;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: Container(
+        color: Colors.grey[900], // Imposta il colore di sfondo
+        child: Column(
+          children: [
+            if (_showSearchBar)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(
+                    color: Colors.white, // Colore del testo digitato
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Cerca film...',
+                    hintStyle: const TextStyle(
+                      color: Colors.white54, // Colore del testo suggerimento
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: const BorderSide(color: Colors.white), // Colore del bordo
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Colors.white, // Colore dell'icona di ricerca
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Colors.white, // Colore dell'icona clear
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        FocusScope.of(context).unfocus(); // Chiude la tastiera
+                      },
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    // Logica di ricerca
+                    print('Ricerca per: $value');
+                  },
+                ),
+              ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 50),
+                    createCard(
+                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                      'La storia della principessa splendente e delle sue avventure straordinarie',
+                    ),
+                    createCard(
+                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                      'Un altro film con un titolo molto lungo che si estende per diverse righe',
+                    ),
+                    createCard(
+                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                      'La storia della principessa splendente',
+),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget createCard(String imageUrl, String filmName) {
     bool isChecked = true;
 
     return StatefulBuilder(
@@ -92,103 +230,4 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 28,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Film Visti',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 27,
-            fontFamily: 'Cinematic',
-          ),
-        ),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.grey[900],
-        elevation: 4.0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.movie,
-                  color: Colors.white,
-                  size: 33,
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Text(
-                    '$_favoriteCount',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  iconSize: 35,
-                  onPressed: () {
-                    // TODO: Implementa la funzione per la ricerca
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1B1B1B),
-              Color(0xFF333333),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              createImageWithStar(
-                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                'La storia della principessa splendente e delle sue avventure straordinarie',
-              ),
-              createImageWithStar(
-                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                'Un altro film con un titolo molto lungo che si estende per diverse righe',
-              ),
-              createImageWithStar(
-                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                'La storia della principessa splendente',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

@@ -9,9 +9,11 @@ class FavoriteFilmPage extends StatefulWidget {
 }
 
 class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
-  HashSet<int> numeri = HashSet<int>(); 
-  
-  
+  HashSet<int> numeri = HashSet<int>();
+  bool showSearchBar = false; // Variabile di stato per la barra di ricerca
+  final TextEditingController searchController =
+      TextEditingController(); // Controller per la barra di ricerca
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +76,10 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                   icon: const Icon(Icons.search),
                   iconSize: 35,
                   onPressed: () {
-                    // TODO: Implementa la funzione per la ricerca
+                    setState(() {
+                      showSearchBar =
+                          !showSearchBar; // Mostra o nasconde la barra di ricerca
+                    });
                   },
                 ),
               ],
@@ -82,36 +87,73 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1B1B1B),
-              Color(0xFF333333),
-            ],
+      backgroundColor: Colors.grey[900],
+      body: Column(
+        children: [
+          if (showSearchBar) // Mostra la barra di ricerca solo se showSearchBar è true
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                style: const TextStyle(
+                  color: Colors.white, // Colore del testo digitato
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Cerca regista...',
+                  hintStyle: const TextStyle(
+                    color: Colors.white54, // Colore del testo suggerimento
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: const BorderSide(
+                        color: Colors.white), // Colore del bordo
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.white, // Colore dell'icona di ricerca
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      color: Colors.white, // Colore dell'icona clear
+                    ),
+                    onPressed: () {
+                      searchController.clear();
+                      FocusScope.of(context).unfocus(); // Chiude la tastiera
+                    },
+                  ),
+                ),
+                onSubmitted: (value) {
+                  // Logica di ricerca
+                  print('Ricerca per: $value');
+                },
+              ),
+            ),
+          Expanded(
+            child: Container(
+              color: Colors.grey[900], // Imposta il colore di sfondo
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 50),
+                    createCard(
+                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                      'La storia della principessa splendente e delle sue avventure straordinarie',
+                    ),
+                    createCard(
+                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                      'Un altro film con un titolo molto lungo che si estende per diverse righe',
+                    ),
+                    createCard(
+                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
+                      'La storia della principessa splendente',
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              createCard(
-                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                'La storia della principessa splendente e delle sue avventure straordinarie',
-              ),
-              createCard(
-                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                'Un altro film con un titolo molto lungo che si estende per diverse righe',
-              ),
-              createCard(
-                'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                'La storia della principessa splendente',
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }

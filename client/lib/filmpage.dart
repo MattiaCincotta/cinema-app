@@ -12,8 +12,12 @@ class FilmPage extends StatefulWidget {
 class __FilmPageStateState extends State<FilmPage> {
   bool isFavorite = false;
   bool isViewed = false;
+  bool showSearchBar =
+      false; // Variabile per mostrare o nascondere la barra di ricerca
   final RequestManager requestManager =
       RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  final TextEditingController searchController =
+      TextEditingController(); // Controller per la barra di ricerca
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,10 @@ class __FilmPageStateState extends State<FilmPage> {
                   icon: const Icon(Icons.search),
                   iconSize: 35,
                   onPressed: () {
-                    // TODO: Implementa la funzione per la ricerca
+                    setState(() {
+                      showSearchBar =
+                          !showSearchBar; // Mostra o nasconde la barra di ricerca
+                    });
                   },
                 ),
               ],
@@ -59,19 +66,52 @@ class __FilmPageStateState extends State<FilmPage> {
         ],
       ),
       backgroundColor: Colors.grey[900],
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1B1B1B),
-              Color(0xFF333333),
-            ],
-          ),
-        ),
+      body: GestureDetector(
+        onTap: () {
+          // Chiude la tastiera quando si tocca fuori dalla TextField
+          FocusScope.of(context).unfocus();
+        },
         child: Column(
           children: [
+            if (showSearchBar) // Mostra la barra di ricerca solo se showSearchBar è true
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: searchController,
+                  style: const TextStyle(
+                    color: Colors.white, // Colore del testo digitato
+                    fontSize: 18, 
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Cerca film...',
+                    hintStyle: const TextStyle(
+                      color: Colors.white54, // Colore del testo suggerimento
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: const BorderSide(color: Colors.white),
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Colors.white, // Colore dell'icona di ricerca
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Colors.white, // Colore dell'icona clear
+                      ),
+                      onPressed: () {
+                        searchController.clear(); // Pulisce il campo di testo
+                        FocusScope.of(context).unfocus(); // Chiude la tastiera
+                      },
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    // Qui puoi implementare la logica di ricerca
+                    print('Ricerca per: $value');
+                  },
+                ),
+              ),
             Card(
               margin: const EdgeInsets.all(16.0),
               shape: RoundedRectangleBorder(
@@ -120,63 +160,64 @@ class __FilmPageStateState extends State<FilmPage> {
               ),
             ),
             FutureBuilder(
-                future: requestManager.getDirectorMovies('Christopher Nolan'),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    print('Errore: ${snapshot.error}');
-                    return const Center(
-                      child: Text(
-                        'Error loading movies.',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
+              future: requestManager.getDirectorMovies('Christopher Nolan'),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  print('Errore: ${snapshot.error}');
+                  return const Center(
+                    child: Text(
+                      'Error loading movies.',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  } else if (!snapshot.hasData) {
-                    print(
-                        'Nessun dato trovato, snapshot.hasData: ${snapshot.hasData}');
-                    return const Center(
-                      child: Text(
-                        'No movies found.',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                  );
+                } else if (!snapshot.hasData) {
+                  print(
+                      'Nessun dato trovato, snapshot.hasData: ${snapshot.hasData}');
+                  return const Center(
+                    child: Text(
+                      'No movies found.',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  } else {
-                    print('Film trovati: ${snapshot.data}');
-                    final dynamic result = snapshot.data;
+                    ),
+                  );
+                } else {
+                  print('Film trovati: ${snapshot.data}');
+                  final dynamic result = snapshot.data;
 
-                    List<Movie> movies = [];
-                    for (var movieData in result) {
-                      movies.add(Movie(
-                        directorID: movieData["director_id"],
-                        title: movieData["title"],
-                        imageUrl: movieData["image_url"],
-                        year: movieData["year"],
-                      ));
-                    }
-
-                    List<Widget> movieCards = movies.map((movie) {
-                      return createCard(
-                        context,
-                        movie.title,
-                        movie.imageUrl,
-                        movie.year,
-                      );
-                    }).toList();
-
-                    return Expanded(
-                      child: SingleChildScrollView(
-                        child: createCardRows(movieCards),
-                      ),
-                    );
+                  List<Movie> movies = [];
+                  for (var movieData in result) {
+                    movies.add(Movie(
+                      directorID: movieData["director_id"],
+                      title: movieData["title"],
+                      imageUrl: movieData["image_url"],
+                      year: movieData["year"],
+                    ));
                   }
-                }),
+
+                  List<Widget> movieCards = movies.map((movie) {
+                    return createCard(
+                      context,
+                      movie.title,
+                      movie.imageUrl,
+                      movie.year,
+                    );
+                  }).toList();
+
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      child: createCardRows(movieCards),
+                    ),
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),
