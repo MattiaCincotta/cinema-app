@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:client/utils/models.dart';
@@ -128,7 +129,7 @@ class RequestManager {
   }
 
   ///////////////////////////////// GET DIRECTOR MOVIES /////////////////////////////////
-  Future<String?> getDirectorMovies(String director) async {
+  Future<dynamic> getDirectorMovies(String director) async {
     String endpoint = '/director/movies';
     final Uri url = Uri.parse('$baseUrl$endpoint?director=$director');
     const storage = FlutterSecureStorage();

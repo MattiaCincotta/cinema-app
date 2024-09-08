@@ -119,7 +119,6 @@ class __FilmPageStateState extends State<FilmPage> {
                 ),
               ),
             ),
-
             FutureBuilder(
                 future: requestManager.getDirectorMovies('Christopher Nolan'),
                 builder: (context, snapshot) {
@@ -136,9 +135,9 @@ class __FilmPageStateState extends State<FilmPage> {
                         ),
                       ),
                     );
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-
-                    print('snapshotHasData: ${snapshot.hasData},  snapshotData: ${snapshot.data}');
+                  } else if (!snapshot.hasData) {
+                    print(
+                        'Nessun dato trovato, snapshot.hasData: ${snapshot.hasData}');
                     return const Center(
                       child: Text(
                         'No movies found.',
@@ -149,7 +148,7 @@ class __FilmPageStateState extends State<FilmPage> {
                       ),
                     );
                   } else {
-                    print('prova------------------------');
+                    print('Film trovati: ${snapshot.data}');
                     final dynamic result = snapshot.data;
 
                     List<Movie> movies = [];
