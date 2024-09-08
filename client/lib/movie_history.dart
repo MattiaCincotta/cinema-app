@@ -81,7 +81,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
         ],
       ),
       body: Container(
-        color: Colors.grey[900], // Imposta il colore di sfondo
+        color: Colors.grey[900],
         child: Column(
           children: [
             if (_showSearchBar)
@@ -90,34 +90,34 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                 child: TextField(
                   controller: _searchController,
                   style: const TextStyle(
-                    color: Colors.white, // Colore del testo digitato
+                    color: Colors.white,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Cerca film...',
                     hintStyle: const TextStyle(
-                      color: Colors.white54, // Colore del testo suggerimento
+                      color: Colors.white54, 
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
-                      borderSide: const BorderSide(color: Colors.white), // Colore del bordo
+                      borderSide: const BorderSide(
+                          color: Colors.white), 
                     ),
                     prefixIcon: const Icon(
                       Icons.search,
-                      color: Colors.white, // Colore dell'icona di ricerca
+                      color: Colors.white,
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(
                         Icons.clear,
-                        color: Colors.white, // Colore dell'icona clear
+                        color: Colors.white, 
                       ),
                       onPressed: () {
                         _searchController.clear();
-                        FocusScope.of(context).unfocus(); // Chiude la tastiera
+                        FocusScope.of(context).unfocus();
                       },
                     ),
                   ),
                   onSubmitted: (value) {
-                    // Logica di ricerca
                     print('Ricerca per: $value');
                   },
                 ),
@@ -138,7 +138,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                     createCard(
                       'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
                       'La storia della principessa splendente',
-),
+                    ),
                   ],
                 ),
               ),
@@ -148,6 +148,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
       ),
     );
   }
+
   Widget createCard(String imageUrl, String filmName) {
     bool isChecked = true;
 
@@ -229,5 +230,4 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
       },
     );
   }
-
 }

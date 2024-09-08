@@ -13,11 +13,11 @@ class __FilmPageStateState extends State<FilmPage> {
   bool isFavorite = false;
   bool isViewed = false;
   bool showSearchBar =
-      false; // Variabile per mostrare o nascondere la barra di ricerca
+      false; 
   final RequestManager requestManager =
       RequestManager(baseUrl: 'http://172.18.0.3:5000');
   final TextEditingController searchController =
-      TextEditingController(); // Controller per la barra di ricerca
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class __FilmPageStateState extends State<FilmPage> {
                   onPressed: () {
                     setState(() {
                       showSearchBar =
-                          !showSearchBar; // Mostra o nasconde la barra di ricerca
+                          !showSearchBar;
                     });
                   },
                 ),
@@ -68,24 +68,23 @@ class __FilmPageStateState extends State<FilmPage> {
       backgroundColor: Colors.grey[900],
       body: GestureDetector(
         onTap: () {
-          // Chiude la tastiera quando si tocca fuori dalla TextField
           FocusScope.of(context).unfocus();
         },
         child: Column(
           children: [
-            if (showSearchBar) // Mostra la barra di ricerca solo se showSearchBar è true
+            if (showSearchBar) 
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   controller: searchController,
                   style: const TextStyle(
-                    color: Colors.white, // Colore del testo digitato
+                    color: Colors.white, 
                     fontSize: 18, 
                   ),
                   decoration: InputDecoration(
                     hintText: 'Cerca film...',
                     hintStyle: const TextStyle(
-                      color: Colors.white54, // Colore del testo suggerimento
+                      color: Colors.white54, 
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -93,21 +92,20 @@ class __FilmPageStateState extends State<FilmPage> {
                     ),
                     prefixIcon: const Icon(
                       Icons.search,
-                      color: Colors.white, // Colore dell'icona di ricerca
+                      color: Colors.white, 
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(
                         Icons.clear,
-                        color: Colors.white, // Colore dell'icona clear
+                        color: Colors.white,
                       ),
                       onPressed: () {
-                        searchController.clear(); // Pulisce il campo di testo
-                        FocusScope.of(context).unfocus(); // Chiude la tastiera
+                        searchController.clear(); 
+                        FocusScope.of(context).unfocus(); 
                       },
                     ),
                   ),
                   onSubmitted: (value) {
-                    // Qui puoi implementare la logica di ricerca
                     print('Ricerca per: $value');
                   },
                 ),
@@ -248,7 +246,7 @@ class __FilmPageStateState extends State<FilmPage> {
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(19.0)),
                     image: DecorationImage(
-                      image: NetworkImage(imageUrl), // Carica l'immagine da URL
+                      image: NetworkImage(imageUrl), 
                       fit: BoxFit.cover,
                     ),
                   ),
