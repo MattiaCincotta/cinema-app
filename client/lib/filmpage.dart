@@ -120,66 +120,64 @@ class __FilmPageStateState extends State<FilmPage> {
               ),
             ),
 
-            // Aggiunta del FutureBuilder per ottenere i registi
             FutureBuilder(
-              future: requestManager.getDirectorMovie('Christopher Nolan'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text(
-                      'Error loading movies.',
-                      style: TextStyle(
-                        color: Colors.red, // Colore rosso
-                        fontWeight: FontWeight.bold, // Grassetto
+                future: requestManager.getDirectorMovies('Christopher Nolan'),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    print('Errore: ${snapshot.error}');
+                    return const Center(
+                      child: Text(
+                        'Error loading movies.',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  );
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(
-                    child: Text(
-                      'No movies found.',
-                      style: TextStyle(
-                        color: Colors.red, // Colore rosso
-                        fontWeight: FontWeight.bold, // Grassetto
+                    );
+                  } else if (!snapshot.hasData || snapshot.data == null) {
+
+                    print('snapshotHasData: ${snapshot.hasData},  snapshotData: ${snapshot.data}');
+                    return const Center(
+                      child: Text(
+                        'No movies found.',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  } else {
+                    print('prova------------------------');
+                    final dynamic result = snapshot.data;
 
-                final dynamic result = snapshot.data;
+                    List<Movie> movies = [];
+                    for (var movieData in result) {
+                      movies.add(Movie(
+                        directorID: movieData["director_id"],
+                        title: movieData["title"],
+                        imageUrl: movieData["image_url"],
+                        year: movieData["year"],
+                      ));
+                    }
 
-                // Creare una lista di registi
-                List<Movie> movies = [];
-                for (var movieData in result) {
-                  movies.add(Movie(
-                    directorID: movieData["director_id"],
-                    title: movieData["title"],
-                    imageUrl: movieData["image_url"],
-                    year: movieData["year"],
-                  ));
-                }
+                    List<Widget> movieCards = movies.map((movie) {
+                      return createCard(
+                        context,
+                        movie.title,
+                        movie.imageUrl,
+                        movie.year,
+                      );
+                    }).toList();
 
-                List<Widget> movieCards = movies.map((movie) {
-                  return createCard(
-                    context,
-                    movie.title,
-                    movie.imageUrl,
-                    movie.year,
-                  );
-                }).toList();
-
-                // Usa createCardRows per visualizzare le card in righe
-                return Expanded(
-                  child: SingleChildScrollView(
-                    child: createCardRows(movieCards),
-                  ),
-                );
-              },
-            ),
-
-            // Le tue card statiche di esempio
+                    return Expanded(
+                      child: SingleChildScrollView(
+                        child: createCardRows(movieCards),
+                      ),
+                    );
+                  }
+                }),
           ],
         ),
       ),

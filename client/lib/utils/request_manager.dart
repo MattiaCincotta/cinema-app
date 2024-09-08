@@ -88,20 +88,20 @@ class RequestManager {
   Future<String?> getDirectorBiography() async {
     String endpoint = '/director/biography';
     final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
 
     try {
-      final response = await http.get(url);
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final dynamic result = json.decode(response.body);
 
-        return data['biography'] as String?; //specificare il campo
-      } else {
-        print('Errore durante la richiesta GET: ${response.statusCode}');
-        return null;
+        return result;
       }
+
+      return null;
     } catch (e) {
-      print('Errore durante la richiesta GET: $e');
       return null;
     }
   }
@@ -110,42 +110,41 @@ class RequestManager {
   Future<String?> getDirectorCategory() async {
     String endpoint = '/director/category';
     final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
 
     try {
-      final response = await http.get(url);
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final dynamic result = json.decode(response.body);
 
-        return data['category'] as String?; //specificare il campo
-      } else {
-        print('Errore durante la richiesta GET: ${response.statusCode}');
-        return null;
+        return result; 
       }
+      return null;
     } catch (e) {
-      print('Errore durante la richiesta GET: $e');
       return null;
     }
   }
 
-  ///////////////////////////////// GET DIRECTOR MOVIE /////////////////////////////////
-  Future<String?> getDirectorMovie(String director) async {
+  ///////////////////////////////// GET DIRECTOR MOVIES /////////////////////////////////
+  Future<String?> getDirectorMovies(String director) async {
     String endpoint = '/director/movies';
     final Uri url = Uri.parse('$baseUrl$endpoint?director=$director');
-
+    const storage = FlutterSecureStorage();
+    
     try {
-      final response = await http.get(url);
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final dynamic result = json.decode(response.body);
 
-        return data['category'] as String?; //specificare il campo
-      } else {
-        print('Errore durante la richiesta GET: ${response.statusCode}');
-        return null;
+        print('result: ${result}');
+        return result; 
       }
+      return null;
     } catch (e) {
-      print('Errore durante la richiesta GET: $e');
       return null;
     }
   }
