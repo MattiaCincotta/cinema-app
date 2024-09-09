@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, g
+from flask.json import jsonify
 from utils.models import *
 
 api = Flask(__name__, '/api')   
@@ -189,6 +190,17 @@ def add_seen():
             return jsonify("seen added"), 200
         else:
             return jsonify("error while adding"), 400
+    else:
+        return jsonify("invalid token"), 401
+
+@api.route('/director/<id>/biography', methods=['GET'])
+def get_director_biography(id):
+    if UserManager.verify_token(request.headers.get('token'), True):
+        result = DirectorManager.get_director_by_id(id).get_biography()
+        if result is not None:
+            return jsonify({"biography": result,}), 200
+        else:
+            return jsonify({}), 400
     else:
         return jsonify("invalid token"), 401
 

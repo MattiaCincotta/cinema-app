@@ -169,6 +169,26 @@ class Director:
         self.id = id
         self.name = name
         self.image_url = image_url
+
+    def get_biography(self) -> str:
+        """
+        Get the biography of a director.
+        Returns:
+            The biography of the director.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM directors_biography WHERE id = %s", (self.id,))
+            result = cursor.fetchone()
+            cursor.close()
+            return result["biography"]
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return None
     
 class DirectorManager:
     def __init__(self) -> None:
@@ -194,7 +214,8 @@ class DirectorManager:
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
-        
+    
+    @staticmethod
     def get_director_by_id(id: int) -> Director:
         """
         Get a director from the database.

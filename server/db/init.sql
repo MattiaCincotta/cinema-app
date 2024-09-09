@@ -49,6 +49,12 @@ CREATE TABLE IF NOT EXISTS sessions(
     token VARCHAR(64) NOT NULL  
 );
 
+CREATE TABLE IF NOT EXISTS directors_biography(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    director_id INTEGER NOT NULL,
+    biography TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS seen_movies(
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INTEGER NOT NULL,
@@ -100,3 +106,14 @@ INSERT INTO movies_categories(movie_id, category_id) VALUES
         (1, 9),
         (2, 3),
         (3, 1);
+
+INSERT INTO directors_biography(director_id, biography) VALUES
+        (1, 'Christopher Edward Nolan CBE is a British-American film director, producer, and screenwriter. He is one of the highest-grossing directors in history, and among the most acclaimed and influential filmmakers of the 21st century. The acclaim garnered by his independent films gave Nolan the opportunity to make the big-budget thriller Insomnia (2002), the mystery drama The Prestige (2006), the action film The Dark Knight Trilogy (2005–2012), the science fiction thriller Inception (2010), and the science fiction film Interstellar (2014).');
+
+INSERT INTO favorites(user_id, movie_id) VALUES
+        (1, 1),
+        (1, 2);
+
+INSERT INTO seen_movies(user_id, movie_id) VALUES
+        (1, 1),
+        (1, 2);
