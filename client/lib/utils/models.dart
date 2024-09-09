@@ -6,6 +6,7 @@ class Director {
   final String imageUrl;
 
   Director({required this.id, required this.name, required this.imageUrl});
+  
 }
 
 

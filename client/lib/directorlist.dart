@@ -336,7 +336,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const FilmPage()),
+                      MaterialPageRoute(builder: (context) => FilmPage(name: name)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -353,7 +353,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     ),
                   ),
                   child: const Text('Esplora'),
-                ),
+                )
               ],
             ),
           ),

@@ -3,7 +3,8 @@ import 'package:client/utils/request_manager.dart';
 import 'package:client/utils/models.dart';
 
 class FilmPage extends StatefulWidget {
-  const FilmPage({super.key});
+  final String name;
+  const FilmPage({super.key, required this.name});
 
   @override
   State<FilmPage> createState() => __FilmPageStateState();
@@ -158,7 +159,7 @@ class __FilmPageStateState extends State<FilmPage> {
               ),
             ),
             FutureBuilder(
-              future: requestManager.getDirectorMovies('Christopher Nolan'),
+              future: requestManager.getDirectorMovies(widget.name),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
