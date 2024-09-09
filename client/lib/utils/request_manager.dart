@@ -120,7 +120,7 @@ class RequestManager {
       if (response.statusCode == 200) {
         final dynamic result = json.decode(response.body);
 
-        return result; 
+        return result;
       }
       return null;
     } catch (e) {
@@ -133,7 +133,7 @@ class RequestManager {
     String endpoint = '/director/movies';
     final Uri url = Uri.parse('$baseUrl$endpoint?director=$director');
     const storage = FlutterSecureStorage();
-    
+
     try {
       final response = await http
           .get(url, headers: {"token": (await storage.read(key: 'token'))!});
@@ -141,8 +141,185 @@ class RequestManager {
       if (response.statusCode == 200) {
         final dynamic result = json.decode(response.body);
 
-        print('result: ${result}');
-        return result; 
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// GET FAVORITES FILM /////////////////////////////////
+  Future<dynamic> getFavorites(String title) async {
+    String endpoint = '/favorites';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// ADD FAVORITE FILM /////////////////////////////////
+  Future<dynamic> addFavorite(String title) async {
+    String endpoint = '/add_favorite';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final token = await storage.read(key: 'token');
+      if (token == null) {
+        throw 'Token non trovato';
+      }
+
+      final body = jsonEncode({'title': title});
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// REMOVE FAVORITE FILM /////////////////////////////////
+  Future<dynamic> removeFavorite(String title) async {
+    String endpoint = '/remove_favorite';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final token = await storage.read(key: 'token');
+      if (token == null) {
+        throw 'Token non trovato';
+      }
+
+      final body = jsonEncode({'title': title});
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// GET SEEN FILM /////////////////////////////////
+  Future<dynamic> getSeenMovies(String title) async {
+    String endpoint = '/seen_movies';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// ADD SEEN FILM /////////////////////////////////
+  Future<dynamic> addSeenMovies(String title) async {
+    String endpoint = '/add_seen';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final token = await storage.read(key: 'token');
+      if (token == null) {
+        throw 'Token non trovato';
+      }
+
+      final body = jsonEncode({'title': title});
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// ADD SEEN FILM /////////////////////////////////
+  Future<dynamic> removeSeenMovies(String title) async {
+    String endpoint = '/remove_seen';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final token = await storage.read(key: 'token');
+      if (token == null) {
+        throw 'Token non trovato';
+      }
+
+      final body = jsonEncode({'title': title});
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
       }
       return null;
     } catch (e) {
