@@ -14,14 +14,14 @@ class DirectionListPage extends StatefulWidget {
 
 class _DirectionListPageState extends State<DirectionListPage> {
   final Map<String, bool> _checkboxValues = {
-    'Horror': false,
-    'Thriller': false,
-    'Mistero': false,
-    'Romantico': false,
-    'Fantasy': false,
-    'Fantascienza': false,
+    'Horror      ': false,
+    'Thriller          ': false,
+    'Mistero    ': false,
+    'Romantico    ': false,
+    'Fantasy    ': false,
+    'Drammatico  ': false,
     'Avventura': false,
-    'Drammatico': false,
+    'Fantascienza': false,
   };
 
   final RequestManager requestManager =
