@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:client/utils/models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -67,15 +64,6 @@ class RequestManager {
       if (response.statusCode == 200) {
         final dynamic result = json.decode(response.body);
 
-        /*int count = result["count"];
-        List<Director> directors = [];
-        for (int i = 0; i < count; i++) {
-          directors.add(Director(
-              id: result["directors"][i]["id"],
-              name: result["directors"][i]["name"],
-              imageUrl: result["directors"][i]["image_url"]));
-        }
-        return directors;*/
         return result;
       }
 
@@ -321,6 +309,28 @@ class RequestManager {
 
         return result;
       }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///////////////////////////////// SEARCH DIRECTOR BY CATEGORY /////////////////////////////////
+  Future<dynamic> searchDirectorByCategory(String categoryID) async {
+    String endpoint = '/directors/category';
+    final Uri url = Uri.parse('$baseUrl$endpoint?category=$categoryID');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+
       return null;
     } catch (e) {
       return null;

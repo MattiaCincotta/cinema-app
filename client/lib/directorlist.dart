@@ -67,6 +67,38 @@ class _DirectionListPageState extends State<DirectionListPage> {
     });
   }
 
+  void _searchDirectorByCategory(String categoryID) async {
+    final result = await requestManager.searchDirectorByCategory(categoryID);
+    if (result != null) {
+      final List<Director> directors = [];
+      for (var directorData in result["directors"]) {
+        directors.add(Director(
+          id: directorData["id"],
+          name: directorData["name"],
+          imageUrl: directorData["image_url"],
+        ));
+      }
+      setState(() {
+        _directors = directors;
+        _filteredDirectors = directors;
+      });
+    }
+  }
+
+  String _getCategoryID(String categoryName) {
+    const categoryMap = {
+      'Horror      ': '1',
+      'Thriller          ': '2',
+      'Mistero    ': '3',
+      'Romantico    ': '4',
+      'Fantasy    ': '5',
+      'Drammatico  ': '6',
+      'Avventura': '7',
+      'Fantascienza': '8',
+    };
+    return categoryMap[categoryName.trim()] ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,6 +236,18 @@ class _DirectionListPageState extends State<DirectionListPage> {
                                 _checkboxValues.clear();
                                 _checkboxValues.addAll(tempCheckboxValues);
                               });
+
+                              String selectedCategory = _checkboxValues.entries
+                                  .firstWhere((entry) => entry.value == true,
+                                      orElse: () => MapEntry("", false))
+                                  .key;
+
+                              if (selectedCategory.isNotEmpty) {
+                                String categoryID =
+                                    _getCategoryID(selectedCategory);
+                                _searchDirectorByCategory(categoryID);
+                              }
+
                               Navigator.of(context).pop();
                             },
                             style: TextButton.styleFrom(
