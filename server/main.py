@@ -66,9 +66,9 @@ def movies_category():
         category = request.args.get('category')
         result = MovieManager.get_movies_from_category(category)
         if result:
-            return jsonify([movie.__dict__ for movie in result])
+            return jsonify([movie.__dict__ for movie in result]), 200
         else:
-            return jsonify([])
+            return jsonify([]), 400
     else:
         return jsonify("invalid token"), 401
 
@@ -78,9 +78,9 @@ def directors_category():
         category = request.args.get('category')
         result = DirectorManager.get_directors_from_category(category)
         if result:
-            return jsonify([director.__dict__ for director in result])
+            return jsonify([director.__dict__ for director in result]), 200
         else:
-            return jsonify([])
+            return jsonify([]), 400
     else:
         return jsonify("invalid token"), 401
 
@@ -104,6 +104,91 @@ def director():
             return jsonify(result.__dict__), 200
         else:
             return jsonify({}), 400
+    else:
+        return jsonify("invalid token"), 401
+
+@api.route('/favorites', methods=['GET'])
+def getFavorites():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        user = UserManager.get_user_by_token(request.headers.get('token'))
+        result = MovieManager.get_favorites(user)
+        if result:
+            return jsonify([movie.__dict__ for movie in result]), 200
+        else:
+            return jsonify([]), 400
+    else:
+        return jsonify("invalid token"), 401
+        
+@api.route('/remove_favorite', methods=['POST'])
+def remove_favorite():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        data = request.json
+        movie = MovieManager.get_movie(data['title'])
+        user = UserManager.get_user_by_token(request.headers.get('token'))
+        
+        success = MovieManager.remove_favorite(user, movie)
+        if success:
+            return jsonify("favorite removed"), 200
+        else:
+            return jsonify("error while removing"), 400
+    else:
+        return jsonify("invalid token"), 401
+    
+@api.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        data = request.json
+        movie = MovieManager.get_movie(data['title'])
+        user = UserManager.get_user_by_token(request.headers.get('token'))
+        
+        success = MovieManager.add_favorite(user, movie)
+        if success:
+            return jsonify("favorite added"), 200
+        else:
+            return jsonify("error while adding"), 400
+    else:
+        return jsonify("invalid token"), 401
+
+@api.route('/seen_movies', methods=['GET'])
+def getSeenMovies():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        user = UserManager.get_user_by_token(request.headers.get('token'))
+        result = MovieManager.get_seen_movies(user)
+        if result:
+            return jsonify([movie.__dict__ for movie in result]), 200
+        else:
+            return jsonify([]), 400
+
+    else:
+        return jsonify("invalid token"), 401
+
+@api.route('/remove_seen', methods=['POST'])
+def remove_seen():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        data = request.json
+        movie = MovieManager.get_movie(data['title'])
+        user = UserManager.get_user_by_token(request.headers.get('token'))
+        
+        success = MovieManager.remove_seen(user, movie)
+        if success:
+            return jsonify("seen removed"), 200
+        else:
+            return jsonify("error while removing"), 400
+    else:
+        return jsonify("invalid token"), 401
+
+@api.route('/add_seen', methods=['POST'])
+def add_seen():
+    if UserManager.verify_token(request.headers.get('token'), True):
+        data = request.json
+        movie = MovieManager.get_movie(data['title'])
+        user = UserManager.get_user_by_token(request.headers.get('token'))
+        
+        success = MovieManager.add_seen(user, movie)
+        if success:
+            return jsonify("seen added"), 200
+        else:
+            return jsonify("error while adding"), 400
     else:
         return jsonify("invalid token"), 401
 

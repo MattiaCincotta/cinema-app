@@ -133,6 +133,33 @@ class UserManager:
                 return False
             return None
     
+    @staticmethod
+    def get_user_by_token(token: str) -> User:
+        """
+        get a user by token.
+        Args:
+            token: The token of the user.
+        Returns:
+            The user object if found, None otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT user_id FROM sessions WHERE token = %s", (token,))
+            result = cursor.fetchone()
+            if result:
+                cursor.execute("SELECT * FROM users WHERE id = %s", (result['user_id'],))
+                user = cursor.fetchone()
+                cursor.close()
+                return User(user['id'], user['username'], user['password'])
+            return None
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return None
+    
 ###################################################################################################################
 
 ######### DIRECTOR PART ###########################################################################################
@@ -421,6 +448,62 @@ class MovieManager:
             return []
     
     @staticmethod
+    def get_favorites(user: User) -> list:
+        """
+        Get all favorite movies from a user.
+        Args:
+            user: The user object.
+        Returns:
+            A list of movie objects.
+        """
+        
+        if'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT movie_id FROM favorites WHERE user_id = %s", (user.id,))
+            result = cursor.fetchall()
+            l = []
+            for link in result:
+                cursor.execute("SELECT * FROM movies WHERE id = %s", (link['movie_id'],))
+                movie = cursor.fetchone()
+                l.append(Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']))
+            cursor.close()
+            return l
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return []
+    
+    @staticmethod
+    def get_seen_movies(user: User) -> list:
+        """
+        Get all seen movies from a user.
+        Args:
+            user: The user object.
+        Returns:
+            A list of movie objects.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT movie_id FROM seen WHERE user_id = %s", (user.id,))
+            result = cursor.fetchall()
+            l = []
+            for link in result:
+                cursor.execute("SELECT * FROM movies WHERE id = %s", (link['movie_id'],))
+                movie = cursor.fetchone()
+                l.append(Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']))
+            cursor.close()
+            return l
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return []
+
+    @staticmethod
     def add_movie(movie: Movie) -> bool:
         """
         Add a movie to the database.
@@ -436,6 +519,100 @@ class MovieManager:
         try:
             cursor = g.db.cursor(dictionary=True)
             cursor.execute("INSERT INTO movies (title, director, year) VALUES (%s, %s, %s, %s)", (movie.title, movie.director, movie.year, movie.image_url))
+            g.db.commit()
+            return True
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+        
+################################ FAVORITE AND SEEN MOVIES ##########################################
+    
+    @staticmethod
+    def add_favorite(user: User, movie: Movie) -> bool:
+        """
+        Add a movie to the favorites of a user.
+        Args:
+            user: The user object.
+            movie: The movie object.
+        Returns:
+            True if the movie was added successfully, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("INSERT INTO favorites (user_id, movie_id) VALUES (%s, %s)", (user.id, movie.id))
+            g.db.commit()
+            return True
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+    
+    @staticmethod
+    def remove_favorite(user: User, movie: Movie) -> bool:
+        """
+        Remove a movie from the favorites of a user.
+        Args:
+            user: The user object.
+            movie: The movie object.
+        Returns:
+            True if the movie was removed successfully, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("DELETE FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie.id))
+            g.db.commit()
+            return True
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+    
+    @staticmethod
+    def add_seen_movie(user: User, movie: Movie) -> bool:
+        """
+        Add a movie to the seen movies of a user.
+        Args:
+            user: The user object.
+            movie: The movie object.
+        Returns:
+            True if the movie was added successfully, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("INSERT INTO seen_movies (user_id, movie_id) VALUES (%s, %s)", (user.id, movie.id))
+            g.db.commit()
+            return True
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+    
+    @staticmethod
+    def remove_seen_movie(user: User, movie: Movie) -> bool:
+        """
+        Remove a movie from the seen movies of a user.
+        Args:
+            user: The user object.
+            movie: The movie object.
+        Returns:
+            True if the movie was removed successfully, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("DELETE FROM seen_movies WHERE user_id = %s AND movie_id = %s", (user.id, movie.id))
             g.db.commit()
             return True
         except mysql.connector.Error as e:
