@@ -24,9 +24,10 @@ class _DirectionListPageState extends State<DirectionListPage> {
     'Drammatico': false,
   };
 
-  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  final RequestManager requestManager =
+      RequestManager(baseUrl: 'http://172.18.0.3:5000');
   final TextEditingController _searchController = TextEditingController();
-  bool _showSearchBar = false; 
+  bool _showSearchBar = false;
   List<Director> _directors = [];
   List<Director> _filteredDirectors = [];
 
@@ -100,7 +101,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
             iconSize: 28,
             onPressed: () {
               setState(() {
-                _showSearchBar = !_showSearchBar; 
+                _showSearchBar = !_showSearchBar;
               });
             },
           ),
@@ -238,12 +239,12 @@ class _DirectionListPageState extends State<DirectionListPage> {
                 child: TextField(
                   controller: _searchController,
                   style: const TextStyle(
-                    color: Colors.white, 
+                    color: Colors.white,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Cerca regista...',
                     hintStyle: const TextStyle(
-                      color: Colors.white54, 
+                      color: Colors.white54,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -260,7 +261,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                       ),
                       onPressed: () {
                         _searchController.clear();
-                        FocusScope.of(context).unfocus(); 
+                        FocusScope.of(context).unfocus();
                         _filterDirectors('');
                       },
                     ),
@@ -287,11 +288,10 @@ class _DirectionListPageState extends State<DirectionListPage> {
       ),
     );
   }
-
   Widget createCard({
     required BuildContext context,
     required String imageUrl,
-    required String name,
+    required name,
   }) {
     return Column(
       children: [
@@ -319,11 +319,16 @@ class _DirectionListPageState extends State<DirectionListPage> {
                     ),
                     const SizedBox(width: 15.0),
                     Text(
-                      name,
+                      truncateWithEllipsis(13,
+                          getSurname(name)), 
                       style: const TextStyle(
                         fontSize: 23.0,
                         color: Colors.white,
                       ),
+                      maxLines: 1, 
+                      overflow: TextOverflow
+                          .ellipsis, 
+                      softWrap: false, 
                     ),
                   ],
                 ),
@@ -361,4 +366,16 @@ class _DirectionListPageState extends State<DirectionListPage> {
       ],
     );
   }
+}
+
+String truncateWithEllipsis(int cutoff, String text) {
+  return (text.length <= cutoff) ? text : '${text.substring(0, cutoff)}...';
+}
+
+String getSurname(String name) {
+  List<String> parts = name.split(' ');
+  if (parts.length > 1) {
+    return parts.last; 
+  }
+  return name;
 }
