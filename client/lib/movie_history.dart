@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:client/utils/request_manager.dart';
 
 class MovieHistoryPage extends StatefulWidget {
   const MovieHistoryPage({super.key});
@@ -11,6 +12,8 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
   int _favoriteCount = 0;
   final TextEditingController _searchController = TextEditingController();
   bool _showSearchBar = false;
+
+  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');  // Aggiungi il RequestManager
 
   @override
   Widget build(BuildContext context) {
@@ -123,24 +126,43 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                 ),
               ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    createCard(
-                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                      'La storia della principessa splendente e delle sue avventure straordinarie',
-                    ),
-                    createCard(
-                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                      'Un altro film con un titolo molto lungo che si estende per diverse righe',
-                    ),
-                    createCard(
-                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                      'La storia della principessa splendente',
-                    ),
-                  ],
-                ),
+              child: FutureBuilder(
+                future: requestManager.getSeenMovies(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                      child: Text(
+                        'Errore nel caricamento dei film visti.',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Non ci sono film visti.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  } else {
+                    final List<dynamic> movies = snapshot.data;
+
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: movies.map((movie) {
+                          return createCard(movie['image_url'], movie['title']);
+                        }).toList(),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
           ],

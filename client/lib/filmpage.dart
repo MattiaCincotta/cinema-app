@@ -13,12 +13,10 @@ class FilmPage extends StatefulWidget {
 class __FilmPageStateState extends State<FilmPage> {
   bool isFavorite = false;
   bool isViewed = false;
-  bool showSearchBar =
-      false; 
+  bool showSearchBar = false;
   final RequestManager requestManager =
       RequestManager(baseUrl: 'http://172.18.0.3:5000');
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +54,7 @@ class __FilmPageStateState extends State<FilmPage> {
                   iconSize: 35,
                   onPressed: () {
                     setState(() {
-                      showSearchBar =
-                          !showSearchBar;
+                      showSearchBar = !showSearchBar;
                     });
                   },
                 ),
@@ -73,19 +70,19 @@ class __FilmPageStateState extends State<FilmPage> {
         },
         child: Column(
           children: [
-            if (showSearchBar) 
+            if (showSearchBar)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   controller: searchController,
                   style: const TextStyle(
-                    color: Colors.white, 
-                    fontSize: 18, 
+                    color: Colors.white,
+                    fontSize: 18,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Cerca film...',
                     hintStyle: const TextStyle(
-                      color: Colors.white54, 
+                      color: Colors.white54,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -93,7 +90,7 @@ class __FilmPageStateState extends State<FilmPage> {
                     ),
                     prefixIcon: const Icon(
                       Icons.search,
-                      color: Colors.white, 
+                      color: Colors.white,
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(
@@ -101,8 +98,8 @@ class __FilmPageStateState extends State<FilmPage> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        searchController.clear(); 
-                        FocusScope.of(context).unfocus(); 
+                        searchController.clear();
+                        FocusScope.of(context).unfocus();
                       },
                     ),
                   ),
@@ -247,7 +244,7 @@ class __FilmPageStateState extends State<FilmPage> {
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(19.0)),
                     image: DecorationImage(
-                      image: NetworkImage(imageUrl), 
+                      image: NetworkImage(imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -281,10 +278,36 @@ class __FilmPageStateState extends State<FilmPage> {
                       ),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
                             isFavorite = !isFavorite;
                           });
+
+                          if (isFavorite) {
+                            final result =
+                                await requestManager.addFavorite(title);
+                            if (result != null) {
+                              print('Film aggiunto ai preferiti: $title');
+                            } else {
+                              setState(() {
+                                isFavorite = false;
+                              });
+                              print(
+                                  'Errore durante l\'aggiunta del film ai preferiti');
+                            }
+                          } else {
+                            final result =
+                                await requestManager.removeFavorite(title);
+                            if (result != null) {
+                              print('Film rimosso dai preferiti: $title');
+                            } else {
+                              setState(() {
+                                isFavorite = true;
+                              });
+                              print(
+                                  'Errore durante la rimozione del film dai preferiti');
+                            }
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8.0),

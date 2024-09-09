@@ -150,7 +150,7 @@ class RequestManager {
   }
 
   ///////////////////////////////// GET FAVORITES FILM /////////////////////////////////
-  Future<dynamic> getFavorites(String title) async {
+  Future<dynamic> getFavorites() async {
     String endpoint = '/favorites';
     final Uri url = Uri.parse('$baseUrl$endpoint');
     const storage = FlutterSecureStorage();
@@ -239,7 +239,7 @@ class RequestManager {
   }
 
   ///////////////////////////////// GET SEEN FILM /////////////////////////////////
-  Future<dynamic> getSeenMovies(String title) async {
+  Future<dynamic> getSeenMovies() async {
     String endpoint = '/seen_movies';
     final Uri url = Uri.parse('$baseUrl$endpoint');
     const storage = FlutterSecureStorage();

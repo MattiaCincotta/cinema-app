@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:collection';
+import 'package:client/utils/request_manager.dart';
 
 class FavoriteFilmPage extends StatefulWidget {
   const FavoriteFilmPage({super.key});
@@ -10,9 +11,9 @@ class FavoriteFilmPage extends StatefulWidget {
 
 class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   HashSet<int> numeri = HashSet<int>();
-  bool showSearchBar = false; // Variabile di stato per la barra di ricerca
-  final TextEditingController searchController =
-      TextEditingController(); // Controller per la barra di ricerca
+  bool showSearchBar = false; 
+  final TextEditingController searchController = TextEditingController();
+  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000'); 
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,6 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           onPressed: () async {
             bool shouldExit = await _showExitConfirmationDialog();
             if (shouldExit) {
-              // ignore: use_build_context_synchronously
               Navigator.pop(context);
             }
           },
@@ -56,8 +56,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.redAccent,
                     borderRadius: BorderRadius.circular(15),
@@ -77,8 +76,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                   iconSize: 35,
                   onPressed: () {
                     setState(() {
-                      showSearchBar =
-                          !showSearchBar; // Mostra o nasconde la barra di ricerca
+                      showSearchBar = !showSearchBar; 
                     });
                   },
                 ),
@@ -90,68 +88,93 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
       backgroundColor: Colors.grey[900],
       body: Column(
         children: [
-          if (showSearchBar) // Mostra la barra di ricerca solo se showSearchBar è true
+          if (showSearchBar)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: searchController,
                 style: const TextStyle(
-                  color: Colors.white, // Colore del testo digitato
+                  color: Colors.white,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Cerca regista...',
                   hintStyle: const TextStyle(
-                    color: Colors.white54, // Colore del testo suggerimento
+                    color: Colors.white54,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: const BorderSide(
-                        color: Colors.white), // Colore del bordo
+                      color: Colors.white,
+                    ),
                   ),
                   prefixIcon: const Icon(
                     Icons.search,
-                    color: Colors.white, // Colore dell'icona di ricerca
+                    color: Colors.white,
                   ),
                   suffixIcon: IconButton(
                     icon: const Icon(
                       Icons.clear,
-                      color: Colors.white, // Colore dell'icona clear
+                      color: Colors.white,
                     ),
                     onPressed: () {
                       searchController.clear();
-                      FocusScope.of(context).unfocus(); // Chiude la tastiera
+                      FocusScope.of(context).unfocus();
                     },
                   ),
                 ),
                 onSubmitted: (value) {
-                  // Logica di ricerca
                   print('Ricerca per: $value');
                 },
               ),
             ),
-          Expanded(
-            child: Container(
-              color: Colors.grey[900], // Imposta il colore di sfondo
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    createCard(
-                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                      'La storia della principessa splendente e delle sue avventure straordinarie',
+          FutureBuilder(
+            future: requestManager.getFavorites(), 
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    'Errore nel caricamento dei film.',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
                     ),
-                    createCard(
-                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                      'Un altro film con un titolo molto lungo che si estende per diverse righe',
+                  ),
+                );
+              } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'Nessun film trovato.',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
                     ),
-                    createCard(
-                      'https://www.agireora.org/img/news/pollo-bianco-primo-piano.jpg',
-                      'La storia della principessa splendente',
+                  ),
+                );
+              } else {
+                final List<dynamic> result = snapshot.data;
+
+                List<Movie> movies = result.map((movieData) {
+                  return Movie(
+                    directorID: movieData["director_id"],
+                    title: movieData["title"],
+                    imageUrl: movieData["image_url"],
+                    year: movieData["year"],
+                  );
+                }).toList();
+
+                return Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: movies.map((movie) {
+                        return createCard(movie.imageUrl, movie.title);
+                      }).toList(),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -199,11 +222,6 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                       onTap: () {
                         setState(() {
                           isFavorite = !isFavorite;
-                          if (isFavorite) {
-                            //_favoriteCount++;
-                          } else {
-                            //_favoriteCount--;
-                          }
                         });
                       },
                       child: Container(
@@ -238,26 +256,23 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
     );
   }
 
-  // Funzione per mostrare il popup di conferma
   Future<bool> _showExitConfirmationDialog() async {
     return await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Conferma'),
-              content: const Text(
-                  'Vuoi eliminare i film dai preferiti prima di uscire?'),
+              content: const Text('Vuoi eliminare i film dai preferiti prima di uscire?'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(false); // Resta nella pagina
+                    Navigator.of(context).pop(false);
                   },
                   child: const Text('No'),
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context)
-                        .pop(true); // Conferma ed esce dalla pagina
+                    Navigator.of(context).pop(true);
                   },
                   child: const Text('Sì'),
                 ),
@@ -265,6 +280,20 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
             );
           },
         ) ??
-        false; // Torna a false se il dialogo viene chiuso senza selezionare nulla
+        false;
   }
+}
+
+class Movie {
+  final int directorID;
+  final String title;
+  final String imageUrl;
+  final int year;
+
+  Movie({
+    required this.directorID,
+    required this.title,
+    required this.imageUrl,
+    required this.year,
+  });
 }
