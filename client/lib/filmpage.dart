@@ -4,7 +4,9 @@ import 'package:client/utils/models.dart';
 
 class FilmPage extends StatefulWidget {
   final String name;
-  const FilmPage({super.key, required this.name});
+  final int id;
+  final String imageUrl;
+  const FilmPage({super.key, required this.name, required this.id, required this.imageUrl});
 
   @override
   State<FilmPage> createState() => __FilmPageStateState();
@@ -32,9 +34,9 @@ class __FilmPageStateState extends State<FilmPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'Nome del regista',
-          style: TextStyle(
+        title: Text(
+          widget.name,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 27,
             fontFamily: 'Cinematic',
@@ -43,21 +45,12 @@ class __FilmPageStateState extends State<FilmPage> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[900],
         elevation: 4.0,
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.only(right: 20.0),
+            padding:EdgeInsets.only(right: 20.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  iconSize: 35,
-                  onPressed: () {
-                    setState(() {
-                      showSearchBar = !showSearchBar;
-                    });
-                  },
-                ),
               ],
             ),
           ),
@@ -120,8 +113,8 @@ class __FilmPageStateState extends State<FilmPage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
-                      child: Image.asset(
-                        'assets/images/Logo.jpg',
+                      child: Image.network(
+                        widget.imageUrl,
                         width: 200.0,
                         height: 200.0,
                         fit: BoxFit.cover,
@@ -132,21 +125,42 @@ class __FilmPageStateState extends State<FilmPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Biografia regista',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                            ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            'Una breve descrizione o un sottotitolo qui.',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.grey[600],
-                            ),
+                          FutureBuilder<String?>(
+                            future:
+                                requestManager.getDirectorBiography(widget.id),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return const Text(
+                                  'Errore nel caricamento della biografia.',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return const Text(
+                                  'Nessuna biografia disponibile.',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16.0,
+                                  ),
+                                );
+                              } else {
+                                return Text(
+                                  snapshot.data!,
+                                  style: TextStyle(
+                                    fontSize: 3.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                  ),
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),

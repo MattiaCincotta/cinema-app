@@ -86,8 +86,8 @@ class RequestManager {
   }
 
 ///////////////////////////////// GET DIRECTOR BIOGRAPHY /////////////////////////////////
-  Future<String?> getDirectorBiography() async {
-    String endpoint = '/director/biography';
+  Future<String?> getDirectorBiography(int id) async {
+    String endpoint = '/director/$id/biography';
     final Uri url = Uri.parse('$baseUrl$endpoint');
     const storage = FlutterSecureStorage();
 
@@ -98,7 +98,7 @@ class RequestManager {
       if (response.statusCode == 200) {
         final dynamic result = json.decode(response.body);
 
-        return result;
+        return result['biography'];
       }
 
       return null;

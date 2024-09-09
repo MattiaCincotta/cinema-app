@@ -279,6 +279,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   context: context,
                   imageUrl: _filteredDirectors[index].imageUrl,
                   name: _filteredDirectors[index].name,
+                  id: _filteredDirectors[index].id,
                 );
               },
               childCount: _filteredDirectors.length,
@@ -292,6 +293,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
     required BuildContext context,
     required String imageUrl,
     required name,
+    required id,
   }) {
     return Column(
       children: [
@@ -336,7 +338,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FilmPage(name: name)),
+                      MaterialPageRoute(builder: (context) => FilmPage(name: name, id: id, imageUrl: imageUrl)),
                     );
                   },
                   style: ElevatedButton.styleFrom(

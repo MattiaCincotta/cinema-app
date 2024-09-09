@@ -14,6 +14,44 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   bool showSearchBar = false; 
   final TextEditingController searchController = TextEditingController();
   final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000'); 
+  List<Movie> _movies = [];
+  List<Movie> _filteredMovies = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMovies();
+  }
+
+  void _fetchMovies() async {
+    final result = await requestManager.getFavorites(); 
+    if (result != null) {
+      final List<Movie> movies = [];
+      for (var movieData in result) {
+        movies.add(Movie(
+          directorID: movieData["director_id"],
+          title: movieData["title"],
+          imageUrl: movieData["image_url"],
+          year: movieData["year"],
+        ));
+      }
+      setState(() {
+        _movies = movies;
+        _filteredMovies = movies;
+      });
+    }
+  }
+
+  void _filterMovies(String query) {
+    final filtered = _movies.where((movie) {
+      final titleLower = movie.title.toLowerCase();
+      final queryLower = query.toLowerCase();
+      return titleLower.contains(queryLower);
+    }).toList();
+    setState(() {
+      _filteredMovies = filtered;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +64,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
             size: 28,
           ),
           onPressed: () async {
-            bool shouldExit = await _showExitConfirmationDialog();
+            bool shouldExit = await _confirmationDialog();
             if (shouldExit) {
               Navigator.pop(context);
             }
@@ -97,7 +135,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                   color: Colors.white,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Cerca regista...',
+                  hintText: 'Cerca film...',
                   hintStyle: const TextStyle(
                     color: Colors.white54,
                   ),
@@ -119,62 +157,33 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                     onPressed: () {
                       searchController.clear();
                       FocusScope.of(context).unfocus();
+                      _filterMovies('');
                     },
                   ),
                 ),
-                onSubmitted: (value) {
-                  print('Ricerca per: $value');
+                onChanged: (value) {
+                  _filterMovies(value);
                 },
               ),
             ),
-          FutureBuilder(
-            future: requestManager.getFavorites(), 
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text(
-                    'Errore nel caricamento dei film.',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              } else if (!snapshot.hasData || snapshot.data.isEmpty) {
-                return const Center(
+          Expanded(
+            child: _filteredMovies.isEmpty
+              ? const Center(
                   child: Text(
                     'Nessun film trovato.',
                     style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 16,
                     ),
                   ),
-                );
-              } else {
-                final List<dynamic> result = snapshot.data;
-
-                List<Movie> movies = result.map((movieData) {
-                  return Movie(
-                    directorID: movieData["director_id"],
-                    title: movieData["title"],
-                    imageUrl: movieData["image_url"],
-                    year: movieData["year"],
-                  );
-                }).toList();
-
-                return Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: movies.map((movie) {
-                        return createCard(movie.imageUrl, movie.title);
-                      }).toList(),
-                    ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: _filteredMovies.map((movie) {
+                      return createCard(movie.imageUrl, movie.title);
+                    }).toList(),
                   ),
-                );
-              }
-            },
+                ),
           ),
         ],
       ),
@@ -182,81 +191,83 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   }
 
   Widget createCard(String imageUrl, String filmName) {
-    bool isFavorite = false;
+  bool isFavorite = false;
 
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  filmName,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.redAccent,
+  return StatefulBuilder(
+    builder: (BuildContext context, StateSetter setState) {
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        elevation: 5,
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
+              child: Image.network(
+                imageUrl,
+                width: double.infinity,
+                height: 275,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      filmName,
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 15),
-                Image.network(
-                  imageUrl,
-                  width: double.infinity,
-                  height: 275,
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  children: [
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isFavorite = !isFavorite;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: isFavorite
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ]
-                              : [],
-                        ),
-                        child: Icon(
-                          isFavorite ? Icons.favorite_border : Icons.favorite,
-                          color: isFavorite ? Colors.grey : Colors.redAccent,
-                          size: 45,
-                        ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: isFavorite
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.redAccent : Colors.grey,
+                        size: 45,
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
-  }
+          ],
+        ),
+      );
+    },
+  );
+}
 
-  Future<bool> _showExitConfirmationDialog() async {
+  Future<bool> _confirmationDialog() async {
     return await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
