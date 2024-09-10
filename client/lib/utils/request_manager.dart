@@ -158,6 +158,25 @@ class RequestManager {
     }
   }
 
+  ///////////////////////////////// GET FAVORITE FILM BY TITLE /////////////////////////////////
+  Future<bool> isFavorite(String title) async {
+    String endpoint = '/favorites';
+    final Uri url = Uri.parse('$baseUrl$endpoint?title=$title');
+    const storage = FlutterSecureStorage();
+
+    try {
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   ///////////////////////////////// ADD FAVORITE FILM /////////////////////////////////
   Future<dynamic> addFavorite(String title) async {
     String endpoint = '/add_favorite';
