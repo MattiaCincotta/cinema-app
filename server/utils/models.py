@@ -483,7 +483,7 @@ class MovieManager:
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie.id))
+            cursor.execute("SELECT COUNT(*) FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie_title))
             result = cursor.fetchone()
             cursor.close()
             return True if result else False
