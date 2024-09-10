@@ -1,4 +1,4 @@
-from flask import Flask, current_app, g
+from flask import current_app, g
 import mysql.connector
 from db.db import DB_utils
 import uuid
@@ -170,7 +170,7 @@ class Director:
         self.name = name
         self.image_url = image_url
 
-    def get_biography(self) -> str:
+    def get_biography(self) -> str | None:
         """
         Get the biography of a director.
         Returns:
@@ -216,7 +216,7 @@ class DirectorManager:
             return []
     
     @staticmethod
-    def get_director_by_id(id: int) -> Director:
+    def get_director_by_id(id: int) -> Director | None:
         """
         Get a director from the database.
         Args:
@@ -466,6 +466,30 @@ class MovieManager:
         except mysql.connector.Error as e:      
             print(f"Error: {e}")
             return []
+    
+    @staticmethod
+    def is_favorite(user: User, movie_title: str) -> bool:
+        """
+        Check if a movie is in the favorites of a user.
+        Args:
+            user: The user object.
+            movie: The movie object.
+        Returns:
+            True if the movie is in the favorites, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie.id))
+            result = cursor.fetchone()
+            cursor.close()
+            return True if result else False
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
     
     @staticmethod
     def get_favorites(user: User) -> list:

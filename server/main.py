@@ -111,6 +111,10 @@ def director():
 def getFavorites():
     if UserManager.verify_token(request.headers.get('token'), True):
         user = UserManager.get_user_by_token(request.headers.get('token'))
+        if title := request.args.get('title') and isinstance(title, str):
+            result = MovieManager.is_favorite(user, title)
+            return jsonify("true" if result else "false"), 200
+
         result = MovieManager.get_favorites(user)
         if result:
             return jsonify([movie.__dict__ for movie in result]), 200
@@ -195,7 +199,15 @@ def add_seen():
 @api.route('/director/<id>/biography', methods=['GET'])
 def get_director_biography(id):
     if UserManager.verify_token(request.headers.get('token'), True):
-        result = DirectorManager.get_director_by_id(id).get_biography()
+        if not isinstance(id, int):
+            return jsonify("invalid id"), 400
+        result = DirectorManager.get_director_by_id(id)
+        
+        if result is not None:
+            result = result.get_biography()
+        else:
+            return jsonify("invalid director id"), 400
+        
         if result is not None:
             return jsonify({"biography": result,}), 200
         else:
