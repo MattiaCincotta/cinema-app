@@ -329,7 +329,8 @@ class DirectorManager:
 ######### MOVIE PART ##############################################################################################
 
 class Movie:
-    def __init__(self, title: str, director_id: str, year: int, image_url: str) -> None:
+    def __init__(self, id: int, title: str, director_id: str, year: int, image_url: str) -> None:
+        self.id = id
         self.title = title
         self.director_id = director_id
         self.year = year
@@ -355,7 +356,7 @@ class MovieManager:
             cursor.execute("SELECT * FROM movies")
             result = cursor.fetchall()
             cursor.close()
-            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
+            return [Movie(movie['id'], movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -379,7 +380,7 @@ class MovieManager:
             result = cursor.fetchone()
             cursor.close()
             if result:
-                return Movie(result['title'], result['director_id'], result['year'], result['image_url'])
+                return Movie(result['id'], result['title'], result['director_id'], result['year'], result['image_url'])
             return None
         except mysql.connector.Error as e:
             print(f"Error: {e}")
@@ -403,7 +404,7 @@ class MovieManager:
             cursor.execute("SELECT * FROM movies WHERE title LIKE %s", (f"%{title}%",))
             result = cursor.fetchall()
             cursor.close()  
-            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
+            return [Movie(movie['id'], movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
@@ -435,7 +436,7 @@ class MovieManager:
                 for link in result:
                     cursor.execute("SELECT * FROM movies WHERE id = %s", (link['movie_id'],))
                     movie = cursor.fetchone()
-                    l.append(Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']))
+                    l.append(Movie(movie['id'], movie['title'], movie['director_id'], movie['year'], movie['image_url']))
             
             cursor.close()
             return l
@@ -463,7 +464,7 @@ class MovieManager:
             cursor.execute("SELECT * FROM movies WHERE director_id = %s", (director.id,))
             result = cursor.fetchall()
             cursor.close()
-            return [Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
+            return [Movie(movie['id'], movie['title'], movie['director_id'], movie['year'], movie['image_url']) for movie in result]
         except mysql.connector.Error as e:      
             print(f"Error: {e}")
             return []
@@ -489,7 +490,7 @@ class MovieManager:
             for link in result:
                 cursor.execute("SELECT * FROM movies WHERE id = %s", (link['movie_id'],))
                 movie = cursor.fetchone()
-                l.append(Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']))
+                l.append(Movie(movie['id'], movie['title'], movie['director_id'], movie['year'], movie['image_url']))
             cursor.close()
             return l
         except mysql.connector.Error as e:
@@ -517,7 +518,7 @@ class MovieManager:
             for link in result:
                 cursor.execute("SELECT * FROM movies WHERE id = %s", (link['movie_id'],))
                 movie = cursor.fetchone()
-                l.append(Movie(movie['title'], movie['director_id'], movie['year'], movie['image_url']))
+                l.append(Movie(movie['id'], movie['title'], movie['director_id'], movie['year'], movie['image_url']))
             cursor.close()
             return l
         except mysql.connector.Error as e:
