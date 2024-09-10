@@ -77,14 +77,12 @@ def movies_category():
 def directors_category():
     if UserManager.verify_token(request.headers.get('token'), True):
         data = request.json
-        if data and type(data["category"] is list):
+        if data and isinstance(data["category"], list):
             result = DirectorManager.get_directors_from_category(data['category'])
             if result:
                 return jsonify({"directors": [director.__dict__ for director in result]}), 200
-        else:
-            return jsonify([]), 400
-    else:
-        return jsonify("invalid token"), 401
+        return jsonify([]), 400
+    return jsonify("invalid token"), 401
 
 @api.route('/directors', methods=['GET'])
 def directors():

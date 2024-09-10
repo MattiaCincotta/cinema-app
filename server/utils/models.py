@@ -255,11 +255,14 @@ class DirectorManager:
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT director_id FROM directors_categories WHERE category_id IN ({})".format(','.join([str(i) for i in category])))
+            placeholders = ','.join(['%s'] * len(category))
+            cursor.execute(f"SELECT director_id FROM directors_categories WHERE category_id IN ({placeholders})", category)
             result = cursor.fetchall()
             
             if result:
-                cursor.execute("SELECT * FROM directors WHERE id IN ({})".format(','.join([str(entry['director_id']) for entry in result])))
+                director_ids = [entry['director_id'] for entry in result]
+                placeholders = ','.join(['%s'] * len(director_ids))
+                cursor.execute(f"SELECT * FROM directors WHERE id IN ({placeholders})", director_ids)
                 result = cursor.fetchall()
 
                 return [Director(director['id'], director['name'], director['image_url']) for director in result]
