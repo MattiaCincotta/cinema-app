@@ -1,1 +1,0 @@
- /home/mattia/Desktop/cinema-app/client/.dart_tool/flutter_build/c5fb92e0488cb10de7f946c9d1c52155/native_assets.yaml: 
