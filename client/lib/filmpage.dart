@@ -235,153 +235,179 @@ class __FilmPageStateState extends State<FilmPage> {
   }
 
   Widget createCard(
-      BuildContext context, String title, String imageUrl, int year) {
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return SizedBox(
-          width: 250.0,
-          height: 410.0,
-          child: Card(
-            margin:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(19.0),
-            ),
-            elevation: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(19.0)),
-                    image: DecorationImage(
-                      image: NetworkImage(imageUrl),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10.0, right: 10.0, bottom: 10.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () async {
-                          setState(() {
-                            isFavorite = !isFavorite;
-                          });
-
-                          if (isFavorite) {
-                            final result =
-                                await requestManager.addFavorite(title);
-                            if (result != null) {
-                              print('Film aggiunto ai preferiti: $title');
-                            } else {
-                              setState(() {
-                                isFavorite = false;
-                              });
-                              print(
-                                  'Errore durante l\'aggiunta del film ai preferiti');
-                            }
-                          } else {
-                            final result =
-                                await requestManager.removeFavorite(title);
-                            if (result != null) {
-                              print('Film rimosso dai preferiti: $title');
-                            } else {
-                              setState(() {
-                                isFavorite = true;
-                              });
-                              print(
-                                  'Errore durante la rimozione del film dai preferiti');
-                            }
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          margin: const EdgeInsets.only(right: 10.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.redAccent : Colors.grey,
-                            size: 30,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isViewed = !isViewed;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            isViewed
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: isViewed ? Colors.blue : Colors.grey,
-                            size: 30,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+    BuildContext context, String title, String imageUrl, int year) {
+  return StatefulBuilder(
+    builder: (BuildContext context, StateSetter setState) {
+      return SizedBox(
+        width: 250.0,
+        height: 410.0,
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(19.0),
           ),
-        );
-      },
-    );
-  }
+          elevation: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 250,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(19.0)),
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      year.toString(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    // Bottone per aggiungere/rimuovere dai preferiti
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          isFavorite = !isFavorite;
+                        });
+
+                        if (isFavorite) {
+                          final result =
+                              await requestManager.addFavorite(title);
+                          if (result != null) {
+                            print('Film aggiunto ai preferiti: $title');
+                          } else {
+                            setState(() {
+                              isFavorite = false;
+                            });
+                            print(
+                                'Errore durante l\'aggiunta del film ai preferiti');
+                          }
+                        } else {
+                          final result =
+                              await requestManager.removeFavorite(title);
+                          if (result != null) {
+                            print('Film rimosso dai preferiti: $title');
+                          } else {
+                            setState(() {
+                              isFavorite = true;
+                            });
+                            print(
+                                'Errore durante la rimozione del film dai preferiti');
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        margin: const EdgeInsets.only(right: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: isFavorite ? Colors.redAccent : Colors.grey,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    // Bottone per aggiungere/rimuovere dai già visti
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          isViewed = !isViewed;
+                        });
+
+                        if (isViewed) {
+                          final result = await requestManager.addSeenMovies(title);
+                          if (result != null) {
+                            print('Film aggiunto alla lista dei già visti: $title');
+                          } else {
+                            setState(() {
+                              isViewed = false;
+                            });
+                            print('Errore durante l\'aggiunta del film alla lista dei già visti');
+                          }
+                        } else {
+                          final result = await requestManager.removeSeenMovies(title);
+                          if (result != null) {
+                            print('Film rimosso dalla lista dei già visti: $title');
+                          } else {
+                            setState(() {
+                              isViewed = true;
+                            });
+                            print('Errore durante la rimozione del film dalla lista dei già visti');
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isViewed
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: isViewed ? Colors.blue : Colors.grey,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 
   Widget createCardRows(List<Widget> cards) {
     List<Widget> rows = [];
