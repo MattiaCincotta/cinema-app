@@ -3,7 +3,8 @@ USE cineCult;
 CREATE TABLE IF NOT EXISTS directors(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(64) NOT NULL,
-    image_url VARCHAR(256) NOT NULL
+    image_url VARCHAR(256) NOT NULL,
+    biography TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS categories(
@@ -29,7 +30,7 @@ CREATE TABLE IF NOT EXISTS movies(
     year INTEGER NOT NULL,
     image_url VARCHAR(256) NOT NULL, -- image of the movie  
     director_id INT,
-    FOREIGN KEY (director_id) REFERENCES directors(id)                                                                                                 
+    FOREIGN KEY (director_id) REFERENCES directors(id)
 );
 
 CREATE TABLE IF NOT EXISTS users(
@@ -47,12 +48,6 @@ CREATE TABLE IF NOT EXISTS favorites(
 CREATE TABLE IF NOT EXISTS sessions(
     user_id INTEGER PRIMARY KEY NOT NULL,
     token VARCHAR(64) NOT NULL  
-);
-
-CREATE TABLE IF NOT EXISTS directors_biography(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    director_id INTEGER NOT NULL,
-    biography TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS seen_movies(
@@ -87,8 +82,8 @@ CALL insert_categories_if_empty();
 -- CALL THE PROCEDURE TO INSERT CATEGORIES
 
 -- example data for testing
-INSERT INTO directors(name, image_url) VALUES
-        ('Christopher Nolan', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Christopher_Nolan_Cannes_2018.jpg/220px-Christopher_Nolan_Cannes_2018.jpg'),
+INSERT INTO directors(name, image_url, biography) VALUES
+        ('Christopher Nolan', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Christopher_Nolan_Cannes_2018.jpg/220px-Christopher_Nolan_Cannes_2018.jpg', 'Christopher Edward Nolan CBE is a British-American film director, producer, and screenwriter. He is one of the highest-grossing directors in history, and among the most acclaimed and influential filmmakers of the 21st century. The acclaim garnered by his independent films gave Nolan the opportunity to make the big-budget thriller Insomnia (2002), the mystery drama The Prestige (2006), the action film The Dark Knight Trilogy (2005–2012), the science fiction thriller Inception (2010), and the science fiction film Interstellar (2014).'),
         ('Quentin Tarantino', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Quentin_Tarantino_by_Gage_Skidmore.jpg/220px-Quentin_Tarantino_by_Gage_Skidmore.jpg'),
         ('Steven Spielberg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/MKr25402_Steven_Spielberg_%28Berlinale_2023%29.jpg/220px-MKr25402_Steven_Spielberg_%28Berlinale_2023%29.jpg');
     
@@ -106,9 +101,6 @@ INSERT INTO movies_categories(movie_id, category_id) VALUES
         (1, 9),
         (2, 3),
         (3, 1);
-
-INSERT INTO directors_biography(director_id, biography) VALUES
-        (1, 'Christopher Edward Nolan CBE is a British-American film director, producer, and screenwriter. He is one of the highest-grossing directors in history, and among the most acclaimed and influential filmmakers of the 21st century. The acclaim garnered by his independent films gave Nolan the opportunity to make the big-budget thriller Insomnia (2002), the mystery drama The Prestige (2006), the action film The Dark Knight Trilogy (2005–2012), the science fiction thriller Inception (2010), and the science fiction film Interstellar (2014).');
 
 INSERT INTO favorites(user_id, movie_id) VALUES
         (1, 1),

@@ -182,10 +182,10 @@ class Director:
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM directors_biography WHERE id = %s", (self.id,))
+            cursor.execute("SELECT biography FROM directors WHERE id = %s", (self.id,))
             result = cursor.fetchone()
             cursor.close()
-            return result["biography"]
+            return result
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return None
