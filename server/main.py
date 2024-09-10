@@ -76,10 +76,11 @@ def movies_category():
 @api.route('/directors/category', methods=['GET'])
 def directors_category():
     if UserManager.verify_token(request.headers.get('token'), True):
-        category = request.args.get('category')
-        result = DirectorManager.get_directors_from_category(category)
-        if result:
-            return jsonify([director.__dict__ for director in result]), 200
+        data = request.json
+        if data and type(data["category"] is list):
+            result = DirectorManager.get_directors_from_category(data['category'])
+            if result:
+                return jsonify({"directors": [director.__dict__ for director in result]}), 200
         else:
             return jsonify([]), 400
     else:
@@ -170,7 +171,7 @@ def remove_seen():
         movie = MovieManager.get_movie(data['title'])
         user = UserManager.get_user_by_token(request.headers.get('token'))
         
-        success = MovieManager.remove_seen(user, movie)
+        success = MovieManager.remove_seen_movie(user, movie)
         if success:
             return jsonify("seen removed"), 200
         else:
@@ -185,7 +186,7 @@ def add_seen():
         movie = MovieManager.get_movie(data['title'])
         user = UserManager.get_user_by_token(request.headers.get('token'))
         
-        success = MovieManager.add_seen(user, movie)
+        success = MovieManager.add_seen_movie(user, movie)
         if success:
             return jsonify("seen added"), 200
         else:

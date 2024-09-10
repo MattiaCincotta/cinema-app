@@ -241,7 +241,7 @@ class DirectorManager:
             return None
     
     @staticmethod
-    def get_directors_from_category(category: str):
+    def get_directors_from_category(category: list):
         """
         Get all directors from a category.
         Args:
@@ -249,28 +249,23 @@ class DirectorManager:
         Returns:
             A list of director objects.
         """
-        
-        l = []
-        
+                
         if 'db' not in g:
             g.db = DB_utils.get_db_connection()
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT id FROM categories WHERE name = %s", (category,))
-            result = cursor.fetchone()
+            cursor.execute("SELECT director_id FROM directors_categories WHERE category_id IN ({})".format(','.join([str(i) for i in category])))
+            result = cursor.fetchall()
             
             if result:
-                cursor.execute("SELECT * FROM directors_categories WHERE category_id = %s", (result['id'],))
+                cursor.execute("SELECT * FROM directors WHERE id IN ({})".format(','.join([str(entry['director_id']) for entry in result])))
                 result = cursor.fetchall()
-                
-                for link in result:
-                    cursor.execute("SELECT * FROM directors WHERE id = %s", (link['director_id'],))
-                    director = cursor.fetchone()
-                    l.append(Director(director['id'], director['name'], director['image_url']))
+
+                return [Director(director['id'], director['name'], director['image_url']) for director in result]
             
             cursor.close()
-            return l
+            return []
         
         except mysql.connector.Error as e:
             print(f"Error: {e}")
