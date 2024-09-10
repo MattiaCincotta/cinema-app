@@ -111,7 +111,8 @@ def director():
 def getFavorites():
     if UserManager.verify_token(request.headers.get('token'), True):
         user = UserManager.get_user_by_token(request.headers.get('token'))
-        if title := request.args.get('title') and isinstance(title, str):
+        title = request.args.get('title')
+        if title and isinstance(title, str):
             result = MovieManager.is_favorite(user, title)
             return jsonify("true" if result else "false"), 200
 
