@@ -67,8 +67,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
     });
   }
 
-  void _searchDirectorByCategory(String categoryID) async {
-    final result = await requestManager.searchDirectorByCategory(categoryID);
+  void _searchDirectorByCategory(List<int> categoryIds) async {
+    final result = await requestManager.getDirectorCategory(categoryIds);
     if (result != null) {
       final List<Director> directors = [];
       for (var directorData in result["directors"]) {
@@ -237,15 +237,18 @@ class _DirectionListPageState extends State<DirectionListPage> {
                                 _checkboxValues.addAll(tempCheckboxValues);
                               });
 
-                              String selectedCategory = _checkboxValues.entries
-                                  .firstWhere((entry) => entry.value == true,
-                                      orElse: () => MapEntry("", false))
-                                  .key;
+                              List<int> selectedCategoryIds = _checkboxValues.entries
+                                  .where((entry) => entry.value)
+                                  .map((entry) {
+                                    final categoryIdString = _getCategoryID(entry.key);
+                                    return int.tryParse(categoryIdString);
+                                  })
+                                  .where((id) => id != null) // Filtra gli ID nulli
+                                  .map((id) => id!) // Converti non-null ID a int
+                                  .toList();
 
-                              if (selectedCategory.isNotEmpty) {
-                                String categoryID =
-                                    _getCategoryID(selectedCategory);
-                                _searchDirectorByCategory(categoryID);
+                              if (selectedCategoryIds.isNotEmpty) {
+                                _searchDirectorByCategory(selectedCategoryIds);
                               }
 
                               Navigator.of(context).pop();

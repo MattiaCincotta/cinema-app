@@ -18,12 +18,20 @@ class _LoginPageState extends State<LoginPage> {
   String _errorMessage = '';
   bool _isSnackBarActive = false;
 
-  Future<bool> _login() async {
+  Future<void> _login() async {
     RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
-    if (await mgr.login(_usernameController.text, _passwordController.text)) {
-      return true;
+    final bool success = await mgr.login(_usernameController.text, _passwordController.text);
+    
+    if (success) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const DirectionListPage()),
+      );
     } else {
-      return false;
+      setState(() {
+        _errorMessage = 'Accesso non riuscito. Controlla username e password.';
+      });
+      _showSnackBar();
     }
   }
 
@@ -171,9 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: 300.0,
                   child: Row(
@@ -272,13 +278,8 @@ class _LoginPageState extends State<LoginPage> {
                   width: 180.0,
                   height: 65.0,
                   child: ElevatedButton(
-                    onPressed: /*_handleLogin*/ () {
-                      // TODO rimettere la cosa commentata e togliere il navigator.push una volta collegato il backend
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DirectionListPage()),
-                      );
+                    onPressed: () async {
+                      await _login();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[600],

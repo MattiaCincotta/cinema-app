@@ -216,6 +216,7 @@ class __FilmPageStateState extends State<FilmPage> {
                   List<Widget> movieCards = movies.map((movie) {
                     return createCard(
                       context,
+                      movie.directorID,
                       movie.title,
                       movie.imageUrl,
                       movie.year,
@@ -236,12 +237,12 @@ class __FilmPageStateState extends State<FilmPage> {
     );
   }
 
-  Widget createCard(
-  BuildContext context, String title, String imageUrl, int year) {
+ Widget createCard(
+  BuildContext context, int id, String title, String imageUrl, int year) {
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
       return FutureBuilder<bool>(
-        future: requestManager.isFavorite(title),
+        future: requestManager.isFavorite(title), // Verifica se il film è tra i preferiti
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(
@@ -253,7 +254,7 @@ class __FilmPageStateState extends State<FilmPage> {
                   borderRadius: BorderRadius.circular(19.0),
                 ),
                 elevation: 3,
-                child: const Center(child: CircularProgressIndicator()),
+                child: const Center(child: CircularProgressIndicator()), // Loader durante il caricamento
               ),
             );
           } else if (snapshot.hasError) {
@@ -267,11 +268,11 @@ class __FilmPageStateState extends State<FilmPage> {
                   borderRadius: BorderRadius.circular(19.0),
                 ),
                 elevation: 3,
-                child: const Center(child: Text('Errore')),
+                child: const Center(child: Text('Errore')), // Gestione errore
               ),
             );
           } else {
-            bool isFavorite = snapshot.data ?? false;
+            bool isFavorite = snapshot.data ?? false; // Se è preferito
             return SizedBox(
               width: 250.0,
               height: 410.0,
@@ -288,8 +289,7 @@ class __FilmPageStateState extends State<FilmPage> {
                       width: double.infinity,
                       height: 250,
                       decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.vertical(top: Radius.circular(19.0)),
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(19.0)),
                         image: DecorationImage(
                           image: NetworkImage(imageUrl),
                           fit: BoxFit.cover,
@@ -326,26 +326,28 @@ class __FilmPageStateState extends State<FilmPage> {
                           GestureDetector(
                             onTap: () async {
                               setState(() {
-                                isFavorite = !isFavorite;
+                                isFavorite = !isFavorite; // Inverti lo stato di preferito al clic
                               });
 
                               if (isFavorite) {
+                                // Aggiungi ai preferiti
                                 final result = await requestManager.addFavorite(title);
                                 if (result != null) {
                                   print('Film aggiunto ai preferiti: $title');
                                 } else {
                                   setState(() {
-                                    isFavorite = false;
+                                    isFavorite = false; // Torna a grigio in caso di errore
                                   });
                                   print('Errore durante l\'aggiunta del film ai preferiti');
                                 }
                               } else {
+                                // Rimuovi dai preferiti
                                 final result = await requestManager.removeFavorite(title);
                                 if (result != null) {
                                   print('Film rimosso dai preferiti: $title');
                                 } else {
                                   setState(() {
-                                    isFavorite = true;
+                                    isFavorite = true; // Torna a rosso in caso di errore
                                   });
                                   print('Errore durante la rimozione del film dai preferiti');
                                 }
@@ -366,56 +368,8 @@ class __FilmPageStateState extends State<FilmPage> {
                                 ],
                               ),
                               child: Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border,
-                                color: isFavorite ? Colors.redAccent : Colors.grey,
-                                size: 30,
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              setState(() {
-                                isViewed = !isViewed;
-                              });
-
-                              if (isViewed) {
-                                final result = await requestManager.addSeenMovies(title);
-                                if (result != null) {
-                                  print('Film aggiunto alla lista dei già visti: $title');
-                                } else {
-                                  setState(() {
-                                    isViewed = false;
-                                  });
-                                  print('Errore durante l\'aggiunta del film alla lista dei già visti');
-                                }
-                              } else {
-                                final result = await requestManager.removeSeenMovies(title);
-                                if (result != null) {
-                                  print('Film rimosso dalla lista dei già visti: $title');
-                                } else {
-                                  setState(() {
-                                    isViewed = true;
-                                  });
-                                  print('Errore durante la rimozione del film dalla lista dei già visti');
-                                }
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                isViewed ? Icons.check_box : Icons.check_box_outline_blank,
-                                color: isViewed ? Colors.blue : Colors.grey,
+                                isFavorite ? Icons.favorite : Icons.favorite_border, // Icona piena o vuota
+                                color: isFavorite ? Colors.redAccent : Colors.grey, // Rosso se preferito, grigio altrimenti
                                 size: 30,
                               ),
                             ),
@@ -433,6 +387,7 @@ class __FilmPageStateState extends State<FilmPage> {
     },
   );
 }
+
 
 
 

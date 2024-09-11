@@ -10,7 +10,6 @@ class FavoriteFilmPage extends StatefulWidget {
 }
 
 class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
-  HashSet<int> numeri = HashSet<int>();
   bool showSearchBar = false; 
   final TextEditingController searchController = TextEditingController();
   final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000'); 
@@ -100,7 +99,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Text(
-                    numeri.length.toString(),
+                    _movies.length.toString(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
