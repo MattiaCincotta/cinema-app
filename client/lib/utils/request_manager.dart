@@ -95,40 +95,39 @@ class RequestManager {
     }
   }
 
-Future<dynamic> getDirectorCategory(List<int> listID) async {
-  String endpoint = '/directors/category'; 
-  final Uri url = Uri.parse('$baseUrl$endpoint')
-      .replace(queryParameters: {
-        'category': listID.map((id) => id.toString()).toList().join(',')
-      });
+////////////////////////////// GET DIRECTOR CATEGORY //////////////////////////////
+  Future<dynamic> getDirectorCategory(List<int> listID) async {
+    String endpoint = '/directors/category';
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    const storage = FlutterSecureStorage();
 
-  const storage = FlutterSecureStorage();
+    try {
+      final token = await storage.read(key: 'token');
+      if (token == null) {
+        throw 'Token non trovato';
+      }
 
-  try {
-    final token = await storage.read(key: 'token');
-    if (token == null) {
-      throw 'Token non trovato';
+      final body = jsonEncode({'category': listID});
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic result = json.decode(response.body);
+
+        return result;
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
-
-    final response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "token": token,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final dynamic result = json.decode(response.body);
-      return result;
-    }
-    return null;
-  } catch (e) {
-    print('Errore: $e');
-    return null;
   }
-}
-
 
   ///////////////////////////////// GET DIRECTOR MOVIES /////////////////////////////////
   Future<dynamic> getDirectorMovies(String director) async {
