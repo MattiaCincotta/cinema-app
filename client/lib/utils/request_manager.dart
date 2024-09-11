@@ -172,9 +172,9 @@ class RequestManager {
   }
 
   ///////////////////////////////// GET FAVORITE FILM BY TITLE /////////////////////////////////
-  Future<bool> isFavorite(String title) async {
+  Future<bool> isFavorite(int id) async {
     String endpoint = '/favorites';
-    final Uri url = Uri.parse('$baseUrl$endpoint?title=$title');
+    final Uri url = Uri.parse('$baseUrl$endpoint?id=$id');
     const storage = FlutterSecureStorage();
 
     try {

@@ -13,11 +13,13 @@ class Director {
 class Movie {
   final int directorID;
 
+  final int movieID;
+
   final String title;
 
   final String imageUrl;
 
   final int year;
 
-  Movie({required this.directorID, required this.title , required this.imageUrl, required this.year});
+  Movie({required this.directorID, required this.title , required this.imageUrl, required this.year, required this.movieID});
 }

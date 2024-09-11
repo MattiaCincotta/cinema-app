@@ -13,6 +13,7 @@ class FilmPage extends StatefulWidget {
 }
 
 class __FilmPageStateState extends State<FilmPage> {
+  Map<String, bool> favoriteStatus = {};
   bool isFavorite = false;
   bool isViewed = false;
   bool showSearchBar = false;
@@ -172,60 +173,74 @@ class __FilmPageStateState extends State<FilmPage> {
               ),
             ),
             FutureBuilder(
-              future: requestManager.getDirectorMovies(widget.name),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  print('Errore: ${snapshot.error}');
-                  return const Center(
-                    child: Text(
-                      'Error loading movies.',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                } else if (!snapshot.hasData) {
-                  print(
-                      'Nessun dato trovato, snapshot.hasData: ${snapshot.hasData}');
-                  return const Center(
-                    child: Text(
-                      'No movies found.',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                } else {
-                  print('Film trovati: ${snapshot.data}');
-                  final dynamic result = snapshot.data;
+  future: requestManager.getDirectorMovies(widget.name),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      print('Errore: ${snapshot.error}');
+      return const Center(
+        child: Text(
+          'Error loading movies.',
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    } else if (!snapshot.hasData) {
+      return const Center(
+        child: Text(
+          'No movies found.',
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    } else {
+      final dynamic result = snapshot.data;
 
-                  List<Movie> movies = [];
-                  for (var movieData in result) {
-                    movies.add(Movie(
-                      directorID: movieData["director_id"],
-                      title: movieData["title"],
-                      imageUrl: movieData["image_url"],
-                      year: movieData["year"],
-                    ));
-                  }
+      List<Movie> movies = [];
+      for (var movieData in result) {
+        movies.add(Movie(
+          directorID: movieData["director_id"],
+          movieID: movieData["id"],
+          title: movieData["title"],
+          imageUrl: movieData["image_url"],
+          year: movieData["year"],
+        ));
+      }
 
-                  List<Widget> movieCards = movies.map((movie) {
-                    return createCard(
-                      context,
-                      movie.directorID,
-                      movie.title,
-                      movie.imageUrl,
-                      movie.year,
-                    );
-                  }).toList();
+      List<Widget> movieCards = movies.map((movie) {
+        // Qui verifichi se il film è tra i preferiti
+        return FutureBuilder<bool>(
+          future: requestManager.isFavorite(movie.directorID), // Usa l'ID del film per controllare i preferiti
+          builder: (context, favSnapshot) {
+            if (favSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (favSnapshot.hasError) {
+              return const Center(child: Text('Errore'));
+            } else {
+              bool isFavorite = favSnapshot.data ?? false;
 
-                  return Expanded(
-                    child: SingleChildScrollView(
-                      child: createCardRows(movieCards),
+              // Crea la card per ogni film con lo stato di preferito
+              return createCard(
+                context,
+                movie.movieID, // Passa l'ID del film
+                movie.title,
+                movie.imageUrl,
+                movie.year,
+                isFavorite, // Stato di preferito
+              );
+            }
+          },
+        );
+      }).toList();
+
+      return Expanded(
+        child: SingleChildScrollView(
+          child: createCardRows(movieCards),
                     ),
                   );
                 }
@@ -237,14 +252,16 @@ class __FilmPageStateState extends State<FilmPage> {
     );
   }
 
- Widget createCard(
-  BuildContext context, int id, String title, String imageUrl, int year) {
+Widget createCard(
+  BuildContext context, int id, String title, String imageUrl, int year, bool isFavorite) {
+  print('filmID: ${id}');
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
       return FutureBuilder<bool>(
-        future: requestManager.isFavorite(title), // Verifica se il film è tra i preferiti
+        future: requestManager.isFavorite(id), // Verifica se il film è tra i preferiti
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            // Visualizza un loader mentre i dati sono in caricamento
             return SizedBox(
               width: 250.0,
               height: 410.0,
@@ -254,10 +271,11 @@ class __FilmPageStateState extends State<FilmPage> {
                   borderRadius: BorderRadius.circular(19.0),
                 ),
                 elevation: 3,
-                child: const Center(child: CircularProgressIndicator()), // Loader durante il caricamento
+                child: const Center(child: CircularProgressIndicator()),
               ),
             );
           } else if (snapshot.hasError) {
+            // Gestione degli errori
             print('Errore: ${snapshot.error}');
             return SizedBox(
               width: 250.0,
@@ -268,11 +286,13 @@ class __FilmPageStateState extends State<FilmPage> {
                   borderRadius: BorderRadius.circular(19.0),
                 ),
                 elevation: 3,
-                child: const Center(child: Text('Errore')), // Gestione errore
+                child: const Center(child: Text('Errore')),
               ),
             );
           } else {
-            bool isFavorite = snapshot.data ?? false; // Se è preferito
+            // Se i dati sono stati caricati correttamente
+            bool isFavorite = snapshot.data ?? false;
+
             return SizedBox(
               width: 250.0,
               height: 410.0,
@@ -326,7 +346,7 @@ class __FilmPageStateState extends State<FilmPage> {
                           GestureDetector(
                             onTap: () async {
                               setState(() {
-                                isFavorite = !isFavorite; // Inverti lo stato di preferito al clic
+                                isFavorite = !isFavorite; // Inverti lo stato di preferito
                               });
 
                               if (isFavorite) {
@@ -336,7 +356,7 @@ class __FilmPageStateState extends State<FilmPage> {
                                   print('Film aggiunto ai preferiti: $title');
                                 } else {
                                   setState(() {
-                                    isFavorite = false; // Torna a grigio in caso di errore
+                                    isFavorite = false; // Torna allo stato precedente in caso di errore
                                   });
                                   print('Errore durante l\'aggiunta del film ai preferiti');
                                 }
@@ -347,7 +367,7 @@ class __FilmPageStateState extends State<FilmPage> {
                                   print('Film rimosso dai preferiti: $title');
                                 } else {
                                   setState(() {
-                                    isFavorite = true; // Torna a rosso in caso di errore
+                                    isFavorite = true; // Torna allo stato precedente in caso di errore
                                   });
                                   print('Errore durante la rimozione del film dai preferiti');
                                 }
@@ -368,8 +388,8 @@ class __FilmPageStateState extends State<FilmPage> {
                                 ],
                               ),
                               child: Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border, // Icona piena o vuota
-                                color: isFavorite ? Colors.redAccent : Colors.grey, // Rosso se preferito, grigio altrimenti
+                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: isFavorite ? Colors.redAccent : Colors.grey,
                                 size: 30,
                               ),
                             ),
@@ -387,6 +407,7 @@ class __FilmPageStateState extends State<FilmPage> {
     },
   );
 }
+
 
 
 
