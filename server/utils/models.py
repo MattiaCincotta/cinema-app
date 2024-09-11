@@ -4,6 +4,8 @@ from db.db import DB_utils
 import uuid
 from hashlib import sha256
 
+# may god help us writing less shitty code
+
 ######### USER PART ##############################################################################################
 
 class User:
@@ -468,12 +470,12 @@ class MovieManager:
             return []
     
     @staticmethod
-    def is_favorite(user: User, movie_title: str) -> bool:
+    def is_favorite(user: User, movie_id: int) -> bool:
         """
         Check if a movie is in the favorites of a user.
         Args:
             user: The user object.
-            movie: The movie object.
+            movie_id: The movie id.
         Returns:
             True if the movie is in the favorites, False otherwise.
         """
@@ -483,10 +485,10 @@ class MovieManager:
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie_title))
+            cursor.execute("SELECT COUNT(*) FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie_id))
             result = cursor.fetchone()
             cursor.close()
-            return True if result else False
+            return True if result == 1 else False
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return False
@@ -518,6 +520,30 @@ class MovieManager:
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
+    
+    @staticmethod
+    def is_seen(user: User, movie_id: int) -> bool:
+        """
+        Check if a movie is in the seen of a user.
+        Args:
+            user: The user object.
+            movie_id: The movie id.
+        Returns:
+            True if the movie is in the favorites, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) FROM seen WHERE user_id = %s AND movie_id = %s", (user.id, movie_id))
+            result = cursor.fetchone()
+            cursor.close()
+            return True if result == 1 else False
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
     
     @staticmethod
     def get_seen_movies(user: User) -> list:

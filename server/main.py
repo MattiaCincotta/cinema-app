@@ -73,7 +73,7 @@ def movies_category():
     else:
         return jsonify("invalid token"), 401
 
-@api.route('/directors/category', methods=['GET'])
+@api.route('/directors/category', methods=['POST'])
 def directors_category():
     if UserManager.verify_token(request.headers.get('token'), True):
         data = request.json
@@ -111,9 +111,9 @@ def director():
 def getFavorites():
     if UserManager.verify_token(request.headers.get('token'), True):
         user = UserManager.get_user_by_token(request.headers.get('token'))
-        title = request.args.get('title')
-        if title and isinstance(title, str):
-            result = MovieManager.is_favorite(user, title)
+        movie_id = request.args.get('id')
+        if movie_id and isinstance(movie_id, int):
+            result = MovieManager.is_favorite(user, movie_id)
             return jsonify("true" if result else "false"), 200
 
         result = MovieManager.get_favorites(user)
@@ -159,6 +159,11 @@ def getSeenMovies():
     if UserManager.verify_token(request.headers.get('token'), True):
         user = UserManager.get_user_by_token(request.headers.get('token'))
         result = MovieManager.get_seen_movies(user)
+        movie_id = request.args.get('id')
+        if movie_id and isinstance(movie_id, int):
+            result = MovieManager.is_seen(user, movie_id)
+            return jsonify("true" if result else "false"), 200
+        
         if result:
             return jsonify([movie.__dict__ for movie in result]), 200
         else:
