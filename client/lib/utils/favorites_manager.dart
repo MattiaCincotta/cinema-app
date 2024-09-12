@@ -16,6 +16,7 @@ class FavoritesManager with ChangeNotifier {
 
     if (newStatus) {
       final result = await requestManager.addFavorite(title);
+
       if (result != null) {
         _favoritesNotifier.value = Map.from(_favoritesNotifier.value)
           ..[id] = newStatus;

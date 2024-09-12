@@ -1,3 +1,4 @@
+import 'package:client/utils/seen_movie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/request_manager.dart';
 import 'package:client/utils/favorites_manager.dart';
@@ -28,6 +29,7 @@ class _FilmPageState extends State<FilmPage> {
   final TextEditingController searchController = TextEditingController();
   final FlutterSecureStorage storage = const FlutterSecureStorage();
   final FavoritesManager favoritesController = FavoritesManager();
+  final SeenMovieManager seenMovieController = SeenMovieManager();
 
   @override
   Widget build(BuildContext context) {
@@ -241,137 +243,219 @@ class _FilmPageState extends State<FilmPage> {
     );
   }
 
-Widget createCard(
-  BuildContext context, int id, String title, String imageUrl, int year) {
-  return StatefulBuilder(
-    builder: (BuildContext context, StateSetter setState) {
-      return FutureBuilder<bool>(
-        future: requestManager.isFavorite(id),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
-              width: 250.0,
-              height: 410.0,
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(19.0),
+  Widget createCard(
+      BuildContext context, int id, String title, String imageUrl, int year) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return FutureBuilder<bool>(
+          future: requestManager.isFavorite(id),
+          builder: (context, favoriteSnapshot) {
+            if (favoriteSnapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox(
+                width: 250.0,
+                height: 410.0,
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(19.0),
+                  ),
+                  elevation: 3,
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
-                elevation: 3,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            print('Errore: ${snapshot.error}');
-            return SizedBox(
-              width: 250.0,
-              height: 410.0,
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(19.0),
+              );
+            } else if (favoriteSnapshot.hasError) {
+              print('Errore: ${favoriteSnapshot.error}');
+              return SizedBox(
+                width: 250.0,
+                height: 410.0,
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(19.0),
+                  ),
+                  elevation: 3,
+                  child: const Center(child: Text('Errore')),
                 ),
-                elevation: 3,
-                child: const Center(child: Text('Errore')),
-              ),
-            );
-          } else {
-            bool isFavorite = snapshot.data ?? false;
-            print('isFavorite: $isFavorite');
+              );
+            } else {
+              bool isFavorite = favoriteSnapshot.data ?? false;
 
-            return SizedBox(
-              width: 250.0,
-              height: 410.0,
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(19.0),
-                ),
-                elevation: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 250,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(19.0)),
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
+              // FutureBuilder for isSeen
+              return FutureBuilder<bool>(
+                future: requestManager.isSeen(id),
+                builder: (context, seenSnapshot) {
+                  if (seenSnapshot.connectionState == ConnectionState.waiting) {
+                    return SizedBox(
+                      width: 250.0,
+                      height: 410.0,
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(19.0),
                         ),
+                        elevation: 3,
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                    );
+                  } else if (seenSnapshot.hasError) {
+                    print('Errore: ${seenSnapshot.error}');
+                    return SizedBox(
+                      width: 250.0,
+                      height: 410.0,
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(19.0),
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        elevation: 3,
+                        child: const Center(child: Text('Errore')),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, right: 10.0, bottom: 10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            year.toString(),
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () async {
-
-                              await favoritesController.toggleFavorite(isFavorite, title, id);
-                              setState(() {});
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              margin: const EdgeInsets.only(right: 10.0),
+                    );
+                  } else {
+                    bool isSeen = seenSnapshot.data ?? false;
+                    print('isSeen: $isSeen');
+                    return SizedBox(
+                      width: 250.0,
+                      height: 410.0,
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(19.0),
+                        ),
+                        elevation: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 250,
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
+                                borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(19.0)),
+                                image: DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 10.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    year.toString(),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.grey[800],
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Spacer(),
+
+                                  // Icon for isFavorite
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await favoritesController.toggleFavorite(
+                                          isFavorite, title, id);
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      margin:
+                                          const EdgeInsets.only(right: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.3),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        isFavorite
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color: isFavorite
+                                            ? Colors.redAccent
+                                            : Colors.grey,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
+                                  
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await seenMovieController
+                                          .togglesSeenMovies(isSeen, title, id);
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      margin:
+                                          const EdgeInsets.only(right: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.3),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        isSeen
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: isSeen
+                                            ? Colors.greenAccent
+                                            : Colors.grey,
+                                        size: 30,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                              child: Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border,
-                                color: isFavorite ? Colors.redAccent : Colors.grey,
-                                size: 30,
-                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        },
-      );
-    },
-  );
-}
-
+                    );
+                  }
+                },
+              );
+            }
+          },
+        );
+      },
+    );
+  }
 
   Widget createCardRows(List<Widget> cards) {
     List<Widget> rows = [];

@@ -9,11 +9,54 @@ class MovieHistoryPage extends StatefulWidget {
 }
 
 class _MovieHistoryPageState extends State<MovieHistoryPage> {
-  int _favoriteCount = 0;
-  final TextEditingController _searchController = TextEditingController();
-  bool _showSearchBar = false;
+  int initialFilmNumber = 0;
+  final ValueNotifier<int> filmNumberNotifier = ValueNotifier<int>(0);
+  final List<String> removedFilm = [];
+  bool showSearchBar = false;
+  final TextEditingController searchController = TextEditingController();
+  final RequestManager requestManager =
+      RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  List<Movie> _movies = [];
+  List<Movie> _filteredMovies = [];
 
-  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');  // Aggiungi il RequestManager
+  @override
+  void initState() {
+    super.initState();
+    _fetchMovies();
+  }
+
+  void _fetchMovies() async {
+    final result = await requestManager.getSeenMovies();
+    print('prova in movie:history: $result');
+    if (result != null) {
+      final List<Movie> movies = [];
+      for (var movieData in result) {
+        movies.add(Movie(
+          directorID: movieData["director_id"],
+          title: movieData["title"],
+          imageUrl: movieData["image_url"],
+          year: movieData["year"],
+        ));
+      }
+      setState(() {
+        _movies = movies;
+        _filteredMovies = movies;
+      });
+      filmNumberNotifier.value = _movies.length; // Imposta il valore iniziale
+      initialFilmNumber = _movies.length;
+    }
+  }
+
+  void _filterMovies(String query) {
+    final filtered = _movies.where((movie) {
+      final titleLower = movie.title.toLowerCase();
+      final queryLower = query.toLowerCase();
+      return titleLower.contains(queryLower);
+    }).toList();
+    setState(() {
+      _filteredMovies = filtered;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +68,12 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
             color: Colors.white,
             size: 28,
           ),
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async {
+            bool shouldExit = await _confirmationDialog();
+            if (shouldExit) {
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
+            }
           },
         ),
         title: const Text(
@@ -52,21 +99,26 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                   size: 33,
                 ),
                 const SizedBox(width: 8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Text(
-                    '$_favoriteCount',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                ValueListenableBuilder<int>(
+                  valueListenable: filmNumberNotifier,
+                  builder: (context, filmNumber, child) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        filmNumber.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 12),
                 IconButton(
@@ -74,7 +126,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                   iconSize: 35,
                   onPressed: () {
                     setState(() {
-                      _showSearchBar = !_showSearchBar;
+                      showSearchBar = !showSearchBar;
                     });
                   },
                 ),
@@ -83,96 +135,75 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
           ),
         ],
       ),
-      body: Container(
-        color: Colors.grey[900],
-        child: Column(
-          children: [
-            if (_showSearchBar)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  style: const TextStyle(
-                    color: Colors.white,
+      backgroundColor: Colors.grey[900],
+      body: Column(
+        children: [
+          if (showSearchBar)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Cerca film...',
+                  hintStyle: const TextStyle(
+                    color: Colors.white54,
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'Cerca film...',
-                    hintStyle: const TextStyle(
-                      color: Colors.white54, 
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                      borderSide: const BorderSide(
-                          color: Colors.white), 
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.search,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: const BorderSide(
                       color: Colors.white,
                     ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(
-                        Icons.clear,
-                        color: Colors.white, 
-                      ),
-                      onPressed: () {
-                        _searchController.clear();
-                        FocusScope.of(context).unfocus();
-                      },
-                    ),
                   ),
-                  onSubmitted: (value) {
-                    print('Ricerca per: $value');
-                  },
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      searchController.clear();
+                      FocusScope.of(context).unfocus();
+                      _filterMovies('');
+                    },
+                  ),
                 ),
-              ),
-            Expanded(
-              child: FutureBuilder(
-                future: requestManager.getSeenMovies(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Text(
-                        'Errore nel caricamento dei film visti.',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'Non ci sono film visti.',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  } else {
-                    final List<dynamic> movies = snapshot.data;
-
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: movies.map((movie) {
-                          return createCard(movie['image_url'], movie['title']);
-                        }).toList(),
-                      ),
-                    );
-                  }
+                onChanged: (value) {
+                  _filterMovies(value);
                 },
               ),
             ),
-          ],
-        ),
+          Expanded(
+            child: _filteredMovies.isEmpty
+                ? const Center(
+                    child: Text(
+                      'Nessun film trovato.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      children: _filteredMovies.map((movie) {
+                        return createCard(movie.imageUrl, movie.title);
+                      }).toList(),
+                    ),
+                  ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget createCard(String imageUrl, String filmName) {
-    bool isChecked = true;
+  Widget createCard(String imageUrl, String title) {
+    bool isSeen = true;
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -182,40 +213,50 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
             borderRadius: BorderRadius.circular(15.0),
           ),
           elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  filmName,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.redAccent,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 15),
-                Image.network(
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(15.0)),
+                child: Image.network(
                   imageUrl,
                   width: double.infinity,
                   height: 275,
                   fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 15),
-                Row(
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Spacer(),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.redAccent,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          isChecked = !isChecked;
-                          if (isChecked) {
-                            _favoriteCount++;
+                          isSeen = !isSeen;
+                          if (!isSeen) {
+                            if (!removedFilm.contains(title)) {
+                              removedFilm.add(title);
+                              filmNumberNotifier
+                                  .value--; // Diminuisci il contatore
+                              print('Film aggiunto a removedFilm: $title');
+                            }
                           } else {
-                            _favoriteCount--;
+                            removedFilm.remove(title);
+                            filmNumberNotifier.value++; // Aumenta il contatore
+                            print('Film rimosso da removedFilm: $title');
                           }
                         });
                       },
@@ -224,7 +265,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
-                          boxShadow: isChecked
+                          boxShadow: isSeen
                               ? [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.3),
@@ -235,21 +276,73 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                               : [],
                         ),
                         child: Icon(
-                          isChecked
-                              ? Icons.check_box
-                              : Icons.check_box_outline_blank,
-                          color: Colors.lightBlue,
+                          isSeen ? Icons.visibility : Icons.visibility_off,
+                          color: isSeen ? Colors.greenAccent : Colors.grey,
                           size: 45,
                         ),
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
   }
+
+  Future<bool> _confirmationDialog() async {
+    // Condizione casuale, ad esempio un numero casuale
+    if (filmNumberNotifier.value == initialFilmNumber) {
+      return true; // Evita di mostrare il popup
+    }
+
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Conferma'),
+              content: const Text(
+                  'Vuoi eliminare i film dai già visti prima di uscire?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Utente ha scelto "No"
+                  },
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Utente ha scelto "Sì"
+                    for (String title in removedFilm) {
+                      await requestManager.removeSeenMovies(title);
+                    }
+
+                    // Chiude il dialogo e ritorna true
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Sì'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+  }
+}
+
+class Movie {
+  final int directorID;
+  final String title;
+  final String imageUrl;
+  final int year;
+
+  Movie({
+    required this.directorID,
+    required this.title,
+    required this.imageUrl,
+    required this.year,
+  });
 }

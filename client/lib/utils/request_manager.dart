@@ -259,7 +259,8 @@ class RequestManager {
     }
   }
 
-  ///////////////////////////////// GET SEEN FILM /////////////////////////////////
+
+  ///////////////////////////////// GET SEEN MOVIES /////////////////////////////////
   Future<dynamic> getSeenMovies() async {
     String endpoint = '/seen_movies';
     final Uri url = Uri.parse('$baseUrl$endpoint');
@@ -272,11 +273,33 @@ class RequestManager {
       if (response.statusCode == 200) {
         final dynamic result = json.decode(response.body);
 
+        print('film visti: $result');
         return result;
       }
       return null;
     } catch (e) {
       return null;
+    }
+  }
+
+
+  ///////////////////////////////// GET SEEN MOVIE BY ID /////////////////////////////////
+  Future<bool> isSeen(int id) async {
+    String endpoint = '/seen_movies';
+    final Uri url = Uri.parse('$baseUrl$endpoint?id=$id');
+    const storage = FlutterSecureStorage();
+    print('URI: $url');
+    try {
+      final response = await http
+          .get(url, headers: {"token": (await storage.read(key: 'token'))!});
+
+      if (response.statusCode == 200) {
+        print('server response IsSeen: ${response.body.toString().contains('true')}');
+        return response.body.toString().contains('true');
+      }
+      return false;
+    } catch (e) {
+      return false;
     }
   }
 

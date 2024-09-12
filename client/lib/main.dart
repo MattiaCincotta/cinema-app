@@ -1,8 +1,7 @@
 import 'package:client/login.dart';
+import 'package:client/movie_history.dart';
 import 'package:client/registration.dart';
-import 'package:client/utils/request_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'homepage.dart';
 import 'directorlist.dart';
 import 'favoritefilm.dart';
@@ -36,6 +35,7 @@ class _CinemaAppState extends State<CinemaApp> {
         '/directorList': (context) => const DirectionListPage(),
         '/favoritefilm': (context) => const FavoriteFilmPage(),
         '/filmpage': (context) => const FilmPage(name: "", id: 1, imageUrl: ''),
+        '/movieHistory': (context) => const MovieHistoryPage(),
       },
     );
   }

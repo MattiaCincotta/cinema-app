@@ -70,6 +70,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           onPressed: () async {
             bool shouldExit = await _confirmationDialog();
             if (shouldExit) {
+              // ignore: use_build_context_synchronously
               Navigator.pop(context);
             }
           },
