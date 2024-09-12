@@ -176,13 +176,15 @@ class RequestManager {
     String endpoint = '/favorites';
     final Uri url = Uri.parse('$baseUrl$endpoint?id=$id');
     const storage = FlutterSecureStorage();
-
+    print('URI: $url');
     try {
       final response = await http
           .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        return true;
+        print('response: ${response.body}');
+        
+        return response.body == 'true' ? true : false;
       }
       return false;
     } catch (e) {
