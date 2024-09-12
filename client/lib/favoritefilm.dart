@@ -14,7 +14,8 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   final List<String> removedFilm = [];
   bool showSearchBar = false;
   final TextEditingController searchController = TextEditingController();
-  final RequestManager requestManager = RequestManager(baseUrl: 'http://172.18.0.3:5000');
+  final RequestManager requestManager =
+      RequestManager(baseUrl: 'http://172.18.0.3:5000');
   List<Movie> _movies = [];
   List<Movie> _filteredMovies = [];
 
@@ -100,7 +101,8 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                   valueListenable: filmNumberNotifier,
                   builder: (context, filmNumber, child) {
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.redAccent,
                         borderRadius: BorderRadius.circular(15),
@@ -176,22 +178,22 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
             ),
           Expanded(
             child: _filteredMovies.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Nessun film trovato.',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                ? const Center(
+                    child: Text(
+                      'Nessun film trovato.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      children: _filteredMovies.map((movie) {
+                        return createCard(movie.imageUrl, movie.title);
+                      }).toList(),
                     ),
                   ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: _filteredMovies.map((movie) {
-                      return createCard(movie.imageUrl, movie.title);
-                    }).toList(),
-                  ),
-                ),
           ),
         ],
       ),
@@ -212,7 +214,8 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           child: Column(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(15.0)),
                 child: Image.network(
                   imageUrl,
                   width: double.infinity,
@@ -244,7 +247,8 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
                           if (!isFavorite) {
                             if (!removedFilm.contains(title)) {
                               removedFilm.add(title);
-                              filmNumberNotifier.value--; // Diminuisci il contatore
+                              filmNumberNotifier
+                                  .value--; // Diminuisci il contatore
                               print('Film aggiunto a removedFilm: $title');
                             }
                           } else {
@@ -286,48 +290,45 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
     );
   }
 
+  Future<bool> _confirmationDialog() async {
+    // Condizione casuale, ad esempio un numero casuale
+    if (filmNumberNotifier.value == initialFilmNumber) {
+      return true; // Evita di mostrare il popup
+    }
 
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Conferma'),
+              content: const Text(
+                  'Vuoi eliminare i film dai preferiti prima di uscire?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Utente ha scelto "No"
+                  },
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Utente ha scelto "Sì"
+                    for (String title in removedFilm) {
+                      await requestManager.removeFavorite(title);
+                    }
 
-
-
-Future<bool> _confirmationDialog() async {
-  // Condizione casuale, ad esempio un numero casuale
-  if (filmNumberNotifier.value == initialFilmNumber) {
-    return true; // Evita di mostrare il popup
+                    // Chiude il dialogo e ritorna true
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Sì'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
-
-  return await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Conferma'),
-            content: const Text('Vuoi eliminare i film dai preferiti prima di uscire?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false); // Utente ha scelto "No"
-                },
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  // Utente ha scelto "Sì"
-                  for (String title in removedFilm) {
-                    await requestManager.removeFavorite(title);
-                  }
-
-                  // Chiude il dialogo e ritorna true
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text('Sì'),
-              ),
-            ],
-          );
-        },
-      ) ??
-      false;
-}
 }
 
 class Movie {

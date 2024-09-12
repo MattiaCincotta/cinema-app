@@ -6,7 +6,11 @@ class FilmPage extends StatefulWidget {
   final String name;
   final int id;
   final String imageUrl;
-  const FilmPage({super.key, required this.name, required this.id, required this.imageUrl});
+  const FilmPage(
+      {super.key,
+      required this.name,
+      required this.id,
+      required this.imageUrl});
 
   @override
   State<FilmPage> createState() => __FilmPageStateState();
@@ -20,8 +24,6 @@ class __FilmPageStateState extends State<FilmPage> {
   final RequestManager requestManager =
       RequestManager(baseUrl: 'http://172.18.0.3:5000');
   final TextEditingController searchController = TextEditingController();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +52,10 @@ class __FilmPageStateState extends State<FilmPage> {
         elevation: 4.0,
         actions: const [
           Padding(
-            padding:EdgeInsets.only(right: 20.0),
+            padding: EdgeInsets.only(right: 20.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
-              ],
+              children: [],
             ),
           ),
         ],
@@ -173,74 +174,74 @@ class __FilmPageStateState extends State<FilmPage> {
               ),
             ),
             FutureBuilder(
-  future: requestManager.getDirectorMovies(widget.name),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      print('Errore: ${snapshot.error}');
-      return const Center(
-        child: Text(
-          'Error loading movies.',
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      );
-    } else if (!snapshot.hasData) {
-      return const Center(
-        child: Text(
-          'No movies found.',
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      );
-    } else {
-      final dynamic result = snapshot.data;
+              future: requestManager.getDirectorMovies(widget.name),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  print('Errore: ${snapshot.error}');
+                  return const Center(
+                    child: Text(
+                      'Error loading movies.',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else if (!snapshot.hasData) {
+                  return const Center(
+                    child: Text(
+                      'No movies found.',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else {
+                  final dynamic result = snapshot.data;
 
-      List<Movie> movies = [];
-      for (var movieData in result) {
-        movies.add(Movie(
-          directorID: movieData["director_id"],
-          movieID: movieData["id"],
-          title: movieData["title"],
-          imageUrl: movieData["image_url"],
-          year: movieData["year"],
-        ));
-      }
+                  List<Movie> movies = [];
+                  for (var movieData in result) {
+                    movies.add(Movie(
+                      directorID: movieData["director_id"],
+                      movieID: movieData["id"],
+                      title: movieData["title"],
+                      imageUrl: movieData["image_url"],
+                      year: movieData["year"],
+                    ));
+                  }
 
-      List<Widget> movieCards = movies.map((movie) {
-        // Qui verifichi se il film è tra i preferiti
-        return FutureBuilder<bool>(
-          future: requestManager.isFavorite(movie.directorID), // Usa l'ID del film per controllare i preferiti
-          builder: (context, favSnapshot) {
-            if (favSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (favSnapshot.hasError) {
-              return const Center(child: Text('Errore'));
-            } else {
-              bool isFavorite = favSnapshot.data ?? false;
+                  List<Widget> movieCards = movies.map((movie) {
+                    return FutureBuilder<bool>(
+                      future: requestManager.isFavorite(movie.directorID),
+                      builder: (context, favSnapshot) {
+                        if (favSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (favSnapshot.hasError) {
+                          return const Center(child: Text('Errore'));
+                        } else {
+                          bool isFavorite = favSnapshot.data ?? false;
 
-              // Crea la card per ogni film con lo stato di preferito
-              return createCard(
-                context,
-                movie.movieID, // Passa l'ID del film
-                movie.title,
-                movie.imageUrl,
-                movie.year,
-                isFavorite, // Stato di preferito
-              );
-            }
-          },
-        );
-      }).toList();
+                          return createCard(
+                            context,
+                            movie.movieID,
+                            movie.title,
+                            movie.imageUrl,
+                            movie.year,
+                            isFavorite,
+                          );
+                        }
+                      },
+                    );
+                  }).toList();
 
-      return Expanded(
-        child: SingleChildScrollView(
-          child: createCardRows(movieCards),
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      child: createCardRows(movieCards),
                     ),
                   );
                 }
@@ -252,165 +253,172 @@ class __FilmPageStateState extends State<FilmPage> {
     );
   }
 
-Widget createCard(
-  BuildContext context, int id, String title, String imageUrl, int year, bool isFavorite) {
-  print('filmID: ${id}');
-  return StatefulBuilder(
-    builder: (BuildContext context, StateSetter setState) {
-      return FutureBuilder<bool>(
-        future: requestManager.isFavorite(id), // Verifica se il film è tra i preferiti
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Visualizza un loader mentre i dati sono in caricamento
-            return SizedBox(
-              width: 250.0,
-              height: 410.0,
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(19.0),
+  Widget createCard(BuildContext context, int id, String title, String imageUrl,
+      int year, bool isFavorite) {
+    print('filmID: ${id}');
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return FutureBuilder<bool>(
+          future: requestManager.isFavorite(id),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox(
+                width: 250.0,
+                height: 410.0,
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(19.0),
+                  ),
+                  elevation: 3,
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
-                elevation: 3,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            // Gestione degli errori
-            print('Errore: ${snapshot.error}');
-            return SizedBox(
-              width: 250.0,
-              height: 410.0,
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(19.0),
+              );
+            } else if (snapshot.hasError) {
+              print('Errore: ${snapshot.error}');
+              return SizedBox(
+                width: 250.0,
+                height: 410.0,
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(19.0),
+                  ),
+                  elevation: 3,
+                  child: const Center(child: Text('Errore')),
                 ),
-                elevation: 3,
-                child: const Center(child: Text('Errore')),
-              ),
-            );
-          } else {
-            // Se i dati sono stati caricati correttamente
-            bool isFavorite = snapshot.data ?? false;
+              );
+            } else {
+              bool isFavorite = snapshot.data ?? false;
 
-            return SizedBox(
-              width: 250.0,
-              height: 410.0,
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(19.0),
-                ),
-                elevation: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 250,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(19.0)),
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
+              return SizedBox(
+                width: 250.0,
+                height: 410.0,
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(19.0),
+                  ),
+                  elevation: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(19.0)),
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            year.toString(),
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10.0, right: 10.0, bottom: 10.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              year.toString(),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () async {
-                              setState(() {
-                                isFavorite = !isFavorite; // Inverti lo stato di preferito
-                              });
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  isFavorite = !isFavorite;
+                                });
 
-                              if (isFavorite) {
-                                // Aggiungi ai preferiti
-                                final result = await requestManager.addFavorite(title);
-                                if (result != null) {
-                                  print('Film aggiunto ai preferiti: $title');
+                                if (isFavorite) {
+                                  final result =
+                                      await requestManager.addFavorite(title);
+                                  if (result != null) {
+                                    print('Film aggiunto ai preferiti: $title');
+                                  } else {
+                                    setState(() {
+                                      isFavorite =
+                                          false; // Torna allo stato precedente in caso di errore
+                                    });
+                                    print(
+                                        'Errore durante l\'aggiunta del film ai preferiti');
+                                  }
                                 } else {
-                                  setState(() {
-                                    isFavorite = false; // Torna allo stato precedente in caso di errore
-                                  });
-                                  print('Errore durante l\'aggiunta del film ai preferiti');
+                                  // Rimuovi dai preferiti
+                                  final result = await requestManager
+                                      .removeFavorite(title);
+                                  if (result != null) {
+                                    print('Film rimosso dai preferiti: $title');
+                                  } else {
+                                    setState(() {
+                                      isFavorite =
+                                          true; // Torna allo stato precedente in caso di errore
+                                    });
+                                    print(
+                                        'Errore durante la rimozione del film dai preferiti');
+                                  }
                                 }
-                              } else {
-                                // Rimuovi dai preferiti
-                                final result = await requestManager.removeFavorite(title);
-                                if (result != null) {
-                                  print('Film rimosso dai preferiti: $title');
-                                } else {
-                                  setState(() {
-                                    isFavorite = true; // Torna allo stato precedente in caso di errore
-                                  });
-                                  print('Errore durante la rimozione del film dai preferiti');
-                                }
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              margin: const EdgeInsets.only(right: 10.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border,
-                                color: isFavorite ? Colors.redAccent : Colors.grey,
-                                size: 30,
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                margin: const EdgeInsets.only(right: 10.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite
+                                      ? Colors.redAccent
+                                      : Colors.grey,
+                                  size: 30,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
-        },
-      );
-    },
-  );
-}
-
-
-
-
+              );
+            }
+          },
+        );
+      },
+    );
+  }
 
   Widget createCardRows(List<Widget> cards) {
     List<Widget> rows = [];

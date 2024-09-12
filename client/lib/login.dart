@@ -20,8 +20,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
-    final bool success = await mgr.login(_usernameController.text, _passwordController.text);
-    
+    final bool success =
+        await mgr.login(_usernameController.text, _passwordController.text);
+
     if (success) {
       Navigator.push(
         context,

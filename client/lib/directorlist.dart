@@ -5,6 +5,25 @@ import 'package:client/movie_history.dart';
 import 'package:client/utils/models.dart';
 import 'package:client/utils/request_manager.dart';
 
+class Category {
+  final int id;
+  bool isSelected;
+
+  Category(this.id, this.isSelected);
+}
+
+// Mappa delle categorie
+final Map<String, Category> categories = {
+  'Horror      ':  Category(1, false),
+  'Thriller          ':  Category(2, false),
+  'Mistero    ': Category(3, false),
+  'Romantico    ': Category(4, false),
+  'Fantasy    ': Category(5, false),
+  'Drammatico ': Category(6, false),
+  'Avventura': Category(7, false),
+  'Fantascienza': Category(8, false),
+};
+
 class DirectionListPage extends StatefulWidget {
   const DirectionListPage({super.key});
 
@@ -13,17 +32,6 @@ class DirectionListPage extends StatefulWidget {
 }
 
 class _DirectionListPageState extends State<DirectionListPage> {
-  final Map<String, bool> _checkboxValues = {
-    'Horror      ': false,
-    'Thriller          ': false,
-    'Mistero    ': false,
-    'Romantico    ': false,
-    'Fantasy    ': false,
-    'Drammatico  ': false,
-    'Avventura': false,
-    'Fantascienza': false,
-  };
-
   final RequestManager requestManager =
       RequestManager(baseUrl: 'http://172.18.0.3:5000');
   final TextEditingController _searchController = TextEditingController();
@@ -68,35 +76,25 @@ class _DirectionListPageState extends State<DirectionListPage> {
   }
 
   void _searchDirectorByCategory(List<int> categoryIds) async {
-    final result = await requestManager.getDirectorCategory(categoryIds);
-    if (result != null) {
-      final List<Director> directors = [];
-      for (var directorData in result["directors"]) {
-        directors.add(Director(
-          id: directorData["id"],
-          name: directorData["name"],
-          imageUrl: directorData["image_url"],
-        ));
+    if (categoryIds.isEmpty) {
+      _fetchDirectors();
+    } else {
+      final result = await requestManager.getDirectorCategory(categoryIds);
+      if (result != null) {
+        final List<Director> directors = [];
+        for (var directorData in result["directors"]) {
+          directors.add(Director(
+            id: directorData["id"],
+            name: directorData["name"],
+            imageUrl: directorData["image_url"],
+          ));
+        }
+        setState(() {
+          _directors = directors;
+          _filteredDirectors = directors;
+        });
       }
-      setState(() {
-        _directors = directors;
-        _filteredDirectors = directors;
-      });
     }
-  }
-
-  String _getCategoryID(String categoryName) {
-    const categoryMap = {
-      'Horror      ': '1',
-      'Thriller          ': '2',
-      'Mistero    ': '3',
-      'Romantico    ': '4',
-      'Fantasy    ': '5',
-      'Drammatico  ': '6',
-      'Avventura': '7',
-      'Fantascienza': '8',
-    };
-    return categoryMap[categoryName.trim()] ?? '';
   }
 
   @override
@@ -163,8 +161,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
             icon: const Icon(Icons.tune),
             iconSize: 28,
             onPressed: () {
-              final Map<String, bool> tempCheckboxValues =
-                  Map.from(_checkboxValues);
+              final Map<String, Category> tempCategoryStates =
+                  Map.from(categories);
 
               showDialog(
                 context: context,
@@ -186,14 +184,15 @@ class _DirectionListPageState extends State<DirectionListPage> {
                               Wrap(
                                 spacing: 30.0,
                                 runSpacing: 10.0,
-                                children: _checkboxValues.keys.map((category) {
+                                children: categories.keys.map((category) {
+                                  final Category categoryData =
+                                      categories[category]!;
                                   return FilterChip(
                                     label: Text(category),
-                                    selected:
-                                        tempCheckboxValues[category] ?? false,
+                                    selected: categoryData.isSelected,
                                     onSelected: (bool selected) {
                                       setState(() {
-                                        tempCheckboxValues[category] = selected;
+                                        categoryData.isSelected = selected;
                                       });
                                     },
                                     selectedColor: Colors.blueAccent,
@@ -233,23 +232,18 @@ class _DirectionListPageState extends State<DirectionListPage> {
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                _checkboxValues.clear();
-                                _checkboxValues.addAll(tempCheckboxValues);
+                                categories.forEach((key, value) {
+                                  value.isSelected =
+                                      tempCategoryStates[key]!.isSelected;
+                                });
                               });
 
-                              List<int> selectedCategoryIds = _checkboxValues.entries
-                                  .where((entry) => entry.value)
-                                  .map((entry) {
-                                    final categoryIdString = _getCategoryID(entry.key);
-                                    return int.tryParse(categoryIdString);
-                                  })
-                                  .where((id) => id != null) // Filtra gli ID nulli
-                                  .map((id) => id!) // Converti non-null ID a int
+                              List<int> selectedCategoryIds = categories.values
+                                  .where((category) => category.isSelected)
+                                  .map((category) => category.id)
                                   .toList();
 
-                              if (selectedCategoryIds.isNotEmpty) {
-                                _searchDirectorByCategory(selectedCategoryIds);
-                              }
+                              _searchDirectorByCategory(selectedCategoryIds);
 
                               Navigator.of(context).pop();
                             },
@@ -336,85 +330,86 @@ class _DirectionListPageState extends State<DirectionListPage> {
       ),
     );
   }
-  Widget createCard({
-    required BuildContext context,
-    required String imageUrl,
-    required name,
-    required id,
-  }) {
-    return Column(
-      children: [
-        Card(
-          color: Colors.grey[850],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          elevation: 5.0,
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15.0),
-                      child: Image.network(
-                        imageUrl,
-                        width: 75,
-                        height: 75,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 15.0),
-                    Text(
-                      truncateWithEllipsis(13,
-                          getSurname(name)), 
-                      style: const TextStyle(
-                        fontSize: 23.0,
-                        color: Colors.white,
-                      ),
-                      maxLines: 1, 
-                      overflow: TextOverflow
-                          .ellipsis, 
-                      softWrap: false, 
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilmPage(name: name, id: id, imageUrl: imageUrl)),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0, vertical: 15.0),
-                    textStyle: const TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
+}
+
+Widget createCard({
+  required BuildContext context,
+  required String imageUrl,
+  required name,
+  required id,
+}) {
+  return Column(
+    children: [
+      Card(
+        color: Colors.grey[850],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        elevation: 5.0,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.network(
+                      imageUrl,
+                      width: 75,
+                      height: 75,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: const Text('Esplora'),
-                )
-              ],
-            ),
+                  const SizedBox(width: 15.0),
+                  Text(
+                    truncateWithEllipsis(13, getSurname(name)),
+                    style: const TextStyle(
+                      fontSize: 23.0,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FilmPage(name: name, id: id, imageUrl: imageUrl)),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 15.0),
+                  textStyle: const TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text('Esplora'),
+              )
+            ],
           ),
         ),
-        const Divider(
-          color: Colors.white30,
-          thickness: 1.0,
-          height: 20.0,
-        ),
-      ],
-    );
-  }
+      ),
+      const Divider(
+        color: Colors.white30,
+        thickness: 1.0,
+        height: 20.0,
+      ),
+    ],
+  );
 }
 
 String truncateWithEllipsis(int cutoff, String text) {
@@ -424,7 +419,7 @@ String truncateWithEllipsis(int cutoff, String text) {
 String getSurname(String name) {
   List<String> parts = name.split(' ');
   if (parts.length > 1) {
-    return parts.last; 
+    return parts.last;
   }
   return name;
 }

@@ -96,7 +96,7 @@ class RequestManager {
   }
 
 ////////////////////////////// GET DIRECTOR CATEGORY //////////////////////////////
-  Future<dynamic> getDirectorCategory(List<int> listID) async {
+  Future<Map<String, dynamic>?> getDirectorCategory(List<int> listID) async {
     String endpoint = '/directors/category';
     final Uri url = Uri.parse('$baseUrl$endpoint');
     const storage = FlutterSecureStorage();
