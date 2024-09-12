@@ -11,16 +11,6 @@ class FavoritesManager with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> isFavorite(int id) async {
-    if (_favoritesNotifier.value.containsKey(id)) {
-      return _favoritesNotifier.value[id]!;
-    }
-    bool isFavorite = await requestManager.isFavorite(id);
-    _favoritesNotifier.value = Map.from(_favoritesNotifier.value)
-      ..[id] = isFavorite;
-    return isFavorite;
-  }
-
   Future<void> toggleFavorite(bool newStatus, String title, int id) async {
     newStatus = !newStatus;
 

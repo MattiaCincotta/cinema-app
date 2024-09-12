@@ -182,9 +182,8 @@ class RequestManager {
           .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        print('response: ${response.body}');
         
-        return response.body == 'true' ? true : false;
+        return response.body.toString().contains('true');
       }
       return false;
     } catch (e) {

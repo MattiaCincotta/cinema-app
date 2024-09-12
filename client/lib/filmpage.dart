@@ -246,7 +246,7 @@ Widget createCard(
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
       return FutureBuilder<bool>(
-        future: favoritesController.isFavorite(id),
+        future: requestManager.isFavorite(id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(
