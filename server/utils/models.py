@@ -484,11 +484,12 @@ class MovieManager:
             g.db = DB_utils.get_db_connection()
         
         try:
-            cursor = g.db.cursor(dictionary=True)
+            cursor = g.db.cursor()
             cursor.execute("SELECT COUNT(*) FROM favorites WHERE user_id = %s AND movie_id = %s", (user.id, movie_id))
             result = cursor.fetchone()
             cursor.close()
-            return True if result == 1 else False
+            current_app.logger.info(result)
+            return True if result[0] > 0 else False
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return False
@@ -536,11 +537,11 @@ class MovieManager:
             g.db = DB_utils.get_db_connection()
         
         try:
-            cursor = g.db.cursor(dictionary=True)
+            cursor = g.db.cursor()
             cursor.execute("SELECT COUNT(*) FROM seen WHERE user_id = %s AND movie_id = %s", (user.id, movie_id))
             result = cursor.fetchone()
             cursor.close()
-            return True if result == 1 else False
+            return True if result[0] > 0 else False
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return False

@@ -112,10 +112,11 @@ def getFavorites():
     if UserManager.verify_token(request.headers.get('token'), True):
         user = UserManager.get_user_by_token(request.headers.get('token'))
         movie_id = request.args.get('id')
-        if movie_id and isinstance(movie_id, int):
-            result = MovieManager.is_favorite(user, movie_id)
-            return jsonify("true" if result else "false"), 200
 
+        if movie_id:
+            result = MovieManager.is_favorite(user, int(movie_id))
+            return jsonify("true" if result else "false"), 200
+            
         result = MovieManager.get_favorites(user)
         if result:
             return jsonify([movie.__dict__ for movie in result]), 200
@@ -160,8 +161,8 @@ def getSeenMovies():
         user = UserManager.get_user_by_token(request.headers.get('token'))
         result = MovieManager.get_seen_movies(user)
         movie_id = request.args.get('id')
-        if movie_id and isinstance(movie_id, int):
-            result = MovieManager.is_seen(user, movie_id)
+        if movie_id:
+            result = MovieManager.is_seen(user, int(movie_id))
             return jsonify("true" if result else "false"), 200
         
         if result:
