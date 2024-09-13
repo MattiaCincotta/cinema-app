@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:client/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/favoritefilm.dart';
 import 'package:client/filmpage.dart';
 import 'package:client/movie_history.dart';
 import 'package:client/utils/models.dart';
 import 'package:client/utils/request_manager.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Category {
   final int id;
@@ -97,26 +101,56 @@ class _DirectionListPageState extends State<DirectionListPage> {
     }
   }
 
+  Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Conferma Logout'),
+              content: const Text('Sei sicuro di voler uscire?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Utente ha scelto "No"
+                  },
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true); // Utente ha scelto "Sì"
+                  },
+                  child: const Text('Sì'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Restituisce false se l'utente chiude il dialog senza fare una scelta
+  }
+
+  void _logout() async {
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: 'token'); // Rimuove il token salvato
+    await storage.write(key: 'rememberMe', value: 'false');
+
+    // Naviga alla pagina di login o altra azione appropriata
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const CinemaAppHomepage()),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Row(
+        title: const Row(
           children: [
-            ClipOval(
-              child: Image.asset(
-                'assets/images/Logo.jpg',
-                width: 45.0,
-                height: 45.0,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 15.0),
-            const Text(
+             Text(
               'CineCult',
               style: TextStyle(
-                fontSize: 26,
+                fontSize: 37,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -266,6 +300,16 @@ class _DirectionListPageState extends State<DirectionListPage> {
                   );
                 },
               );
+            },
+          ),
+           IconButton(
+            icon: const Icon(Icons.logout),
+            iconSize: 28,
+            onPressed: () async {
+              bool shouldLogout = await _showLogoutConfirmationDialog(context);
+              if (shouldLogout) {
+                _logout();
+              }
             },
           ),
         ],
