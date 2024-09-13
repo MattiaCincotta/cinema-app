@@ -204,6 +204,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
 
   Widget createCard(String imageUrl, String title) {
     bool isSeen = true;
+    print('title in movie history: $title');
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
