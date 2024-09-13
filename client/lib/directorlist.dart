@@ -102,38 +102,78 @@ class _DirectionListPageState extends State<DirectionListPage> {
   }
 
   Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Conferma Logout'),
-              content: const Text('Sei sicuro di voler uscire?'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false); // Utente ha scelto "No"
-                  },
-                  child: const Text('No'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true); // Utente ha scelto "Sì"
-                  },
-                  child: const Text('Sì'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false; // Restituisce false se l'utente chiude il dialog senza fare una scelta
-  }
+  return await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),  // Bordi arrotondati
+        ),
+        titlePadding: const EdgeInsets.all(20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+        title: Row(
+          children: const [
+            Icon(Icons.warning, color: Colors.red, size: 30),  // Aggiunge un'icona di avvertimento
+            SizedBox(width: 10),
+            Text(
+              'Conferma Logout',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Sei sicuro di voler uscire?',
+          style: TextStyle(
+            fontSize: 20,
+          ),
+        ),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false); // Utente ha scelto "No"
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              backgroundColor: Colors.grey[300],
+              foregroundColor: Colors.black,
+              textStyle: const TextStyle(fontSize: 18),
+            ),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true); // Utente ha scelto "Sì"
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              textStyle: const TextStyle(fontSize: 18),
+            ),
+            child: const Text('Sì'),
+          ),
+        ],
+      );
+    },
+  ) ?? false; // Restituisce false se l'utente chiude il dialog senza fare una scelta
+}
+
 
   void _logout() async {
     const storage = FlutterSecureStorage();
-    await storage.delete(key: 'token'); // Rimuove il token salvato
+    await storage.delete(key: 'token'); 
     await storage.write(key: 'rememberMe', value: 'false');
 
-    // Naviga alla pagina di login o altra azione appropriata
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const CinemaAppHomepage()),
     );

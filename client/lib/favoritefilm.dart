@@ -292,7 +292,7 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
   }
 
   Future<bool> _confirmationDialog() async {
-    // Condizione casuale, ad esempio un numero casuale
+    // Se il numero di film non è cambiato, non mostra il popup
     if (filmNumberNotifier.value == initialFilmNumber) {
       return true; // Evita di mostrare il popup
     }
@@ -301,27 +301,68 @@ class _FavoriteFilmPageState extends State<FavoriteFilmPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Conferma'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0), // Bordi arrotondati
+              ),
+              titlePadding: const EdgeInsets.all(20),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+              title: const Row(
+                children: [
+                  Icon(Icons.warning, color: Colors.red, size: 30),
+                  SizedBox(width: 10),
+                  Text(
+                    'Conferma',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               content: const Text(
-                  'Vuoi eliminare i film dai preferiti prima di uscire?'),
+                'Vuoi eliminare i film dai preferiti prima di uscire?',
+                style: TextStyle(fontSize: 20),
+              ),
+              actionsPadding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(false); // Utente ha scelto "No"
+                    Navigator.of(context).pop(false);
                   },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 25),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    backgroundColor: Colors.grey[300],
+                    foregroundColor: Colors.black,
+                    textStyle: const TextStyle(fontSize: 18),
+                  ),
                   child: const Text('No'),
                 ),
                 TextButton(
                   onPressed: () async {
-                    // Utente ha scelto "Sì"
                     for (String title in removedFilm) {
                       await requestManager.removeFavorite(title);
                     }
 
-                    // Chiude il dialogo e ritorna true
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop(true);
+                    if (context.mounted) {
+                      Navigator.of(context).pop(true);
+                    }
                   },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 25),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(fontSize: 18),
+                  ),
                   child: const Text('Sì'),
                 ),
               ],
