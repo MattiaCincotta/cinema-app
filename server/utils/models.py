@@ -538,7 +538,7 @@ class MovieManager:
         
         try:
             cursor = g.db.cursor()
-            cursor.execute("SELECT COUNT(*) FROM seen WHERE user_id = %s AND movie_id = %s", (user.id, movie_id))
+            cursor.execute("SELECT COUNT(*) FROM seen_movies WHERE user_id = %s AND movie_id = %s", (user.id, movie_id))
             result = cursor.fetchone()
             cursor.close()
             return True if result[0] > 0 else False
