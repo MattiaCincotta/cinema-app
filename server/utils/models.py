@@ -561,7 +561,7 @@ class MovieManager:
         
         try:
             cursor = g.db.cursor(dictionary=True)
-            cursor.execute("SELECT movie_id FROM seen WHERE user_id = %s", (user.id,))
+            cursor.execute("SELECT movie_id FROM seen_movies WHERE user_id = %s", (user.id,))
             result = cursor.fetchall()
             l = []
             for link in result:
