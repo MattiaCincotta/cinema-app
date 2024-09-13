@@ -23,11 +23,9 @@ class RequestManager {
             name: result['name'],
             imageUrl: result['image_url']);
       } else {
-        print('Errore durante la richiesta GET: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Errore durante la richiesta GET: $e');
       return null;
     }
   }
@@ -43,11 +41,9 @@ class RequestManager {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
-        print('Errore durante la richiesta GET: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Errore durante la richiesta GET: $e');
       return null;
     }
   }
@@ -412,10 +408,8 @@ class RequestManager {
       final responseData = json.decode(response.body);
       await storage.write(key: 'token', value: responseData['token']);
 
-      print('login riuscito: ${responseData['message']}');
       return true;
     } else {
-      print('Errore nel login: ${response.body}');
       return false;
     }
   }
@@ -439,12 +433,8 @@ class RequestManager {
       final responseData = json.decode(response.body);
       await storage.write(key: 'token', value: responseData['token']);
 
-      print(await storage.read(key: "token"));
-
-      print('Registrazione riuscita: ${responseData['token']}');
       return true;
     } else {
-      print('Errore nella registrazione: ${response.body}');
       return false;
     }
   }

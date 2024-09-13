@@ -265,7 +265,6 @@ class _FilmPageState extends State<FilmPage> {
                 ),
               );
             } else if (favoriteSnapshot.hasError) {
-              print('Errore: ${favoriteSnapshot.error}');
               return SizedBox(
                 width: 250.0,
                 height: 410.0,
@@ -301,7 +300,6 @@ class _FilmPageState extends State<FilmPage> {
                       ),
                     );
                   } else if (seenSnapshot.hasError) {
-                    print('Errore: ${seenSnapshot.error}');
                     return SizedBox(
                       width: 250.0,
                       height: 410.0,

@@ -16,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _isChecked = false;
   bool _isObscure = true;
   String _errorMessage = '';
-  bool _isSnackBarActive = false;
 
   Future<void> _login() async {
     RequestManager mgr = RequestManager(baseUrl: 'http://172.18.0.3:5000');
@@ -33,29 +32,50 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _errorMessage = 'Accesso non riuscito. Controlla username e password.';
       });
-      _showSnackBar();
+      _showSnackBar(_errorMessage);
     }
   }
 
-  void _showSnackBar() {
-    if (!_isSnackBarActive && _errorMessage.isNotEmpty) {
-      _isSnackBarActive = true;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_errorMessage, style: const TextStyle(fontSize: 18.0)),
-          duration: const Duration(seconds: 2),
-          onVisible: () {
-            Future.delayed(const Duration(seconds: 2), () {
-              setState(() {
-                _isSnackBarActive = false;
-                _errorMessage = '';
-              });
-            });
-          },
-        ),
-      );
-    }
-  }
+void _showSnackBar(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          const CircleAvatar(
+            backgroundColor: Colors.blueAccent, // Colore di sfondo del cerchio
+            radius: 16.0, // Raggio del cerchio
+            child: Icon(
+              Icons.info_outline, // Icona che può essere cambiata in base al messaggio
+              color: Colors.white, // Colore dell'icona
+              size: 18.0, // Dimensione dell'icona
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 18.0,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.grey[800], // Colore di sfondo della snackbar
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      margin: const EdgeInsets.all(10.0),
+    ),
+  );
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {

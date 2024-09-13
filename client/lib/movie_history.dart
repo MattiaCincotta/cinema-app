@@ -204,7 +204,6 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
 
   Widget createCard(String imageUrl, String title) {
     bool isSeen = true;
-    print('title in movie history: $title');
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -251,13 +250,11 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                             if (!removedFilm.contains(title)) {
                               removedFilm.add(title);
                               filmNumberNotifier
-                                  .value--; // Diminuisci il contatore
-                              print('Film aggiunto a removedFilm: $title');
+                                  .value--; 
                             }
                           } else {
                             removedFilm.remove(title);
-                            filmNumberNotifier.value++; // Aumenta il contatore
-                            print('Film rimosso da removedFilm: $title');
+                            filmNumberNotifier.value++; 
                           }
                         });
                       },

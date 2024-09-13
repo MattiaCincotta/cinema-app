@@ -111,8 +111,8 @@ class _DirectionListPageState extends State<DirectionListPage> {
         ),
         titlePadding: const EdgeInsets.all(20),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.warning, color: Colors.red, size: 30),  // Aggiunge un'icona di avvertimento
             SizedBox(width: 10),
             Text(

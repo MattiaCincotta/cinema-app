@@ -96,19 +96,45 @@ class _RegistrationpageState extends State<Registrationpage> {
     return _password1.text == _password2.text;
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            fontSize: 18.0,
+void _showSnackBar(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          const CircleAvatar(
+            backgroundColor: Colors.redAccent, // Colore di sfondo del cerchio
+            radius: 16.0, // Raggio del cerchio
+            child: Icon(
+              Icons.close,
+              color: Colors.white, // Colore dell'icona
+              size: 18.0, // Dimensione dell'icona
+            ),
           ),
-        ),
-        duration: const Duration(seconds: 3),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 18.0,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
-    );
-  }
+      backgroundColor: Colors.grey[800], // Colore di sfondo della snackbar      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      margin: const EdgeInsets.all(10.0),
+    ),
+  );
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -126,18 +152,18 @@ class _RegistrationpageState extends State<Registrationpage> {
         ),
         title: Row(
           children: [
-            Icon(
-              Icons.account_circle,
-              color: Colors.red[300],
-              size: 30,
-            ),
-            const SizedBox(width: 10),
             const Text(
-              'Benvenuto! Crea il tuo account ',
+              'Crea il tuo account!',
               style: TextStyle(
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.bold,
-                  fontSize: 18),
+                  fontSize: 30),
+            ),
+            const SizedBox(width: 10),
+            Icon(
+              Icons.account_circle,
+              color: Colors.red[300],
+              size: 50,
             ),
           ],
         ),

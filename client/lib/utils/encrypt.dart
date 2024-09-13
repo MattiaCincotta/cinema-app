@@ -30,7 +30,6 @@ class Cryptography{
   Future<void> encryptFile() async {
     File inFile = File(await getDatabaseFile());
     File outFile = File(await getEncryptedFile());
-    print(inFile.path);
 
     bool outFileExists = outFile.existsSync();
 
