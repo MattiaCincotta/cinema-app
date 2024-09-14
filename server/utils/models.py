@@ -341,6 +341,28 @@ class MovieManager:
         pass
     
     @staticmethod
+    def add_movie(movie: Movie) -> bool:
+        """
+        Add a movie to the database.
+        Args:
+            data: The data of the movie to add.
+        Returns:
+            True if the movie was added successfully, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("INSERT INTO movies (title, year, image_url, director_id) VALUES (%s, %s, %s, %s)", (movie.title, movie.year, movie.image_url, movie.director_id))
+            g.db.commit()
+            return True
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+
+    @staticmethod
     def get_movies() -> list:
         """
         Get all movies from the database.
@@ -573,28 +595,6 @@ class MovieManager:
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             return []
-
-    @staticmethod
-    def add_movie(movie: Movie) -> bool:
-        """
-        Add a movie to the database.
-        Args:
-            movie: The movie object to add.
-        Returns:
-            True if the movie was added successfully, False otherwise.
-        """
-        
-        if 'db' not in g:
-            g.db = DB_utils.get_db_connection()
-        
-        try:
-            cursor = g.db.cursor(dictionary=True)
-            cursor.execute("INSERT INTO movies (title, director, year) VALUES (%s, %s, %s, %s)", (movie.title, movie.director, movie.year, movie.image_url))
-            g.db.commit()
-            return True
-        except mysql.connector.Error as e:
-            print(f"Error: {e}")
-            return False
         
 ################################ FAVORITE AND SEEN MOVIES ##########################################
     

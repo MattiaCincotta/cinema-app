@@ -222,6 +222,21 @@ def get_director_biography(id):
     else:
         return jsonify("invalid token"), 401
 
+@api.route('/movies', methods=['POST'])
+def add_movie():
+    """
+    Add a movie to the database
+    """
+    if not UserManager.verify_token(request.headers.get('token'), True):
+        return jsonify("invalid token"), 401
+    
+    data = request.get_json()
+    if data and isinstance(data['title'], str) and isinstance(data['year'], int) and isinstance(data['image_url'], str) and isinstance(data['director_id'], int):
+        success = MovieManager.add_movie(Movie(0, data['title'], data['director_id'], data['year'], data['image_url']))
+        if success:
+            return jsonify("movie added"), 200
+    return jsonify("error while adding"), 400
+
 @api.teardown_appcontext
 def close_db(exception):
     db = g.pop('db', None)
