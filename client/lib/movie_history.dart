@@ -345,7 +345,7 @@ class _MovieHistoryPageState extends State<MovieHistoryPage> {
                 TextButton(
                   onPressed: () async {
                     for (String title in removedFilm) {
-                      await requestManager.removeFavorite(title);
+                      await requestManager.removeSeenMovies(title);
                     }
 
                     if (context.mounted) {
