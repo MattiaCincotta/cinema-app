@@ -167,7 +167,7 @@ class UserManager:
 ######### DIRECTOR PART ###########################################################################################
 
 class Director:
-    def __init__(self, id:int, name: str, image_url: str) -> None:
+    def __init__(self, id: int, name: str, image_url: str) -> None:
         self.id = id
         self.name = name
         self.image_url = image_url
@@ -196,6 +196,28 @@ class DirectorManager:
     def __init__(self) -> None:
         pass
     
+    @staticmethod
+    def add_director(director: Director, biography: str) -> bool:
+        """
+        Add a director to the database.
+        Args:
+            data: The data of the director to add.
+        Returns:
+            True if the director was added successfully, False otherwise.
+        """
+        
+        if 'db' not in g:
+            g.db = DB_utils.get_db_connection()
+        
+        try:
+            cursor = g.db.cursor(dictionary=True)
+            cursor.execute("INSERT INTO directors (name, image_url, biography) VALUES (%s, %s, %s)", (director.name, director.image_url, biography))
+            g.db.commit()
+            return True
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+
     @staticmethod
     def get_directors() -> list:
         """

@@ -237,6 +237,21 @@ def add_movie():
             return jsonify("movie added"), 200
     return jsonify("error while adding"), 400
 
+@api.route('/directors', methods=['POST'])
+def add_director():
+    """ 
+    Add a Director to the database
+    """
+    if not UserManager.verify_token(request.headers.get('token'), True):
+        return jsonify("invalid token"), 401
+    
+    data = request.get_json()
+    if data and isinstance(data['name'], str) and isinstance(data['biography'], str) and isinstance(data['image_url'], str):
+        success = DirectorManager.add_director(Director(0, data['name'], data['image_url']), data['biography'])
+        if success:
+            return jsonify("director added"), 200
+    return jsonify("error while adding"), 400
+
 @api.teardown_appcontext
 def close_db(exception):
     db = g.pop('db', None)
