@@ -178,7 +178,6 @@ class RequestManager {
           .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        
         return response.body.toString().contains('true');
       }
       return false;
@@ -255,7 +254,6 @@ class RequestManager {
     }
   }
 
-
   ///////////////////////////////// GET SEEN MOVIES /////////////////////////////////
   Future<dynamic> getSeenMovies() async {
     String endpoint = '/seen_movies';
@@ -278,7 +276,6 @@ class RequestManager {
     }
   }
 
-
   ///////////////////////////////// GET SEEN MOVIE BY ID /////////////////////////////////
   Future<bool> isSeen(int id) async {
     String endpoint = '/seen_movies';
@@ -290,7 +287,8 @@ class RequestManager {
           .get(url, headers: {"token": (await storage.read(key: 'token'))!});
 
       if (response.statusCode == 200) {
-        print('server response IsSeen: ${response.body.toString().contains('true')}');
+        print(
+            'server response IsSeen: ${response.body.toString().contains('true')}');
         return response.body.toString().contains('true');
       }
       return false;
@@ -438,4 +436,5 @@ class RequestManager {
       return false;
     }
   }
+
 }
