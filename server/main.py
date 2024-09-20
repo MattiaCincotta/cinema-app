@@ -246,8 +246,8 @@ def add_director():
         return jsonify("invalid token"), 401
     
     data = request.get_json()
-    if data and isinstance(data['name'], str) and isinstance(data['biography'], str) and isinstance(data['image_url'], str):
-        success = DirectorManager.add_director(Director(0, data['name'], data['image_url']), data['biography'])
+    if data and isinstance(data['name'], str) and isinstance(data['biography'], str) and isinstance(data['image_url'], str) and isinstance(data['categories_id'], list[str]):
+        success = DirectorManager.add_director(Director(0, data['name'], data['image_url']), data['biography'], data['categories_id'])
         if success:
             return jsonify("director added"), 200
     return jsonify("error while adding"), 400

@@ -197,7 +197,7 @@ class DirectorManager:
         pass
     
     @staticmethod
-    def add_director(director: Director, biography: str) -> bool:
+    def add_director(director: Director, biography: str, categories_id: list[str]) -> bool:
         """
         Add a director to the database.
         Args:
@@ -210,8 +210,13 @@ class DirectorManager:
             g.db = DB_utils.get_db_connection()
         
         try:
-            cursor = g.db.cursor(dictionary=True)
+            cursor = g.db.cursor()
             cursor.execute("INSERT INTO directors (name, image_url, biography) VALUES (%s, %s, %s)", (director.name, director.image_url, biography))
+            g.db.commit()
+            cursor.execute("SELECT id FROM directors WHERE name = %s", (director.name))
+            director_id = cursor.fetchone()
+            for id in categories_id:
+                cursor.execute("INSERT INTO directors_categories (director_id, category_id) VALUES (%s, %s)", (director_id, id))
             g.db.commit()
             return True
         except mysql.connector.Error as e:
