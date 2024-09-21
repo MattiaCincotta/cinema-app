@@ -27,6 +27,29 @@ biographies = {
     "James Cameron": "Nato a Kapuskasing, Canada. Ha vinto l'Oscar per 'Titanic'."
 }
 
+def login(base_url, username, password):
+    endpoint = '/login'
+    url = f'{base_url}{endpoint}'
+
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        'username': username,
+        'password': password
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        data=json.dumps(payload),
+    )
+
+    if response.status_code == 200:
+        responseData = json.loads(response.text)
+        return responseData.get('token')  # Assicurati che il campo 'token' sia presente
+    else:
+        print(f"Errore durante il login: {response.status_code}")
+        return None
+
 def get_image_url(page_name):
     search_url = f"https://en.wikipedia.org/wiki/{page_name.replace(' ', '_')}"
     response = requests.get(search_url)
@@ -41,11 +64,14 @@ def get_image_url(page_name):
                 return image_url
     return None  
 
-def add_movie(base_url, title, year, image_url, director_id):
+def add_movie(base_url, token, title, year, image_url, director_id):
     endpoint = '/movies'
     url = f'{base_url}{endpoint}'
 
-    headers = {'Content-Type': 'application/json'}
+    headers = {
+        'Content-Type': 'application/json',
+        'token': token
+    }
     payload = {
         'title': title,
         'year': year,
@@ -61,16 +87,19 @@ def add_movie(base_url, title, year, image_url, director_id):
 
     return response.status_code == 200
 
-def add_director(base_url, name, image_url, biography, category_id):
+def add_director(base_url, token, name, image_url, biography, category_id):
     endpoint = '/directors'
     url = f'{base_url}{endpoint}'
 
-    headers = {'Content-Type': 'application/json'}
+    headers = {
+        'Content-Type': 'application/json',
+        'token': token  
+    }
     payload = {
         'name': name,
         'image_url': image_url,
         'biography': biography,
-        'category': category_id
+        'categories_id': category_id
     }
 
     response = requests.post(
@@ -83,39 +112,43 @@ def add_director(base_url, name, image_url, biography, category_id):
 
 def main():
     base_url = 'http://172.18.0.3:5000'
+
+
+    token = login(base_url, 'a', '12345678a')
     
+    if not token:
+        print("Errore: impossibile ottenere il token. Uscita.")
+        return
+
     directors = [
         ("Alfred Hitchcock", biographies["Alfred Hitchcock"], categories['Thriller'].id),
-        '''("Steven Spielberg", biographies["Steven Spielberg"], categories['Avventura'].id),
         ("Guillermo del Toro", biographies["Guillermo del Toro"], categories['Horror'].id),
-        ("Quentin Tarantino", biographies["Quentin Tarantino"], categories['Thriller'].id),
-        ("James Cameron", biographies["James Cameron"], categories['Avventura'].id)'''
+        ("James Cameron", biographies["James Cameron"], categories['Avventura'].id)
     ]
 
     movies = [
         ("Psycho", 1960, "Psycho", 2),
-        '''("Jurassic Park", 1993, "Jurassic_Park", 3),
+        ("Jurassic Park", 1993, "Jurassic_Park", 3),
         ("The Shape of Water", 2017, "The_Shape_of_Water", 4),
-        ("Pulp Fiction", 1994, "Pulp_Fiction", 5),
-        ("Avatar", 2009, "Avatar", 6)'''
+        ("Avatar", 2009, "Avatar", 6)
     ]
     
+    # Aggiungi i registi
     for director in directors:
         name, biography, category_id = director
         image_url = get_image_url(name)
         
-        if add_director(base_url, name, image_url, biography, category_id):
+        if add_director(base_url, token, name, image_url, biography, category_id):
             print(f"Regista '{name}' aggiunto con successo.")
         else:
             print(f"Errore nell'aggiungere il regista '{name}'.")
-    
-    
 
+    # Aggiungi i film
     for movie in movies:
         title, year, page_name, director_id = movie
         image_url = get_image_url(page_name)
         
-        if add_movie(base_url, title, year, image_url, director_id):
+        if add_movie(base_url, token, title, year, image_url, director_id):
             print(f"Film '{title}' aggiunto con successo.")
         else:
             print(f"Errore nell'aggiungere il film '{title}'.")
