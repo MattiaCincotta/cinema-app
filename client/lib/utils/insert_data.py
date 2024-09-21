@@ -85,21 +85,19 @@ def main():
     base_url = 'http://172.18.0.3:5000'
     
     directors = [
-        ("Christopher Nolan", biographies["Christopher Nolan"], categories['Thriller'].id),
         ("Alfred Hitchcock", biographies["Alfred Hitchcock"], categories['Thriller'].id),
-        ("Steven Spielberg", biographies["Steven Spielberg"], categories['Avventura'].id),
+        '''("Steven Spielberg", biographies["Steven Spielberg"], categories['Avventura'].id),
         ("Guillermo del Toro", biographies["Guillermo del Toro"], categories['Horror'].id),
         ("Quentin Tarantino", biographies["Quentin Tarantino"], categories['Thriller'].id),
-        ("James Cameron", biographies["James Cameron"], categories['Avventura'].id)
+        ("James Cameron", biographies["James Cameron"], categories['Avventura'].id)'''
     ]
 
     movies = [
-        ("Inception", 2010, "Inception", 1),
         ("Psycho", 1960, "Psycho", 2),
-        ("Jurassic Park", 1993, "Jurassic_Park", 3),
+        '''("Jurassic Park", 1993, "Jurassic_Park", 3),
         ("The Shape of Water", 2017, "The_Shape_of_Water", 4),
         ("Pulp Fiction", 1994, "Pulp_Fiction", 5),
-        ("Avatar", 2009, "Avatar", 6)
+        ("Avatar", 2009, "Avatar", 6)'''
     ]
     
     for director in directors:
