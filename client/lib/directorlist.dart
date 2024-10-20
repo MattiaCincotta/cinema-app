@@ -190,7 +190,7 @@ class _DirectionListPageState extends State<DirectionListPage> {
              Text(
               'CineCult',
               style: TextStyle(
-                fontSize: 37,
+                fontSize: 36,
                 fontWeight: FontWeight.bold,
               ),
             ),
